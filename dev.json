@@ -18,18 +18,18 @@
         "panes": [
           {
             "name": "internal",
-            "command": "bun run dev:internal",
+            "command": "way dev internal",
             "position": "bottom"
           },
           {
             "name": "api",
-            "command": "bun run dev:api",
+            "command": "way dev api",
             "position": "main",
             "services": ["api"]
           },
           {
             "name": "web",
-            "command": "bun run dev:web",
+            "command": "way dev web",
             "position": "right",
             "services": ["web"]
           }
