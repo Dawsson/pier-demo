@@ -7,9 +7,7 @@
     "../hosting-platform/packages/*"
   ],
   "scripts": {
-    "check-types": "bun run --filter='*' check-types",
-    "dev": "dev up --cwd .",
-    "way": "way"
+    "check-types": "bun run --filter='*' check-types"
   },
   "dependencies": {
     "@waypoint/backend": "workspace:*",

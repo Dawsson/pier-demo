@@ -1,4 +1,5 @@
 node_modules/
+.wrangler/
 dist/
 apps/*/dist/
 .env.dev

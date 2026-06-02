@@ -11,6 +11,7 @@ export const Route = createRootRoute({
       { title: "Waypoint Guest App" },
     ],
   }),
+  notFoundComponent: NotFound,
 });
 
 function RootComponent() {
@@ -32,5 +33,17 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
         <Scripts />
       </body>
     </html>
+  );
+}
+
+function NotFound() {
+  return (
+    <main className="shell">
+      <section className="panel">
+        <p className="eyebrow">Waypoint guest app</p>
+        <h1>Not found</h1>
+        <p className="summary">This route is not part of the guest app.</p>
+      </section>
+    </main>
   );
 }
