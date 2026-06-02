@@ -1,0 +1,15 @@
+{
+  "name": "@waypoint-guest-app/internal",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check-types": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@waypoint/backend": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260602.1",
+    "typescript": "^5.9.3"
+  }
+}
