@@ -9,13 +9,11 @@
   "scripts": {
     "check-types": "bun run --filter='*' check-types",
     "dev": "dev up --cwd .",
-    "dev:api": "bun run waypoint dev api",
-    "dev:internal": "bun run waypoint dev internal",
-    "dev:web": "bun run waypoint dev web",
-    "inspect": "bun run way inspect platform.config.ts",
-    "inspect:json": "bun run way inspect platform.config.ts --json",
-    "way": "bun /Users/dawson/projects/hosting-platform/packages/cli/src/index.ts",
-    "waypoint": "bun /Users/dawson/projects/hosting-platform/packages/cli/src/index.ts"
+    "dev:api": "way dev api",
+    "dev:internal": "way dev internal",
+    "dev:web": "way dev web",
+    "inspect": "way inspect platform.config.ts",
+    "inspect:json": "way inspect platform.config.ts --json"
   },
   "dependencies": {
     "@waypoint/backend": "file:../hosting-platform/packages/backend",
@@ -24,6 +22,7 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260602.1",
+    "@waypoint/cli": "file:../hosting-platform/packages/cli",
     "typescript": "^5.9.3"
   },
   "packageManager": "bun@1.3.12"

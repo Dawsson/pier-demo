@@ -11,6 +11,7 @@
       },
       "devDependencies": {
         "@cloudflare/workers-types": "^4.20260602.1",
+        "@waypoint/cli": "file:../hosting-platform/packages/cli",
         "typescript": "^5.9.3",
       },
     },
@@ -322,13 +323,9 @@
 
     "@waypoint-guest-app/web": ["@waypoint-guest-app/web@workspace:apps/web"],
 
-    "@waypoint/backend": ["@waypoint/backend@file:../hosting-platform/packages/backend", { "dependencies": { "@waypoint/core": "workspace:*", "hono": "^4.8.2", "zod": "^4.1.13" }, "devDependencies": { "typescript": "^5.9.3" } }],
-
     "@waypoint/backend": ["@waypoint/backend@workspace:../hosting-platform/packages/backend"],
 
     "@waypoint/cli": ["@waypoint/cli@workspace:../hosting-platform/packages/cli"],
-
-    "@waypoint/core": ["@waypoint/core@file:../hosting-platform/packages/core", { "dependencies": { "zod": "^4.1.13" }, "devDependencies": { "typescript": "^5.9.3" } }],
 
     "@waypoint/core": ["@waypoint/core@workspace:../hosting-platform/packages/core"],
 
@@ -495,11 +492,5 @@
     "@babel/traverse/@babel/code-frame": ["@babel/code-frame@7.29.7", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.29.7", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-Aup7aUOfpbAUg2ROOJN6Iw5f9DMBlzu0mIkm/malLQFN/YQgO48wCj0Kxa3sEHJvPVFg7siR+qRInwXd2qhQKw=="],
 
     "@tanstack/start-plugin-core/@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.1", "", {}, "sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw=="],
-
-    "@waypoint-guest-app/web/@waypoint/backend": ["@waypoint/backend@file:../hosting-platform/packages/backend", { "dependencies": { "@waypoint/core": "workspace:*", "hono": "^4.8.2", "zod": "^4.1.13" }, "devDependencies": { "typescript": "^5.9.3" } }],
-
-    "@waypoint/backend/@waypoint/core": ["@waypoint/core@file:../hosting-platform/packages/core", { "dependencies": { "zod": "^4.1.13" }, "devDependencies": { "typescript": "^5.9.3" } }],
-
-    "@waypoint-guest-app/web/@waypoint/backend/@waypoint/core": ["@waypoint/core@file:../hosting-platform/packages/core", { "dependencies": { "zod": "^4.1.13" }, "devDependencies": { "typescript": "^5.9.3" } }],
   }
 }
