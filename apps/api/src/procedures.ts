@@ -37,4 +37,5 @@ export const publicProcedure = api.procedure();
 export const guestProcedure = api
   .procedure()
   .use(authMiddleware({ required: false }))
-  .use(permissionMiddleware);
+  .use(permissionMiddleware)
+  .permission("guest:read");

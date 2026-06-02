@@ -9,7 +9,8 @@ export const guestQuery = guestProcedure.query({
     .optional()
     .default({ id: "guest" }),
 
-  permission: ({ ctx, input }) => `guest:read:${ctx.session?.user.id ?? input.id}`,
+  permission: ({ ctx, input, permissions }) =>
+    permissions.includes("guest:read") && (ctx.session?.user.id === input.id || input.id === "guest"),
 
   run: async (ctx, input) => {
     const db = ctx.db;
