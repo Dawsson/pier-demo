@@ -1,3 +1,5 @@
 node_modules/
 dist/
 apps/*/dist/
+.env.dev
+.env.workspace

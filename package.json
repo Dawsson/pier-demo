@@ -8,6 +8,10 @@
   ],
   "scripts": {
     "check-types": "bun run --filter='*' check-types",
+    "dev": "dev up --cwd .",
+    "dev:api": "bun run waypoint dev api",
+    "dev:internal": "bun run waypoint dev internal",
+    "dev:web": "bun run waypoint dev web",
     "inspect": "bun run way inspect platform.config.ts",
     "inspect:json": "bun run way inspect platform.config.ts --json",
     "way": "bun /Users/dawson/projects/hosting-platform/packages/cli/src/index.ts",
