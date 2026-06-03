@@ -1,7 +1,7 @@
 # Waypoint Guest App
 
-This repo is a public example of what an app could look like on a more opinionated
-Waypoint hosting platform.
+This repo is a public example of what an app could look like on a more
+opinionated theoretical Waypoint hosting platform.
 
 It is intentionally small, but it exercises the important pieces:
 
@@ -16,7 +16,15 @@ It is intentionally small, but it exercises the important pieces:
 
 The goal is not to be a product template yet. It is a working reference app for
 the desired developer experience: app code declares intent, Waypoint handles the
-Cloudflare wiring, and frontend code calls the API through typed functions.
+Cloudflare wiring, auth, bindings, and local URLs, and frontend code calls the
+API through typed functions.
+
+Waypoint's broader motivation is to make production safer for humans and agents:
+agents should be able to inspect events, logs, deploys, resource state, and
+environment differences without broad destructive credentials. The same model
+should eventually support agency client hosting, where deploys, backups,
+observability, and environment management become a reliable hosting upcharge
+instead of one-off infrastructure work.
 
 ## Apps
 
@@ -47,6 +55,27 @@ export default api.worker(contract, {
 The public route can create an anonymous Better Auth session. The protected
 `/workspace` route uses TanStack Router `beforeLoad` to create or reuse that
 anonymous session before rendering, then calls the protected `api.me` query.
+
+That means guest mode is real auth, not a fake local flag. The browser receives
+a Better Auth anonymous session cookie, the API reads it through middleware, and
+the typed client can call protected queries without importing API runtime code.
+
+## Control Plane Direction
+
+The platform repo now exposes the first control-plane shape:
+
+```sh
+bun way inspect --json
+bun way plan
+bun way submit --control-plane https://waypoint-control.example.com
+bun way deploy api --dry-run
+```
+
+The bridge deploy path can still use generated Wrangler config today. The
+intended final path is manifest plus artifact upload to a central control-plane
+Worker, which reconciles Cloudflare resources, records deploy state, manages
+environment variables and bindings, and gives agents audited read access to
+production diagnostics.
 
 ## Development
 
