@@ -11,13 +11,21 @@ export const guestQuery = guestProcedure.query({
 
   run: async (ctx, input) => {
     const db = ctx.db;
-    const [user, sum] = await Promise.all([
+    const cacheKey = `guest:last-seen:${input.id}`;
+    const seenAt = new Date().toISOString();
+    const [, user, sum] = await Promise.all([
+      ctx.env.CACHE.put(cacheKey, seenAt),
       ctx.env.INTERNAL.getUser(input.id),
       ctx.env.INTERNAL.add(2, 3),
     ]);
+    const cachedSeenAt = await ctx.env.CACHE.get(cacheKey);
 
     return {
       auth: "guest",
+      cache: {
+        key: cacheKey,
+        seenAt: cachedSeenAt,
+      },
       internal: {
         sum,
         user,
