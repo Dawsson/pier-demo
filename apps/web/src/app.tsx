@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-quer
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { api, guestQueryOptions, meQueryOptions } from "./api";
-import { authClient, ensureAnonymousSession } from "./auth";
+import { authClient, ensureAnonymousSession, isAnonymousUser } from "./auth";
 
 const queryClient = new QueryClient();
 
@@ -31,9 +31,7 @@ function GuestPanel() {
   const session = authClient.useSession();
   const guestId = session.data?.user.id ?? "guest";
   const guest = useQuery(guestQueryOptions(guestId));
-  const isAnonymous = Boolean(
-    session.data?.user && "isAnonymous" in session.data.user && session.data.user.isAnonymous,
-  );
+  const isAnonymous = isAnonymousUser(session.data?.user);
 
   const continueAsGuest = async () => {
     await ensureAnonymousSession();

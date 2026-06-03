@@ -2,16 +2,28 @@ import { createAuthClient } from "better-auth/react";
 import { anonymousClient } from "better-auth/client/plugins";
 import { resolveApiUrl } from "./api";
 
-const authClientOptions = {
-  baseURL: `${resolveApiUrl()}/auth`,
-  plugins: [anonymousClient()],
+type AuthClientOptions = {
+  readonly baseURL: string;
+  readonly plugins: [ReturnType<typeof anonymousClient>];
 };
 
-type AuthClient = ReturnType<typeof createAuthClient<typeof authClientOptions>>;
+export type AuthClient = ReturnType<typeof createAuthClient<AuthClientOptions>>;
 
-export const authClient: AuthClient = createAuthClient(authClientOptions);
+const createAppAuthClient = (): AuthClient => {
+  return createAuthClient<AuthClientOptions>({
+    baseURL: `${resolveApiUrl()}/auth`,
+    plugins: [anonymousClient()],
+  });
+};
+
+export const authClient: AuthClient = createAppAuthClient();
 
 export type AuthSession = typeof authClient.$Infer.Session;
+export type AuthUser = AuthSession["user"];
+
+export const isAnonymousUser = (user: AuthUser | null | undefined) => {
+  return Boolean(user && "isAnonymous" in user && user.isAnonymous === true);
+};
 
 export const ensureAnonymousSession = async () => {
   const session = await authClient.getSession();
