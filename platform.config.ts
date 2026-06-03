@@ -42,6 +42,8 @@ export default app({
   permissions: permissionCatalog,
   vars: {
     BETTER_AUTH_SECRET: variable.secret(),
+    DEV_API_URL: variable.optionalString(),
+    DEV_WEB_URL: variable.optionalString(),
     PUBLIC_APP_NAME: variable.string(),
     PUBLIC_APP_URL: variable.string(),
   },

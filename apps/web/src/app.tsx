@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-import { useEffect } from "react";
 import { api, guestQueryOptions, meQueryOptions } from "./api";
 import { authClient, ensureAnonymousSession, isAnonymousUser } from "./auth";
 
@@ -81,14 +80,6 @@ function WorkspacePanel() {
     ...meQueryOptions(),
     enabled: Boolean(session.data),
   });
-
-  useEffect(() => {
-    if (!session.isPending && !session.data) {
-      void ensureAnonymousSession().then(() => {
-        void session.refetch();
-      });
-    }
-  }, [session]);
 
   return (
     <main className="shell workspace-shell">
