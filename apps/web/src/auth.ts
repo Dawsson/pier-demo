@@ -7,9 +7,9 @@ const authClientOptions = {
   plugins: [anonymousClient()],
 };
 
-type GuestAuthClient = ReturnType<typeof createAuthClient<typeof authClientOptions>>;
+type AuthClient = ReturnType<typeof createAuthClient<typeof authClientOptions>>;
 
-export const authClient: GuestAuthClient = createAuthClient(authClientOptions);
+export const authClient: AuthClient = createAuthClient(authClientOptions);
 
 export type AuthSession = typeof authClient.$Infer.Session;
 
