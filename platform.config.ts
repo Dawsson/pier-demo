@@ -1,4 +1,4 @@
-import { app, appSlot, binding, logging, permissions, roles, variable } from "@waypoint/core";
+import { app, appSlot, binding, deploy, logging, permissions, roles, variable } from "@waypoint/core";
 import { z } from "zod";
 
 const permissionCatalog = permissions({
@@ -31,6 +31,7 @@ export default app({
     DB: binding.d1(),
     INTERNAL: binding.worker("internal"),
   },
+  deploy: deploy.localAndGithubActions(),
   logging: logging({
     events: {
       "account.created": z.object({
