@@ -1,6 +1,7 @@
 {
   "name": "waypoint-guest-app",
   "private": true,
+  "description": "Example app showing the ideal Waypoint hosting-platform shape with TanStack Start, Cloudflare Workers, Better Auth, D1, and typed API contracts.",
   "workspaces": [
     "apps/*",
     "../hosting-platform/packages/*"
