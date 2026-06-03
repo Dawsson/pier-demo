@@ -1,12 +1,9 @@
-import { json } from "@waypoint/backend";
 import { publicProcedure } from "../procedures";
 
-export const healthEndpoint = publicProcedure.endpoint({
-  method: "GET",
-  path: "/health",
-  run: ({ env }) =>
-    json({
-      app: env.PUBLIC_APP_NAME,
+export const healthEndpoint = publicProcedure.health.query({
+  run: ({ ctx }) =>
+    ({
+      app: ctx.env.PUBLIC_APP_NAME,
       ok: true,
       surface: "api",
     }),

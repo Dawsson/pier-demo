@@ -1,5 +1,5 @@
 import { createApiClient } from "@waypoint/backend";
-import type { ApiContract } from "../../api/src/contract";
+import { contract } from "../../api/src/contract";
 
 export const resolveApiUrl = () => {
   const apiUrl = import.meta.env.PUBLIC_API_URL;
@@ -10,8 +10,9 @@ export const resolveApiUrl = () => {
   return apiUrl;
 };
 
-export const api = createApiClient<ApiContract>({
+export const api = createApiClient<typeof contract>({
   baseUrl: resolveApiUrl(),
+  contract,
 });
 
 export const getGuest = async (id = "guest") => {

@@ -9,7 +9,7 @@
     "@waypoint/auth": "workspace:*",
     "@waypoint/backend": "workspace:*",
     "@waypoint/db": "workspace:*",
-    "better-auth": "^1.5.0",
+    "better-auth": "1.6.11",
     "drizzle-orm": "^0.45.1",
     "zod": "^4.1.13"
   },

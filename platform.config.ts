@@ -22,9 +22,21 @@ export const appRoles = roles({
 
 export default app({
   apps: {
-    api: appSlot.apiWorker("apps/api/src/index.ts", { bindings: ["CACHE", "DB", "INTERNAL"] }),
+    api: appSlot.apiWorker("apps/api/src/index.ts", {
+      bindings: ["CACHE", "DB", "INTERNAL"],
+      vars: [
+        "APP_URL",
+        "BETTER_AUTH_SECRET",
+        "DEV_API_URL",
+        "DEV_WEB_URL",
+        "PUBLIC_APP_NAME",
+        "PUBLIC_APP_URL",
+      ],
+    }),
     internal: appSlot.internalWorker("apps/internal/src/index.ts", { bindings: ["CACHE"] }),
-    web: appSlot.tanstackStart("apps/web/src/start.ts"),
+    web: appSlot.tanstackStart("apps/web/src/start.ts", {
+      vars: ["PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_APP_URL"],
+    }),
   },
   bindings: {
     CACHE: binding.kv(),
@@ -42,10 +54,12 @@ export default app({
   name: "waypoint-guest-app",
   permissions: permissionCatalog,
   vars: {
+    APP_URL: variable.string(),
     BETTER_AUTH_SECRET: variable.secret(),
     DEV_API_URL: variable.optionalString(),
     DEV_WEB_URL: variable.optionalString(),
+    PUBLIC_API_URL: variable.string().public(),
     PUBLIC_APP_NAME: variable.string(),
-    PUBLIC_APP_URL: variable.string(),
+    PUBLIC_APP_URL: variable.string().public(),
   },
 });

@@ -1,7 +1,7 @@
 import { sessionProcedure } from "../procedures";
 
-export const meQuery = sessionProcedure.query({
-  run: (ctx) => {
+export const meQuery = sessionProcedure.me.query({
+  run: ({ ctx }) => {
     const isAnonymous = "isAnonymous" in ctx.session.user && ctx.session.user.isAnonymous === true;
 
     return {

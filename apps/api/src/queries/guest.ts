@@ -1,15 +1,7 @@
-import { z } from "zod";
 import { guestProcedure } from "../procedures";
 
-export const guestQuery = guestProcedure.query({
-  input: z
-    .object({
-      id: z.string().default("guest"),
-    })
-    .optional()
-    .default({ id: "guest" }),
-
-  run: async (ctx, input) => {
+export const guestQuery = guestProcedure.guest.query({
+  run: async ({ ctx, input }) => {
     const db = ctx.db;
     const cacheKey = `guest:last-seen:${input.id}`;
     const seenAt = new Date().toISOString();
