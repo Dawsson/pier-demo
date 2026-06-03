@@ -88,8 +88,8 @@ function WorkspacePanel() {
           <p className="eyebrow">Protected route</p>
           <h1>Guest workspace</h1>
           <p className="summary">
-            TanStack Router created or reused an anonymous Better Auth session before this route
-            rendered. The API then read the same cookie through the typed `api.me` query.
+            TanStack Router verified the existing Better Auth session before this route rendered.
+            The API then read the same cookie through the typed `api.me` query.
           </p>
         </div>
 
