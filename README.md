@@ -1,7 +1,6 @@
 # Waypoint Guest App
 
-This repo is a public example of what an app could look like on a more
-opinionated theoretical Waypoint hosting platform.
+This repo is a working demo app for the current Waypoint hosting-platform shape.
 
 It is intentionally small, but it exercises the important pieces:
 
@@ -11,13 +10,15 @@ It is intentionally small, but it exercises the important pieces:
 - Better Auth mounted on the API Worker.
 - Better Auth anonymous sessions for guest access.
 - D1 through `ctx.db`.
-- typed API client calls from a type-only contract export.
+- typed API client calls from a browser-safe contract module.
+- generated runtime env modules from `platform.config.ts`.
+- deploy artifact builds for Worker and TanStack Start apps.
 - local dev through `bun way dev <app>`.
 
-The goal is not to be a product template yet. It is a working reference app for
-the desired developer experience: app code declares intent, Waypoint handles the
-Cloudflare wiring, auth, bindings, and local URLs, and frontend code calls the
-API through typed functions.
+The goal is to keep the platform honest: app code declares intent, Waypoint
+handles Cloudflare wiring, auth, bindings, local URLs, build artifacts, and
+environment shape, and frontend code calls the API through typed functions
+without importing server runtime modules.
 
 Waypoint's broader motivation is to make production safer for humans and agents:
 agents should be able to inspect events, logs, deploys, resource state, and
@@ -34,13 +35,14 @@ apps/api       public API Worker
 apps/internal  internal Worker RPC service
 ```
 
-The web app imports only the API contract type:
+The web app imports the browser-safe API contract value:
 
 ```ts
-import type { ApiContract } from "../../api/src/contract";
+import { contract } from "../../api/src/contract";
 ```
 
-That keeps the frontend client type-safe without importing API runtime code.
+That keeps the frontend client type-safe without pulling Worker context,
+database, Better Auth server adapters, or provider code into the browser bundle.
 
 ## Auth
 
@@ -48,7 +50,7 @@ The API mounts Better Auth at `/auth/*`:
 
 ```ts
 export default api.worker(contract, {
-  authHandler: (ctx) => ctx.auth,
+  waypointAuth: ({ auth }) => auth,
 });
 ```
 
@@ -65,17 +67,15 @@ the typed client can call protected queries without importing API runtime code.
 The platform repo now exposes the first control-plane shape:
 
 ```sh
-bun way inspect --json
-bun way plan
-bun way submit --control-plane https://waypoint-control.example.com
-bun way deploy api --dry-run
+bun ../hosting-platform/packages/cli/src/index.ts inspect platform.config.ts --json
+bun ../hosting-platform/packages/cli/src/index.ts deploy api platform.config.ts --dry-run --api local --json
+bun ../hosting-platform/packages/cli/src/index.ts deploy web platform.config.ts --dry-run --api local --json
 ```
 
-`bun way plan` is the agent-readable dry run for this project only. `bun way
-submit` sends this app's intent to the control plane without deploying. The
-local deploy bridge can still use generated Wrangler config for development and
-escape hatches, but production deploys should normally run through generated
-GitHub Actions on Blacksmith after typecheck/test/build gates.
+Dry-run deploy planning is local and does not require a configured control-plane
+database. Real deploys build artifacts, upload to the Waypoint control plane,
+reconcile Cloudflare resources, record deployment state, and use stored
+environment variables/secrets when local values are not provided.
 
 The intended final path is manifest plus artifact upload to a central
 control-plane Worker, which reconciles Cloudflare resources, records deploy
@@ -104,6 +104,7 @@ Or start the dev CLI session from this repo with the configured `dev.json`.
 
 ```sh
 bun run check-types
+PUBLIC_API_URL=http://127.0.0.1:8787 PUBLIC_APP_NAME="Waypoint Guest" PUBLIC_APP_URL=http://127.0.0.1:5173 APP_URL=http://127.0.0.1:8787 BETTER_AUTH_SECRET=dev-secret bun -e 'import { buildAppArtifact } from "../hosting-platform/packages/app-build/src/index.ts"; const config=(await import("./platform.config.ts")).default; for (const appName of ["api", "web"]) { const artifact=await buildAppArtifact({ config, appName, env: process.env }); console.log(JSON.stringify({ appName, mainModule: artifact.mainModule, modules: artifact.modules.length, staticAssets: artifact.staticAssets?.length ?? 0 })); }'
 ```
 
 The API Worker bootstraps the small local D1 schema used by this example so the
