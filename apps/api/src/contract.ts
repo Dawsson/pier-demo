@@ -162,6 +162,11 @@ export const agentContextOutputSchema = z.object({
     name: z.literal("waypoint-guest-app"),
     template: z.literal("waypoint-product-template"),
   }),
+  responsibilityMap: z.object({
+    appOwns: z.array(z.string()),
+    notes: z.array(z.string()),
+    waypointOwns: z.array(z.string()),
+  }),
 });
 
 export const contract = c.router({

@@ -21,6 +21,14 @@ handles Cloudflare wiring, auth, bindings, local URLs, build artifacts, and
 environment shape, and frontend code calls the API through typed functions
 without importing server runtime modules.
 
+This repo is not the Waypoint control plane. Domains, preview URL creation,
+backup replication, restore planning, usage ingestion, billing views,
+organization/project RBAC, invitations, and Cloudflare account operations belong
+in `/Users/dawson/projects/hosting-platform` and should be operated primarily
+through the Waypoint dashboard plus CLI/API. This app should only declare what
+it needs through `platform.config.ts` and demonstrate how a product consumes the
+platform contract.
+
 Waypoint's broader motivation is to make production safer for humans and agents:
 agents should be able to inspect events, logs, deploys, resource state, and
 environment differences without broad destructive credentials. The same model
@@ -126,3 +134,6 @@ inspection, type checks, local dev, and artifact-build verification.
 It also includes the current AI Gateway endpoint plan for new integrations. The
 template streaming route stays mocked and does not call AI Gateway; the endpoint
 plan points production work at Waypoint's REST API OpenAI-compatible guidance.
+The same context includes a responsibility map that separates product-owned code
+from platform-owned operations, so agents keep domains, backups, usage, billing,
+and RBAC work in Waypoint itself instead of this example repo.

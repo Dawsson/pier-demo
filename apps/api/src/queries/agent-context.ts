@@ -171,6 +171,25 @@ export const buildAgentContext = (generatedAt = new Date().toISOString()): Agent
     name: "waypoint-guest-app",
     template: "waypoint-product-template",
   },
+  responsibilityMap: {
+    appOwns: [
+      "Product routes, UI, app-specific API procedures, and domain logic.",
+      "App-declared bindings, variables, permissions, roles, and event catalog in platform.config.ts.",
+      "Browser-safe typed API imports and product-specific tests.",
+    ],
+    notes: [
+      "This repo demonstrates the Waypoint app contract; it is not the platform control plane.",
+      "Do not add Cloudflare account mutation, backup replication, billing ingestion, or domain reconciliation code here.",
+      "When an app needs those capabilities, call Waypoint CLI/control-plane APIs and keep product code declarative.",
+    ],
+    waypointOwns: [
+      "Dashboard-first platform operations for deployments, logs, usage, billing views, domains, and backups.",
+      "Cloudflare API and GraphQL integration for Workers usage, request analytics, R2 storage metrics, and account resources.",
+      "Backblaze B2 disaster-recovery backup configuration, readiness checks, retention expectations, and restore plans.",
+      "Organization, project, invitation, platform-admin, and RBAC policy enforcement.",
+      "Preview URL creation, Dawsson-gated GitHub preview triggers, cleanup policies, and audit logs.",
+    ],
+  },
 });
 
 export const agentContextQuery = publicProcedure.agentContext.query({

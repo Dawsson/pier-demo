@@ -105,5 +105,18 @@ describe("agent context", () => {
     expect(context.guardrails).toContain(
       "Do not import API runtime modules into the browser bundle.",
     );
+    expect(context.responsibilityMap.appOwns).toContain(
+      "Product routes, UI, app-specific API procedures, and domain logic.",
+    );
+    expect(context.responsibilityMap.waypointOwns).toEqual([
+      "Dashboard-first platform operations for deployments, logs, usage, billing views, domains, and backups.",
+      "Cloudflare API and GraphQL integration for Workers usage, request analytics, R2 storage metrics, and account resources.",
+      "Backblaze B2 disaster-recovery backup configuration, readiness checks, retention expectations, and restore plans.",
+      "Organization, project, invitation, platform-admin, and RBAC policy enforcement.",
+      "Preview URL creation, Dawsson-gated GitHub preview triggers, cleanup policies, and audit logs.",
+    ]);
+    expect(context.responsibilityMap.notes).toContain(
+      "Do not add Cloudflare account mutation, backup replication, billing ingestion, or domain reconciliation code here.",
+    );
   });
 });
