@@ -141,6 +141,22 @@ export const agentContextOutputSchema = z.object({
       }),
     ),
   }),
+  localDev: z.object({
+    dashboard: z.object({
+      projectPath: z.string(),
+      logsPath: z.string(),
+    }),
+    daemon: z.object({
+      mode: z.literal("local-machine"),
+      requiredForLogs: z.literal(true),
+    }),
+    logCommands: z.object({
+      all: z.string(),
+      app: z.string(),
+      dump: z.string(),
+    }),
+    notes: z.array(z.string()),
+  }),
   permissions: z.object({
     catalog: z.array(
       z.object({

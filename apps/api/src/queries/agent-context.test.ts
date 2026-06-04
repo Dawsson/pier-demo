@@ -83,6 +83,26 @@ describe("agent context", () => {
       "auth.guest_session.created",
       "stream.guest.connected",
     ]);
+    expect(context.localDev).toEqual({
+      dashboard: {
+        logsPath: "/dev/waypoint-guest-app/logs",
+        projectPath: "/dev/waypoint-guest-app",
+      },
+      daemon: {
+        mode: "local-machine",
+        requiredForLogs: true,
+      },
+      logCommands: {
+        all: "bun way logs --api local --state local --project waypoint-guest-app",
+        app: "bun way logs --api local --state local --project waypoint-guest-app --app api",
+        dump: "bun way logs dump --api local --state local --project waypoint-guest-app --markdown",
+      },
+      notes: [
+        "way dev sends local process logs to the Waypoint local daemon when it is running.",
+        "Use /dev for laptop-only projects and /projects for hosted control-plane projects.",
+        "Remote agents should use hosted logs unless they can reach this machine's local daemon.",
+      ],
+    });
     expect(context.permissions.catalog.map((entry) => entry.resource)).toEqual([
       "account",
       "project",

@@ -138,6 +138,9 @@ sanitized errors instead of live callbacks.
 The API also exposes `api.agentContext`, a typed read-only query for agents. It
 returns app slots, bindings, env names, guardrails, and stable commands for
 inspection, type checks, local dev, and artifact-build verification.
+It also names the Waypoint dashboard paths and CLI commands for local daemon log
+inspection, so local-only work uses `/dev/waypoint-guest-app/logs` while hosted
+projects use the normal `/projects` surfaces.
 It also includes the current AI Gateway endpoint plan for new integrations. The
 template streaming route stays mocked and does not call AI Gateway; the endpoint
 plan points production work at Waypoint's REST API OpenAI-compatible guidance.
