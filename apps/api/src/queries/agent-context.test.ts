@@ -31,6 +31,19 @@ describe("agent context", () => {
     expect(context.billing.warnings).toContain(
       "Do not use recorded-state estimates for customer billing.",
     );
+    expect(context.domains).toMatchObject({
+      previewPolicy: {
+        allowedActors: ["Dawsson"],
+        defaultTtlSeconds: 604800,
+        requiredCommand: "/waypoint preview",
+      },
+      readOnly: true,
+    });
+    expect(context.domains.commands.inspect).toBe("bun way domains inspect --markdown");
+    expect(context.domains.commands.previewTriggerPlan).toContain("--actor Dawsson");
+    expect(context.domains.warnings).toContain(
+      "GitHub-triggered previews require Dawsson plus an explicit /waypoint preview command.",
+    );
     expect(context.logging.events.map((event) => event.name)).toEqual([
       "ai_gateway.example.requested",
       "api.health.checked",

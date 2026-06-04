@@ -55,6 +55,25 @@ export const buildAgentContext = (generatedAt = new Date().toISOString()): Agent
       "Connect provider metrics before comparing this template to a Cloudflare invoice.",
     ],
   },
+  domains: {
+    commands: {
+      cleanupPlan: "bun way preview cleanup plan --markdown",
+      inspect: "bun way domains inspect --markdown",
+      previewTriggerPlan:
+        'bun way preview trigger plan --actor Dawsson --body "/waypoint preview" --pr <number> --markdown',
+    },
+    previewPolicy: {
+      allowedActors: ["Dawsson"],
+      defaultTtlSeconds: 60 * 60 * 24 * 7,
+      requiredCommand: "/waypoint preview",
+    },
+    readOnly: true,
+    warnings: [
+      "Domain inspection must not attach routes, create custom domains, or enable previews.",
+      "GitHub-triggered previews require Dawsson plus an explicit /waypoint preview command.",
+      "Preview cleanup plans are read-only until an operator approves deletion.",
+    ],
+  },
   generatedAt,
   guardrails: [
     "Do not import API runtime modules into the browser bundle.",

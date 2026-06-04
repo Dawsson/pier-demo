@@ -89,6 +89,20 @@ export const agentContextOutputSchema = z.object({
     providerMetricsConnected: z.literal(false),
     warnings: z.array(z.string()),
   }),
+  domains: z.object({
+    commands: z.object({
+      cleanupPlan: z.string(),
+      inspect: z.string(),
+      previewTriggerPlan: z.string(),
+    }),
+    previewPolicy: z.object({
+      allowedActors: z.array(z.string()),
+      defaultTtlSeconds: z.number(),
+      requiredCommand: z.string(),
+    }),
+    readOnly: z.literal(true),
+    warnings: z.array(z.string()),
+  }),
   generatedAt: z.string(),
   guardrails: z.array(z.string()),
   logging: z.object({
