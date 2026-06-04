@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { useEffect, useState, type ReactNode } from "react";
-import { meQueryOptions, streamGuestEvents } from "./api";
+import { meQueryOptions, streamAiGatewayExample, streamGuestEvents } from "./api";
 import { authClient, ensureAnonymousSession, isAnonymousUser } from "./auth";
 
 const queryClient = new QueryClient();
@@ -135,6 +135,22 @@ function WorkspacePanel() {
             }}
           >
             Run stream demo
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setStreamEvents([]);
+              setStreamError(null);
+              streamAiGatewayExample((event) =>
+                setStreamEvents((events) => [...events, event]),
+              ).catch((error) =>
+                setStreamError(
+                  error instanceof Error ? error.message : "AI Gateway stream failed.",
+                ),
+              );
+            }}
+          >
+            Run AI Gateway stream
           </button>
           <button type="button" onClick={signOut}>
             Sign out

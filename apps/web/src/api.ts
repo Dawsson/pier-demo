@@ -24,4 +24,14 @@ export const streamGuestEvents = async (onEvent: (event: string) => void) => {
   });
 };
 
+export const streamAiGatewayExample = async (onEvent: (event: string) => void) => {
+  const response = await fetch(`${resolveApiUrl()}/events/ai-gateway`, {
+    credentials: "include",
+  });
+
+  await readEventStream(response, {
+    onEvent: (event) => onEvent(`${event.event ?? "message"}: ${event.data}`),
+  });
+};
+
 export type GuestQueryResult = Awaited<ReturnType<typeof getGuest>>;
