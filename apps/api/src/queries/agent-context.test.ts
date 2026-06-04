@@ -26,6 +26,25 @@ describe("agent context", () => {
       "auth.guest_session.created",
       "stream.guest.connected",
     ]);
+    expect(context.permissions.catalog.map((entry) => entry.resource)).toEqual([
+      "account",
+      "project",
+      "settings",
+    ]);
+    expect(context.permissions.roles).toEqual([
+      {
+        description: "Full product owner role for the organization.",
+        key: "owner",
+        label: "Owner",
+        permissions: ["*"],
+      },
+      {
+        description: "Read-only product role for invited collaborators.",
+        key: "viewer",
+        label: "Viewer",
+        permissions: ["account:read", "project:read", "settings:read"],
+      },
+    ]);
     expect(context.guardrails).toContain(
       "Do not import API runtime modules into the browser bundle.",
     );

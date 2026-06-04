@@ -88,6 +88,23 @@ export const agentContextOutputSchema = z.object({
       }),
     ),
   }),
+  permissions: z.object({
+    catalog: z.array(
+      z.object({
+        actions: z.array(z.string()),
+        description: z.string(),
+        resource: z.string(),
+      }),
+    ),
+    roles: z.array(
+      z.object({
+        description: z.string(),
+        key: z.string(),
+        label: z.string(),
+        permissions: z.array(z.string()),
+      }),
+    ),
+  }),
   project: z.object({
     name: z.literal("waypoint-guest-app"),
     template: z.literal("waypoint-product-template"),

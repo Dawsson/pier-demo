@@ -68,6 +68,39 @@ export const buildAgentContext = (generatedAt = new Date().toISOString()): Agent
       },
     ],
   },
+  permissions: {
+    catalog: [
+      {
+        actions: ["read", "manage"],
+        description: "Account-level profile, membership, and owner settings.",
+        resource: "account",
+      },
+      {
+        actions: ["read", "manage"],
+        description: "Project access, deploy visibility, and project operations.",
+        resource: "project",
+      },
+      {
+        actions: ["read", "manage"],
+        description: "Organization and project settings screens.",
+        resource: "settings",
+      },
+    ],
+    roles: [
+      {
+        description: "Full product owner role for the organization.",
+        key: "owner",
+        label: "Owner",
+        permissions: ["*"],
+      },
+      {
+        description: "Read-only product role for invited collaborators.",
+        key: "viewer",
+        label: "Viewer",
+        permissions: ["account:read", "project:read", "settings:read"],
+      },
+    ],
+  },
   project: {
     name: "waypoint-guest-app",
     template: "waypoint-product-template",
