@@ -42,7 +42,9 @@ bun run check
 Useful platform checks:
 
 ```sh
-bun ../hosting-platform/packages/cli/src/index.ts inspect platform.config.ts --json
+bun run inspect
+bun run plan
+bun run env:types
 bun way logs --api local --state local --project waypoint-guest-app
 bun way logs dump --api local --state local --project waypoint-guest-app --markdown
 ```

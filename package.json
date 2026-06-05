@@ -10,10 +10,17 @@
   "scripts": {
     "check": "bun run lint && bun run format:check && bun run check-types && bun run test",
     "check-types": "bun run --filter='@waypoint-guest-app/*' check-types",
+    "deploy": "PUBLIC_API_URL=http://127.0.0.1:8787 PUBLIC_APP_NAME='Waypoint Guest' PUBLIC_APP_URL=http://127.0.0.1:5173 APP_URL=http://127.0.0.1:8787 BETTER_AUTH_SECRET=dev-secret bun way deploy all --dry-run --api local --env dev",
+    "doctor": "PUBLIC_API_URL=http://127.0.0.1:8787 PUBLIC_APP_NAME='Waypoint Guest' PUBLIC_APP_URL=http://127.0.0.1:5173 APP_URL=http://127.0.0.1:8787 BETTER_AUTH_SECRET=dev-secret bun way doctor --api local",
+    "env:types": "bun way env types",
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
+    "inspect": "bun way inspect --json",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
+    "logs": "bun way logs --api local --state local --project waypoint-guest-app",
+    "plan": "bun way plan --api local",
+    "submit": "bun way submit --api local",
     "test": "bun test"
   },
   "dependencies": {

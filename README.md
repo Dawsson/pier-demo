@@ -71,25 +71,28 @@ That means guest mode is real auth, not a fake local flag. The browser receives
 a Better Auth anonymous session cookie, the API reads it through middleware, and
 the typed client can call protected queries without importing API runtime code.
 
-## Control Plane Direction
+## Waypoint CLI
 
-The platform repo now exposes the first control-plane shape:
+This repo consumes the local Waypoint CLI through the `@waypoint/cli` workspace
+dependency. Use `bun way ...` for direct commands or the root scripts for common
+template operations:
 
 ```sh
-bun ../hosting-platform/packages/cli/src/index.ts inspect platform.config.ts --json
-bun ../hosting-platform/packages/cli/src/index.ts deploy api platform.config.ts --dry-run --api local --json
-bun ../hosting-platform/packages/cli/src/index.ts deploy web platform.config.ts --dry-run --api local --json
+bun run inspect
+bun run plan
+bun run submit
+bun run env:types
+bun run logs
 ```
 
-Dry-run deploy planning is local and does not require a configured control-plane
-database. Real deploys build artifacts, upload to the Waypoint control plane,
-reconcile Cloudflare resources, record deployment state, and use stored
-environment variables/secrets when local values are not provided.
+Deploy planning is read-only. Real deploys build artifacts, upload to the
+Waypoint control plane, reconcile Cloudflare resources, record deployment state,
+and use stored environment variables/secrets when local values are not provided.
 
-The intended final path is manifest plus artifact upload to a central
-control-plane Worker, which reconciles Cloudflare resources, records deploy
-state, manages environment variables and bindings, and gives agents audited read
-access to production diagnostics.
+```sh
+bun way deploy api --env dev
+bun way deploy web --env dev
+```
 
 ## Development
 
@@ -121,7 +124,8 @@ Or start the dev CLI session from this repo with the configured `dev.json`.
 ```sh
 bun run check-types
 bun run test
-PUBLIC_API_URL=http://127.0.0.1:8787 PUBLIC_APP_NAME="Waypoint Guest" PUBLIC_APP_URL=http://127.0.0.1:5173 APP_URL=http://127.0.0.1:8787 BETTER_AUTH_SECRET=dev-secret bun -e 'import { buildAppArtifact } from "../hosting-platform/packages/app-build/src/index.ts"; const config=(await import("./platform.config.ts")).default; for (const appName of ["api", "web"]) { const artifact=await buildAppArtifact({ config, appName, env: process.env }); console.log(JSON.stringify({ appName, mainModule: artifact.mainModule, modules: artifact.modules.length, staticAssets: artifact.staticAssets?.length ?? 0 })); }'
+bun run inspect
+bun run plan
 ```
 
 The API Worker bootstraps the small local D1 schema used by this example so the
