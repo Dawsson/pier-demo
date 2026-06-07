@@ -50,6 +50,11 @@ jobs:
         working-directory: waypoint-guest-app
         run: bun install --frozen-lockfile
 
+      - name: Generate Waypoint env types
+        if: env.WAYPOINT_PLATFORM_CHECKOUT_TOKEN != ''
+        working-directory: waypoint-guest-app
+        run: bun way env types
+
       - name: Run checks
         if: env.WAYPOINT_PLATFORM_CHECKOUT_TOKEN != ''
         working-directory: waypoint-guest-app
