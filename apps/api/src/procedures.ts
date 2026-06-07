@@ -22,6 +22,9 @@ export type AuthSession = Awaited<ReturnType<ApiContext["auth"]["api"]["getSessi
 
 export const api = createApi<ApiEnv>().context<ApiContext>(({ env }) => createApiContext(env));
 export const procedure = api.implement(contract);
+const publicOperation = api.operationMiddleware("auth.public", {
+  auth: "public",
+});
 
 const requireSession = api.middleware("auth.required", async (ctx) => {
   const session = await ctx.auth.api.getSession({ headers: ctx.request.headers }).catch(() => null);
@@ -34,7 +37,7 @@ const requireSession = api.middleware("auth.required", async (ctx) => {
   };
 });
 
-export const publicProcedure = procedure;
+export const publicProcedure = procedure.use(publicOperation);
 export const guestProcedure = procedure;
 export const sessionProcedure = procedure.use(requireSession);
-export const publicEndpointProcedure = api.procedure();
+export const publicEndpointProcedure = api.procedure().use(publicOperation);

@@ -186,11 +186,45 @@ export const agentContextOutputSchema = z.object({
 });
 
 export const contract = c.router({
-  agentContext: c.query().output(agentContextOutputSchema),
-  aiGatewayDescription: c.query().output(aiGatewayDescriptionOutputSchema),
-  guest: c.query().input(guestInputSchema).output(guestOutputSchema),
-  health: c.query().output(healthOutputSchema),
-  me: c.query().output(meOutputSchema),
+  agentContext: c
+    .query()
+    .openapi({
+      description:
+        "Returns agent-readable context for the template app, including commands, bindings, guardrails, and platform responsibilities.",
+      path: "/agent/context",
+      summary: "Agent context",
+      tags: ["agent"],
+    })
+    .output(agentContextOutputSchema),
+  aiGatewayDescription: c
+    .query()
+    .openapi({
+      summary: "AI Gateway configuration",
+      tags: ["ai"],
+    })
+    .output(aiGatewayDescriptionOutputSchema),
+  guest: c
+    .query()
+    .input(guestInputSchema)
+    .openapi({
+      summary: "Guest demo state",
+      tags: ["guest"],
+    })
+    .output(guestOutputSchema),
+  health: c
+    .query()
+    .openapi({
+      summary: "API health",
+      tags: ["system"],
+    })
+    .output(healthOutputSchema),
+  me: c
+    .query()
+    .openapi({
+      summary: "Current user",
+      tags: ["auth"],
+    })
+    .output(meOutputSchema),
 });
 
 export type ApiContract = typeof contract;
