@@ -7,7 +7,11 @@ export const healthEndpoint = publicProcedure.health.query({
       app: ctx.env.PUBLIC_APP_NAME,
       checks: {
         auth: { detail: "Better Auth context initialized", ok: Boolean(ctx.auth) },
-        db: { detail: "D1 Drizzle context initialized", ok: Boolean(ctx.db) },
+        db: { detail: "Postgres binding initialized", ok: Boolean(ctx.env.DB) },
+        rateLimiter: {
+          detail: "Durable Object binding initialized",
+          ok: Boolean(ctx.env.RATE_LIMITER),
+        },
       },
       surface: "api",
     }),

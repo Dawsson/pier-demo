@@ -1,0 +1,45 @@
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { X } from "lucide-react";
+import { useState, type FormEvent } from "react";
+import { authClient } from "../auth";
+import { SignUpForm } from "../components/sign-up-form";
+
+export const Route = createFileRoute("/sign-up")({
+  component: SignUpRoute,
+});
+
+function SignUpRoute() {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError(null);
+    const name = email.split("@")[0]?.trim() || email;
+    const result = await authClient.signUp.email({ email, name, password });
+    if (result.error) {
+      setError(result.error.message ?? "Sign up failed.");
+      return;
+    }
+    await navigate({ to: "/app" });
+  };
+
+  return (
+    <main className="auth-page">
+      <Link aria-label="Close sign up" className="close-link" to="/">
+        <X aria-hidden size={32} strokeWidth={1.75} />
+      </Link>
+      <SignUpForm
+        className="auth-card"
+        email={email}
+        error={error}
+        password={password}
+        onEmailChange={setEmail}
+        onPasswordChange={setPassword}
+        onSubmit={submit}
+      />
+    </main>
+  );
+}

@@ -2,10 +2,16 @@
   "$schema": "https://dev.dawson.gg/schemas/dev.v1.json",
   "name": "waypoint-guest-app",
   "slug": "wayguest",
-  "services": ["web", "api"],
+  "services": ["web", "admin", "api"],
   "serviceAliases": {
+    "admin": {
+      "url": ["PUBLIC_ADMIN_URL"]
+    },
     "api": {
       "url": ["PUBLIC_API_URL"]
+    },
+    "web": {
+      "url": ["PUBLIC_WEB_URL"]
     }
   },
   "session": {
@@ -17,11 +23,6 @@
         "layout": "left-stack-right",
         "panes": [
           {
-            "name": "internal",
-            "command": "bun run dev:internal",
-            "position": "bottom"
-          },
-          {
             "name": "api",
             "command": "bun run dev:api",
             "position": "main",
@@ -32,6 +33,12 @@
             "command": "bun run dev:web",
             "position": "right",
             "services": ["web"]
+          },
+          {
+            "name": "admin",
+            "command": "bun run dev:admin",
+            "position": "bottom",
+            "services": ["admin"]
           }
         ]
       },

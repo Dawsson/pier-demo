@@ -1,8 +1,10 @@
 import { healthStatus } from "@waypoint/backend";
+import type { Env } from "./.waypoint/env";
 import { api } from "./procedures";
 import { routes } from "./router";
+export { RateLimiterObject } from "./rate-limiter";
 
-export default api.worker(routes, {
+const handler: ExportedHandler<Env> = api.worker(routes, {
   health: (env) =>
     healthStatus({
       app: env.PUBLIC_APP_NAME,
@@ -11,3 +13,5 @@ export default api.worker(routes, {
     }),
   waypointAuth: ({ auth }) => auth,
 });
+
+export default handler;

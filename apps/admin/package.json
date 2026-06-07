@@ -1,0 +1,27 @@
+{
+  "name": "@waypoint-guest-app/admin",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "check-types": "tsc -p tsconfig.json",
+    "dev": "vite --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.95.0",
+    "@tanstack/react-router": "^1.170.10",
+    "@tanstack/react-start": "^1.168.18",
+    "@tanstack/router-plugin": "^1.168.13",
+    "@vitejs/plugin-react": "^5.1.1",
+    "@waypoint/backend": "0.1.4",
+    "better-auth": "1.6.11",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "vite": "^7.2.7"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.9.3"
+  }
+}

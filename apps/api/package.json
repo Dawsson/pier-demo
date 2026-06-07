@@ -7,9 +7,11 @@
     "test": "bun test src/**/*.test.ts"
   },
   "dependencies": {
-    "@waypoint/auth": "workspace:*",
-    "@waypoint/backend": "workspace:*",
-    "@waypoint/db": "workspace:*",
+    "@waypoint/auth": "0.1.4",
+    "@waypoint/backend": "0.1.4",
+    "@waypoint/core": "0.1.4",
+    "@waypoint/db": "0.1.4",
+    "@waypoint/log": "0.1.4",
     "better-auth": "1.6.11",
     "drizzle-orm": "^0.45.1",
     "zod": "^4.1.13"

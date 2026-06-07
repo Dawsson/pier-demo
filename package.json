@@ -4,19 +4,19 @@
   "description": "Example app showing the ideal Waypoint hosting-platform shape with TanStack Start, Cloudflare Workers, Better Auth, D1, and typed API contracts.",
   "workspaces": [
     "apps/*",
-    "../hosting-platform/packages/*"
+    "../hosting-platform/packages/backend"
   ],
   "type": "module",
   "scripts": {
     "check": "bun run lint && bun run format:check && bun run check-types && bun run test",
     "check-types": "bun run --filter='@waypoint-guest-app/*' check-types",
-    "deploy": "API_URL=http://127.0.0.1:8787 PUBLIC_API_URL=http://127.0.0.1:8787 PUBLIC_APP_NAME='Waypoint Guest' PUBLIC_APP_URL=http://127.0.0.1:5173 APP_URL=http://127.0.0.1:8787 BETTER_AUTH_SECRET=dev-secret bun way deploy all --dry-run --api local --env dev",
+    "deploy": "ADMIN_URL=http://127.0.0.1:5174 API_URL=http://127.0.0.1:8787 WEB_URL=http://127.0.0.1:5173 PUBLIC_ADMIN_URL=http://127.0.0.1:5174 PUBLIC_API_URL=http://127.0.0.1:8787 PUBLIC_APP_NAME='Waypoint Counter' PUBLIC_WEB_URL=http://127.0.0.1:5173 BETTER_AUTH_SECRET=dev-secret bun way deploy all --dry-run --api local --env dev",
     "dev": "dev up --cwd .",
     "dev:api": "bun way dev api",
+    "dev:admin": "bun way dev admin",
     "dev:daemon": "bun way daemon start",
-    "dev:internal": "bun way dev internal",
     "dev:web": "bun way dev web",
-    "doctor": "API_URL=http://127.0.0.1:8787 PUBLIC_API_URL=http://127.0.0.1:8787 PUBLIC_APP_NAME='Waypoint Guest' PUBLIC_APP_URL=http://127.0.0.1:5173 APP_URL=http://127.0.0.1:8787 BETTER_AUTH_SECRET=dev-secret bun way doctor --api local",
+    "doctor": "ADMIN_URL=http://127.0.0.1:5174 API_URL=http://127.0.0.1:8787 WEB_URL=http://127.0.0.1:5173 PUBLIC_ADMIN_URL=http://127.0.0.1:5174 PUBLIC_API_URL=http://127.0.0.1:8787 PUBLIC_APP_NAME='Waypoint Counter' PUBLIC_WEB_URL=http://127.0.0.1:5173 BETTER_AUTH_SECRET=dev-secret bun way doctor --api local",
     "env:types": "bun way env types",
     "format": "oxfmt .",
     "format:check": "oxfmt . --check",
@@ -29,10 +29,11 @@
     "test": "bun test"
   },
   "dependencies": {
-    "@waypoint/auth": "workspace:*",
-    "@waypoint/backend": "workspace:*",
-    "@waypoint/core": "workspace:*",
-    "@waypoint/db": "workspace:*",
+    "@waypoint/auth": "0.1.4",
+    "@waypoint/backend": "0.1.4",
+    "@waypoint/core": "0.1.4",
+    "@waypoint/db": "0.1.4",
+    "@waypoint/log": "0.1.4",
     "better-auth": "1.6.11",
     "drizzle-orm": "^0.45.1",
     "zod": "^4.1.13"
@@ -40,7 +41,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260602.1",
     "@types/bun": "^1.3.14",
-    "@waypoint/cli": "workspace:*",
+    "@waypoint/cli": "0.1.4",
     "drizzle-kit": "^0.31.8",
     "oxfmt": "^0.53.0",
     "oxlint": "^1.68.0",
@@ -49,6 +50,7 @@
   "overrides": {
     "@better-auth/core": "1.6.11",
     "@better-auth/utils": "0.4.0",
+    "@waypoint/core": "0.1.4",
     "kysely": "0.28.17"
   },
   "packageManager": "bun@1.3.12"

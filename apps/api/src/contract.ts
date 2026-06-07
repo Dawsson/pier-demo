@@ -1,28 +1,42 @@
 import { contractBuilder as c } from "@waypoint/backend";
 import { z } from "zod";
 
-export const guestInputSchema = z
-  .object({
-    id: z.string().default("guest"),
-  })
-  .optional()
-  .default({ id: "guest" });
+export const counterOutputSchema = z.object({
+  authenticated: z.boolean(),
+  multiplier: z.number(),
+  updatedAt: z.string(),
+  value: z.number(),
+});
 
-export const guestOutputSchema = z.object({
-  auth: z.literal("guest"),
-  cache: z.object({
-    key: z.string(),
-    seenAt: z.string().nullable(),
-  }),
-  internal: z.object({
-    sum: z.number(),
-    user: z.unknown(),
-  }),
-  message: z.string(),
-  operation: z.string(),
-  services: z.object({
-    db: z.boolean(),
-  }),
+export const incrementOutputSchema = counterOutputSchema.extend({
+  amount: z.number(),
+});
+
+export const meOutputSchema = z.object({
+  authenticated: z.boolean(),
+  sessionId: z.string().optional(),
+  user: z
+    .object({
+      email: z.string().nullable().optional(),
+      id: z.string(),
+      name: z.string().nullable().optional(),
+      role: z.string().nullable().optional(),
+    })
+    .optional(),
+});
+
+export const adminSummaryOutputSchema = z.object({
+  counter: counterOutputSchema,
+  recentIncrements: z.array(
+    z.object({
+      amount: z.number(),
+      authenticated: z.boolean(),
+      counterValue: z.number(),
+      createdAt: z.string(),
+      identity: z.string(),
+      userId: z.string().nullable(),
+    }),
+  ),
 });
 
 export const healthOutputSchema = z.object({
@@ -39,30 +53,6 @@ export const healthOutputSchema = z.object({
   surface: z.literal("api"),
 });
 
-export const aiGatewayDescriptionOutputSchema = z.object({
-  providerCount: z.number(),
-  providers: z.array(
-    z.object({
-      cacheTtlSeconds: z.number().optional(),
-      model: z.string().optional(),
-      provider: z.string(),
-      streaming: z.boolean(),
-    }),
-  ),
-  streaming: z.boolean(),
-});
-
-export const meOutputSchema = z.object({
-  mode: z.enum(["anonymous", "user"]),
-  sessionId: z.string(),
-  user: z.object({
-    email: z.string().nullable().optional(),
-    id: z.string(),
-    isAnonymous: z.boolean(),
-    name: z.string().nullable().optional(),
-  }),
-});
-
 export const agentContextOutputSchema = z.object({
   apps: z.array(
     z.object({
@@ -73,144 +63,64 @@ export const agentContextOutputSchema = z.object({
     }),
   ),
   commands: z.object({
-    buildArtifacts: z.string(),
     checkTypes: z.string(),
-    dev: z.array(z.string()),
+    dev: z.string(),
     inspect: z.string(),
-  }),
-  billing: z.object({
-    commands: z.object({
-      assumptions: z.string(),
-      estimate: z.string(),
-      scopedEstimate: z.string(),
-    }),
-    customerBillable: z.literal(false),
-    mode: z.literal("recorded-state-estimate"),
-    providerMetricsConnected: z.literal(false),
-    warnings: z.array(z.string()),
-  }),
-  backups: z.object({
-    commands: z.object({
-      drillPlan: z.string(),
-      readiness: z.string(),
-      restorePlan: z.string(),
-    }),
-    lockedReplica: z.object({
-      objectLockExpected: z.literal(true),
-      primaryStorage: z.literal("r2"),
-      replicaStorage: z.literal("backblaze-b2"),
-      remoteVerification: z.literal(false),
-    }),
-    readOnly: z.literal(true),
-    warnings: z.array(z.string()),
-  }),
-  domains: z.object({
-    commands: z.object({
-      cleanupPlan: z.string(),
-      inspect: z.string(),
-      previewTriggerPlan: z.string(),
-    }),
-    previewPolicy: z.object({
-      allowedActors: z.array(z.string()),
-      defaultTtlSeconds: z.number(),
-      requiredCommand: z.string(),
-    }),
-    readOnly: z.literal(true),
-    warnings: z.array(z.string()),
-  }),
-  aiGateway: z.object({
-    endpointPlan: z.object({
-      chatCompletionsUrl: z.string(),
-      openAiCompatibleBaseUrl: z.string(),
-      recommendedEndpoint: z.literal("rest-api-openai-compatible"),
-      responsesUrl: z.string(),
-      restApiBaseUrl: z.string(),
-      universalDeprecated: z.literal(true),
-      universalUrl: z.string(),
-    }),
-    mockStreamingDemo: z.literal(true),
-    warnings: z.array(z.string()),
-  }),
-  generatedAt: z.string(),
-  guardrails: z.array(z.string()),
-  logging: z.object({
-    events: z.array(
-      z.object({
-        description: z.string(),
-        name: z.string(),
-      }),
-    ),
-  }),
-  localDev: z.object({
-    dashboard: z.object({
-      projectPath: z.string(),
-      logsPath: z.string(),
-    }),
-    daemon: z.object({
-      mode: z.literal("local-machine"),
-      requiredForLogs: z.literal(true),
-    }),
-    logCommands: z.object({
-      all: z.string(),
-      app: z.string(),
-      dump: z.string(),
-    }),
-    notes: z.array(z.string()),
-  }),
-  permissions: z.object({
-    catalog: z.array(
-      z.object({
-        actions: z.array(z.string()),
-        description: z.string(),
-        resource: z.string(),
-      }),
-    ),
-    roles: z.array(
-      z.object({
-        description: z.string(),
-        key: z.string(),
-        label: z.string(),
-        permissions: z.array(z.string()),
-      }),
-    ),
+    logs: z.string(),
+    plan: z.string(),
   }),
   project: z.object({
     name: z.literal("waypoint-guest-app"),
-    template: z.literal("waypoint-product-template"),
-  }),
-  responsibilityMap: z.object({
-    appOwns: z.array(z.string()),
-    notes: z.array(z.string()),
-    waypointOwns: z.array(z.string()),
+    template: z.literal("waypoint-counter-template"),
   }),
 });
 
 export const contract = c.router({
-  agentContext: c
-    .query()
-    .openapi({
-      description:
-        "Returns agent-readable context for the template app, including commands, bindings, guardrails, and platform responsibilities.",
-      path: "/agent/context",
-      summary: "Agent context",
-      tags: ["agent"],
-    })
-    .output(agentContextOutputSchema),
-  aiGatewayDescription: c
-    .query()
-    .openapi({
-      summary: "AI Gateway configuration",
-      tags: ["ai"],
-    })
-    .output(aiGatewayDescriptionOutputSchema),
-  guest: c
-    .query()
-    .input(guestInputSchema)
-    .openapi({
-      summary: "Guest demo state",
-      tags: ["guest"],
-    })
-    .output(guestOutputSchema),
+  account: c.router({
+    me: c
+      .query()
+      .openapi({
+        summary: "Current session",
+        tags: ["auth"],
+      })
+      .output(meOutputSchema),
+  }),
+  admin: c.router({
+    summary: c
+      .query()
+      .openapi({
+        summary: "Admin dashboard summary",
+        tags: ["admin"],
+      })
+      .output(adminSummaryOutputSchema),
+  }),
+  agent: c.router({
+    context: c
+      .query()
+      .openapi({
+        description: "Returns agent-readable wiring for the counter template.",
+        path: "/agent/context",
+        summary: "Agent context",
+        tags: ["agent"],
+      })
+      .output(agentContextOutputSchema),
+  }),
+  counter: c.router({
+    get: c
+      .query()
+      .openapi({
+        summary: "Read counter",
+        tags: ["counter"],
+      })
+      .output(counterOutputSchema),
+    increment: c
+      .mutation()
+      .openapi({
+        summary: "Increment counter",
+        tags: ["counter"],
+      })
+      .output(incrementOutputSchema),
+  }),
   health: c
     .query()
     .openapi({
@@ -218,13 +128,6 @@ export const contract = c.router({
       tags: ["system"],
     })
     .output(healthOutputSchema),
-  me: c
-    .query()
-    .openapi({
-      summary: "Current user",
-      tags: ["auth"],
-    })
-    .output(meOutputSchema),
 });
 
 export type ApiContract = typeof contract;

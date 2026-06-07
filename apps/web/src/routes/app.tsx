@@ -29,8 +29,7 @@ function AppRoute() {
   const me = useQuery(meQueryOptions());
   const increment = useMutation({
     ...api.counter.increment.mutationOptions(),
-    onSuccess: (nextCounter) =>
-      queryClient.setQueryData(api.counter.get.queryKey(), nextCounter),
+    onSuccess: (nextCounter) => queryClient.setQueryData(api.counter.get.queryKey(), nextCounter),
   });
 
   const signOut = async () => {

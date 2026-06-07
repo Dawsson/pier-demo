@@ -1,21 +1,17 @@
-import { createMiddleware, createStart } from "@tanstack/react-start";
-import { requireWorkspaceSession } from "./session-gate";
+import { createCsrfMiddleware, createMiddleware, createStart } from "@tanstack/react-start";
 
-const workspaceSessionGate = createMiddleware({ type: "request" }).server(
-  async ({ next, request }) => {
-    const redirect = await requireWorkspaceSession(request);
-    if (redirect) {
-      return redirect;
-    }
+const csrfMiddleware = createCsrfMiddleware({
+  filter: (context) => context.handlerType === "serverFn",
+});
 
-    return next({
-      context: {
-        request,
-      },
-    });
-  },
+const requestContext = createMiddleware({ type: "request" }).server(async ({ next, request }) =>
+  next({
+    context: {
+      request,
+    },
+  }),
 );
 
 export const startInstance = createStart(() => ({
-  requestMiddleware: [workspaceSessionGate],
+  requestMiddleware: [csrfMiddleware, requestContext],
 }));

@@ -1,46 +1,12 @@
 import { createAuthClient } from "better-auth/react";
-import { anonymousClient } from "better-auth/client/plugins";
-import { resolveApiUrl } from "./api-url";
+import { clientEnv, serverEnv } from "./.waypoint/env";
 
-type AuthClientOptions = {
-  readonly baseURL: string;
-  readonly fetchOptions: {
-    readonly credentials: "include";
-  };
-  readonly plugins: [ReturnType<typeof anonymousClient>];
-};
+const apiUrl = () =>
+  typeof window === "undefined" ? serverEnv.PUBLIC_API_URL : clientEnv.PUBLIC_API_URL;
 
-export type AuthClient = ReturnType<typeof createAuthClient<AuthClientOptions>>;
-
-const createAppAuthClient = (): AuthClient => {
-  return createAuthClient<AuthClientOptions>({
-    baseURL: `${resolveApiUrl()}/auth`,
-    fetchOptions: {
-      credentials: "include",
-    },
-    plugins: [anonymousClient()],
-  });
-};
-
-export const authClient: AuthClient = createAppAuthClient();
-
-export type AuthSession = typeof authClient.$Infer.Session;
-export type AuthUser = AuthSession["user"];
-
-export const isAnonymousUser = (user: AuthUser | null | undefined) => {
-  return Boolean(user && "isAnonymous" in user && user.isAnonymous === true);
-};
-
-export const ensureAnonymousSession = async () => {
-  const result = await authClient.signIn.anonymous();
-  if (result.error) {
-    throw new Error(result.error.message ?? "Could not create anonymous session.");
-  }
-
-  const created = await authClient.getSession();
-  if (!created.data) {
-    throw new Error("Anonymous session was created but could not be read.");
-  }
-
-  return created.data;
-};
+export const authClient: ReturnType<typeof createAuthClient> = createAuthClient({
+  baseURL: apiUrl().path("auth"),
+  fetchOptions: {
+    credentials: "include",
+  },
+});

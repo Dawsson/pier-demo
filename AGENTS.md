@@ -7,12 +7,14 @@ Waypoint. The platform itself lives in `/Users/dawson/projects/hosting-platform`
 
 Use this repo to demonstrate how a product consumes Waypoint:
 
-- TanStack Start frontend in `apps/web`.
+- Public/user TanStack Start app in `apps/web`.
+- Admin TanStack Start app in `apps/admin`.
 - Hono API Worker in `apps/api`.
 - internal Worker service in `apps/internal`.
+- D1 counter state plus a `RATE_LIMITER` Durable Object owned by the API Worker.
 - app intent, bindings, env vars, roles, permissions, and event catalogs in
   `platform.config.ts`.
-- typed app/agent guidance through `api.agentContext`.
+- typed app/agent guidance through `agent.context`.
 
 Do not implement control-plane features here. Domains, previews, backups,
 restore planning, billing/usage ingestion, organization RBAC, invitations,
@@ -21,8 +23,8 @@ Cloudflare account mutations, and platform-admin telemetry belong in Waypoint.
 ## Local Dev And Logs
 
 - Start the full local session with `bun run dev`, or run individual services
-  with `bun run dev:daemon`, `bun run dev:internal`, `bun run dev:api`, and
-  `bun run dev:web`.
+  with `bun run dev:daemon`, `bun run dev:internal`, `bun run dev:api`,
+  `bun run dev:web`, and `bun run dev:admin`.
 - Worker services use Waypoint's Miniflare-backed local runtime and rebuild into
   `.waypoint/build/dev/<app>` on source changes. Do not add product-owned
   Wrangler config.
@@ -61,4 +63,6 @@ bun way logs dump --api local --state local --project waypoint-guest-app --markd
   Cloudflare glue.
 - Do not import API runtime modules into the browser bundle.
 - Use generated `.waypoint` env helpers instead of hand-written env casts.
+- Keep browser apps calling typed API clients; do not bind Durable Objects
+  directly from TanStack Start apps.
 - Keep changes focused and run the smallest useful validation.

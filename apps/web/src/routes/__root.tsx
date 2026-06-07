@@ -1,23 +1,29 @@
-import { HeadContent, Outlet, Scripts, createRootRoute } from "@tanstack/react-router";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import type { RouterContext } from "../router-context";
 import "../styles.css";
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
   head: () => ({
     meta: [
       { charSet: "utf-8" },
       { content: "width=device-width, initial-scale=1", name: "viewport" },
-      { title: "Waypoint Guest App" },
+      { title: "Waypoint Counter" },
     ],
   }),
   notFoundComponent: NotFound,
 });
 
 function RootComponent() {
+  const context = Route.useRouteContext();
+
   return (
     <RootDocument>
-      <Outlet />
+      <QueryClientProvider client={context.queryClient}>
+        <Outlet />
+      </QueryClientProvider>
     </RootDocument>
   );
 }
@@ -39,10 +45,9 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 function NotFound() {
   return (
     <main className="shell">
-      <section className="panel">
-        <p className="eyebrow">Waypoint guest app</p>
+      <section className="auth-panel">
         <h1>Not found</h1>
-        <p className="summary">This route is not part of the guest app.</p>
+        <p className="summary">That page is not available.</p>
       </section>
     </main>
   );

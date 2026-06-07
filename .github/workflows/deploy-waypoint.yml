@@ -1,0 +1,82 @@
+name: Deploy Waypoint Guest App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  cancel-in-progress: false
+  group: waypoint-guest-app-production
+
+jobs:
+  deploy:
+    name: Test and deploy
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    timeout-minutes: 20
+    env:
+      ADMIN_URL: ${{ vars.ADMIN_URL }}
+      API_URL: ${{ vars.API_URL }}
+      BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      PUBLIC_ADMIN_URL: ${{ vars.PUBLIC_ADMIN_URL }}
+      PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL }}
+      PUBLIC_APP_NAME: ${{ vars.PUBLIC_APP_NAME }}
+      PUBLIC_WEB_URL: ${{ vars.PUBLIC_WEB_URL }}
+      WEB_URL: ${{ vars.WEB_URL }}
+    steps:
+      - name: Checkout guest app
+        uses: actions/checkout@v4
+        with:
+          path: waypoint-guest-app
+
+      - name: Checkout Waypoint platform
+        uses: actions/checkout@v4
+        with:
+          repository: withharbor/hosting
+          path: hosting-platform
+          token: ${{ secrets.WAYPOINT_PLATFORM_CHECKOUT_TOKEN }}
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.12
+
+      - name: Install dependencies
+        working-directory: waypoint-guest-app
+        run: bun install --frozen-lockfile
+
+      - name: Generate Waypoint env types
+        working-directory: waypoint-guest-app
+        run: bun way env types
+
+      - name: Run tests
+        working-directory: waypoint-guest-app
+        run: bun run test
+
+      - name: Check types
+        working-directory: waypoint-guest-app
+        run: bun run check-types
+
+      - name: Build web app
+        working-directory: waypoint-guest-app
+        run: bun run --filter='@waypoint-guest-app/web' build
+
+      - name: Deploy internal worker
+        working-directory: waypoint-guest-app
+        run: bun way direct-deploy internal --env prod
+
+      - name: Deploy API worker
+        working-directory: waypoint-guest-app
+        run: bun way direct-deploy api --env prod
+
+      - name: Deploy admin app
+        working-directory: waypoint-guest-app
+        run: bun way direct-deploy admin --env prod
+
+      - name: Deploy web app
+        working-directory: waypoint-guest-app
+        run: bun way direct-deploy web --env prod

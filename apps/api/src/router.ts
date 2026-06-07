@@ -1,20 +1,27 @@
 import { healthEndpoint } from "./endpoints/health";
-import { guestStreamEndpoint } from "./endpoints/stream";
 import { contract } from "./contract";
+import { counterIncrementMutation } from "./mutations/counter";
 import { procedure } from "./procedures";
+import { meQuery } from "./queries/account";
+import { adminSummaryQuery } from "./queries/admin";
 import { agentContextQuery } from "./queries/agent-context";
-import { aiGatewayDescriptionQuery, aiGatewayForwardingEndpoint } from "./queries/ai-gateway";
-import { guestQuery } from "./queries/guest";
-import { meQuery } from "./queries/me";
+import { counterGetQuery } from "./queries/counter";
 
 export const routes = procedure.router({
-  agentContext: agentContextQuery,
-  aiGatewayDescription: aiGatewayDescriptionQuery,
-  aiGatewayForwarding: aiGatewayForwardingEndpoint,
-  guest: guestQuery,
+  account: {
+    me: meQuery,
+  },
+  admin: {
+    summary: adminSummaryQuery,
+  },
+  agent: {
+    context: agentContextQuery,
+  },
+  counter: {
+    get: counterGetQuery,
+    increment: counterIncrementMutation,
+  },
   health: healthEndpoint,
-  me: meQuery,
-  stream: guestStreamEndpoint,
 });
 
 export { contract };

@@ -14,8 +14,7 @@ function HomeRoute() {
   const counterValue = counter.data?.value ?? initialCounter.value;
   const increment = useMutation({
     ...api.counter.increment.mutationOptions(),
-    onSuccess: (nextCounter) =>
-      queryClient.setQueryData(api.counter.get.queryKey(), nextCounter),
+    onSuccess: (nextCounter) => queryClient.setQueryData(api.counter.get.queryKey(), nextCounter),
   });
 
   return (
