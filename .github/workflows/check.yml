@@ -31,6 +31,7 @@ jobs:
         with:
           repository: withharbor/hosting
           path: hosting-platform
+          ref: main
           token: ${{ env.WAYPOINT_PLATFORM_CHECKOUT_TOKEN }}
 
       - name: Skip checks without platform checkout token
