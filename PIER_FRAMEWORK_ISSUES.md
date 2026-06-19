@@ -8,6 +8,10 @@
   source-checkout bridge. Once the CLI is published as a public package or
   installer, GitHub Actions should only need one Pier key plus non-secret org
   configuration.
+- The temporary CLI source checkout is branch-coupled. A demo deploy rerun kept
+  failing with a stale CLI because the workflow cloned `withharbor/hosting@main`
+  while local platform commits had only been pushed to `master`. Publishing the
+  CLI as a normal public install removes this class of CI drift entirely.
 - `pier env types` emits generated `apps/*/src/.pier/*` files that fail
   consumer lint rules (`no-unused-vars` and `unicorn/no-useless-fallback-in-spread`).
   The generator should emit lint-clean code or include generated-file ignore
