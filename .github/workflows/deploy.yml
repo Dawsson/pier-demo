@@ -18,6 +18,7 @@ jobs:
     env:
       PIER_API_KEY: ${{ secrets.PIER_API_KEY }}
       PIER_API_URL: https://api.buildwithharbor.com
+      PIER_REGISTRY_TOKEN: ${{ secrets.PIER_API_KEY }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,11 +43,8 @@ jobs:
           mkdir -p "$HOME/.bun/bin"
           ln -sf "$PWD/packages/cli/src/index.ts" "$HOME/.bun/bin/pier"
 
-      - name: Store Pier API key
-        run: printf '%s' "$PIER_API_KEY" | pier config api-key set --value-stdin
-
       - name: Install dependencies
-        run: pier package install
+        run: bun install --frozen-lockfile
 
       - name: Generate Pier env types
         run: pier env types --api "$PIER_API_URL"

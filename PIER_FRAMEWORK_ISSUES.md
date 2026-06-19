@@ -49,6 +49,11 @@ organization scope`. The CLI should identify the credential kind/scope and
   first-class project CI preset that encodes those operations safely instead of
   forcing agents to choose between an incomplete allowlist and an org-scoped
   all-operation service key.
+- `pier config api-key set --value-stdin` fails in GitHub Actions with
+  `libsecret not available`. Core Pier API calls can use `PIER_API_KEY`
+  directly, but `pier package install` still expects a stored key, so CI has to
+  set `PIER_REGISTRY_TOKEN=$PIER_API_KEY` and call `bun install` directly. The
+  package command should accept env-based auth in noninteractive CI.
 - Production API commands failed after switching the platform API to
   Hyperdrive-only DB access because the Hyperdrive runtime role did not have
   grants on newer control-plane tables. The platform should grant runtime roles
