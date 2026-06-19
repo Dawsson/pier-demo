@@ -8,11 +8,6 @@
   generated env synthesis create `DB: { connectionString }`. Pier should make
   `binding.postgres` first-class by provisioning the shared schema/role and
   wiring the runtime value automatically.
-- Device login had propagation/health instability while testing:
-  `/auth/device/code` alternated between valid device-code responses and blank
-  500 responses. This blocks the safest recovery path for external repo setup
-  and should emit structured `pier.auth.handler.failed` logs plus user-facing
-  CLI errors.
 - A single external-project CI key currently has to be broader than ideal. The
   same key must install private Pier packages, resolve Pier cloud env for
   `pier run`, generate env types, and deploy. The framework should provide a
