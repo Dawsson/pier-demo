@@ -1,11 +1,12 @@
 # Pier Issues Found During Demo Migration
 
 - `@pier/cli` is not installable from `https://api.buildwithharbor.com/npm/`.
-  External repos can install framework packages with `PIER_REGISTRY_TOKEN`, but
-  CI has no clean way to run `pier env types`, `pier run`, or `pier deploy`
-  without either a preinstalled CLI or checking out the platform source.
-  `pier-demo` currently uses a source-checkout bridge in GitHub Actions until
-  the CLI can be installed like a normal Pier package.
+  External repos can install framework packages with `pier package install`,
+  but CI has no clean way to run `pier env types`, `pier run`, or `pier deploy`
+  without either a preinstalled CLI or checking out the private platform source.
+  `pier-demo` currently needs `PIER_PLATFORM_CHECKOUT_TOKEN` only for that
+  source-checkout bridge. Once the CLI is published, GitHub Actions should only
+  need one Pier key.
 - `pier env types` emits generated `apps/*/src/.pier/*` files that fail
   consumer lint rules (`no-unused-vars` and `unicorn/no-useless-fallback-in-spread`).
   The generator should emit lint-clean code or include generated-file ignore
@@ -25,3 +26,12 @@
   `Unauthorized`, `Authenticated user is required`, or `Service key is missing
 organization scope`. The CLI should identify the credential kind/scope and
   guide operators to login or create a scoped service key before deploy.
+- `pier config api-key create --store` looks like a recovery path, but it
+  depends on an already-valid human credential. With a legacy/unscoped service
+  key, production returned a blank 500 instead of a structured 401/403 and a
+  clear instruction to run `pier login`.
+- Device login had propagation/health instability while testing:
+  `/auth/device/code` alternated between valid device-code responses and blank
+  500 responses. This blocks the safest recovery path for external repo setup
+  and should emit structured `pier.auth.handler.failed` logs plus user-facing
+  CLI errors.
