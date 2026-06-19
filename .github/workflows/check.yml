@@ -29,13 +29,7 @@ jobs:
           bun-version: 1.3.12
 
       - name: Install Pier CLI
-        run: |
-          mkdir -p "$RUNNER_TEMP/pier-cli"
-          cat > "$RUNNER_TEMP/pier-cli/bunfig.toml" <<'EOF'
-          [install.scopes]
-          "@buildwithharbor" = { url = "https://api.buildwithharbor.com/npm/", token = "$PIER_API_KEY" }
-          EOF
-          BUN_INSTALL_CACHE_DIR="$RUNNER_TEMP/bun-pier-cli-cache" bun add -g @buildwithharbor/pier@0.1.14 --cwd "$RUNNER_TEMP/pier-cli"
+        run: BUN_INSTALL_CACHE_DIR="$RUNNER_TEMP/bun-pier-cli-cache" bun add -g @buildwithharbor/pier@0.1.9
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
