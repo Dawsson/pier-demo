@@ -30,15 +30,13 @@ jobs:
           bun-version: 1.3.12
 
       - name: Checkout Pier CLI source
-        uses: actions/checkout@v4
-        with:
-          repository: withharbor/hosting
-          path: .pier-cli-source
-          ref: main
-          token: ${{ secrets.PIER_PLATFORM_CHECKOUT_TOKEN }}
+        env:
+          PIER_PLATFORM_CHECKOUT_TOKEN: ${{ secrets.PIER_PLATFORM_CHECKOUT_TOKEN }}
+        run: |
+          git clone --depth 1 --branch main "https://x-access-token:${PIER_PLATFORM_CHECKOUT_TOKEN}@github.com/withharbor/hosting.git" "$RUNNER_TEMP/pier-cli-source"
 
       - name: Install Pier CLI
-        working-directory: .pier-cli-source
+        working-directory: ${{ runner.temp }}/pier-cli-source
         run: |
           bun install --frozen-lockfile
           mkdir -p "$HOME/.bun/bin"
