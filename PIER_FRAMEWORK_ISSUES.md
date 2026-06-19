@@ -32,12 +32,6 @@
   parent collision around existing snapshot files. Custom migration creation
   should be reliable, or the repo should have a documented Pier migration helper
   for SQL-only migrations such as grants.
-- `pier shared-postgres` CLI usage/help is inconsistent. `pier shared-postgres
-provision ...` appears in help, but flags are parsed only when placed before
-  the `provision` positional, and a normal shell `source` of the generated env
-  file can choke on unquoted URLs containing `&`. The CLI should provide a
-  direct `pier shared-postgres provision ... --set-cloud-env --app api` style
-  path so agents never parse or pipe secret URLs by hand.
 - External CI still needs `PIER_ORGANIZATION_ID` next to the single
   `PIER_API_KEY` so deploy commands target the intended organization. It now
   comes from GitHub Actions variables rather than being hard-coded. That is
