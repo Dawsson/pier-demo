@@ -33,8 +33,3 @@
   comes from GitHub Actions variables rather than being hard-coded. That is
   acceptable as non-secret metadata, but the CLI should make missing or
   mismatched org context obvious before deploy.
-- Consumer projects can accidentally mask Pier cloud env with a local `.env`
-  because Bun auto-loads `.env` and generated env helpers merge `process.env`.
-  Pier should provide a clear `pier run --env <env> -- ...` path for local
-  commands and warn when a dotenv file shadows a cloud-managed variable declared
-  in `platform.config.ts`.
