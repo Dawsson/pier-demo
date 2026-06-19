@@ -33,6 +33,7 @@ export default app({
         "ADMIN_URL",
         "API_URL",
         "BETTER_AUTH_SECRET",
+        "DATABASE_URL",
         "PUBLIC_ADMIN_URL",
         "PUBLIC_API_URL",
         "PUBLIC_APP_NAME",
@@ -86,6 +87,7 @@ export default app({
     ADMIN_URL: variable.url().default("https://admin.pier-demo.buildwithharbor.com"),
     API_URL: variable.url().default("https://api.pier-demo.buildwithharbor.com"),
     BETTER_AUTH_SECRET: variable.string().sensitive().random(32),
+    DATABASE_URL: variable.string().sensitive(),
     PUBLIC_ADMIN_URL: variable
       .url()
       .default("https://admin.pier-demo.buildwithharbor.com")

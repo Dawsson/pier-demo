@@ -20,6 +20,14 @@
   configured binding name (`DB` in `pier-demo`). Consumer apps currently need an
   adapter such as `{ HYPERDRIVE: env.DB }`; the package should accept generated
   Postgres bindings directly.
+- Managed deploys silently drop `binding.postgres("shared")` as a Cloudflare
+  binding. The manifest and generated env types preserve `DB`, but the platform
+  deploy resolver only materializes KV, D1, R2, Hyperdrive, service, images,
+  queue, and Durable Objects. `pier-demo` currently works around this by
+  declaring one sensitive `DATABASE_URL` cloud value for the API app, letting
+  generated env synthesis create `DB: { connectionString }`. Pier should make
+  `binding.postgres` first-class by provisioning the shared schema/role and
+  wiring the runtime value automatically.
 - CLI auth/deploy failures are hard to diagnose when the stored local API key is
   valid Better Auth material but has no organization scope. `pier auth status`
   reports authenticated, while org/project/deploy commands fail later with
@@ -50,3 +58,9 @@ organization scope`. The CLI should identify the credential kind/scope and
   parent collision around existing snapshot files. Custom migration creation
   should be reliable, or the repo should have a documented Pier migration helper
   for SQL-only migrations such as grants.
+- `pier shared-postgres` CLI usage/help is inconsistent. `pier shared-postgres
+provision ...` appears in help, but flags are parsed only when placed before
+  the `provision` positional, and a normal shell `source` of the generated env
+  file can choke on unquoted URLs containing `&`. The CLI should provide a
+  direct `pier shared-postgres provision ... --set-cloud-env --app api` style
+  path so agents never parse or pipe secret URLs by hand.
