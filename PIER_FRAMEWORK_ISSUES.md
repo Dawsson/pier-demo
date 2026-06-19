@@ -1,17 +1,8 @@
 # Pier Issues Found During Demo Migration
 
-- `pier env types` emits generated `apps/*/src/.pier/*` files that fail
-  consumer lint rules (`no-unused-vars` and `unicorn/no-useless-fallback-in-spread`).
-  The generator should emit lint-clean code or include generated-file ignore
-  guidance/scaffolding.
 - The Pier CLI can inspect a local `platform.config.ts`, but external project
   setup needs a documented first-run flow around `pier project create`, cloud
   env upload, and the first deploy so agents do not have to infer ordering.
-- `@pier/db` expects Postgres env as `DATABASE_URL` or `HYPERDRIVE`, while
-  generated Pier env types expose `binding.postgres("shared")` under the
-  configured binding name (`DB` in `pier-demo`). Consumer apps currently need an
-  adapter such as `{ HYPERDRIVE: env.DB }`; the package should accept generated
-  Postgres bindings directly.
 - Managed deploys silently drop `binding.postgres("shared")` as a Cloudflare
   binding. The manifest and generated env types preserve `DB`, but the platform
   deploy resolver only materializes KV, D1, R2, Hyperdrive, service, images,
@@ -41,9 +32,6 @@ organization scope`. The CLI should identify the credential kind/scope and
   first-class project CI preset that encodes those operations safely instead of
   forcing agents to choose between an incomplete allowlist and an org-scoped
   all-operation service key.
-- `pier config api-key set --value-stdin` fails in GitHub Actions with
-  `libsecret not available`. CI should keep using `PIER_API_KEY` directly rather
-  than writing to the OS credential store.
 - Production API commands failed after switching the platform API to
   Hyperdrive-only DB access because the Hyperdrive runtime role did not have
   grants on newer control-plane tables. The platform should grant runtime roles
@@ -59,10 +47,6 @@ provision ...` appears in help, but flags are parsed only when placed before
   file can choke on unquoted URLs containing `&`. The CLI should provide a
   direct `pier shared-postgres provision ... --set-cloud-env --app api` style
   path so agents never parse or pipe secret URLs by hand.
-- `pier run --env prod -- ...` failed in GitHub Actions through the
-  source-installed CLI by resolving `prod` as a config module path. `pier-demo`
-  now calls `pier deploy all --env prod` directly, but `pier run` flag parsing
-  should be hardened because it is the nicer long-term cloud-env wrapper.
 - External CI still needs `PIER_ORGANIZATION_ID` next to the single
   `PIER_API_KEY` so deploy commands target the intended organization. It now
   comes from GitHub Actions variables rather than being hard-coded. That is
@@ -78,5 +62,3 @@ provision ...` appears in help, but flags are parsed only when placed before
   `PIER_API_KEY`. The CLI should report which credential source was used and
   whether the active credential can read cloud env for the selected organization
   and project.
-- `pier env upload` now has the right command shape, but the CLI should still
-  add interactive confirmation for destructive replacement when stdin is a TTY.

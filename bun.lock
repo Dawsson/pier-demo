@@ -8,7 +8,7 @@
         "@pier/auth": "0.1.18",
         "@pier/backend": "0.1.18",
         "@pier/core": "0.1.18",
-        "@pier/db": "0.1.18",
+        "@pier/db": "0.1.20",
         "@pier/log": "0.1.18",
         "better-auth": "1.6.11",
         "drizzle-orm": "^0.45.1",
@@ -49,7 +49,7 @@
         "@pier/auth": "0.1.18",
         "@pier/backend": "0.1.18",
         "@pier/core": "0.1.18",
-        "@pier/db": "0.1.18",
+        "@pier/db": "0.1.20",
         "@pier/log": "0.1.18",
         "better-auth": "1.6.11",
         "drizzle-orm": "^0.45.1",
@@ -389,7 +389,7 @@
 
     "@pier/core": ["@pier/core@0.1.18", "https://api.buildwithharbor.com/npm/@pier/core/-/pier-core-0.1.18.tgz", { "dependencies": { "zod": "^4.4.3" } }, "sha512-o1GsIy8fOWSs4qVztf1mjyzfZCP32DKiWIKT2O9gUrmEWLKdk5RlyWX4tLwV0xqlxVzY4qguwiksL9GS5zxMIQ=="],
 
-    "@pier/db": ["@pier/db@0.1.18", "https://api.buildwithharbor.com/npm/@pier/db/-/pier-db-0.1.18.tgz", { "dependencies": { "@electric-sql/pglite": "^0.5.1", "drizzle-orm": "^0.45.1", "postgres": "^3.4.9" } }, "sha512-FSbGaHM9/ws/dOot3sj7a5S/qKVnwWBtMH2i0/E3lDRIq1b4K9FL4kSNJw5hA7rKq3h6IHdSJRTwfyaXkG1glw=="],
+    "@pier/db": ["@pier/db@0.1.20", "https://api.buildwithharbor.com/npm/@pier/db/-/pier-db-0.1.20.tgz", { "dependencies": { "@electric-sql/pglite": "^0.5.1", "drizzle-orm": "^0.45.1", "postgres": "^3.4.9" } }, "sha512-ydoppcxNM5h0olZDDp0nUJe9R7ODWNKXPbC9Ar6WTamxY5nPIaAiUYsYDYbc6bV9Z7rtYgt0MNaUEkSKtq29JQ=="],
 
     "@pier/log": ["@pier/log@0.1.18", "https://api.buildwithharbor.com/npm/@pier/log/-/pier-log-0.1.18.tgz", { "dependencies": { "evlog": "2.18.1", "zod": "^4.4.3" } }, "sha512-o9uP1W9SyjeO0pKu/S5+pTa3wv7pJ/2svTGxVS3f9Qbw+VNbnN7a4fxVMyGNRO7zaMy8JpG7+na8WD0Dt9Z8LA=="],
 

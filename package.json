@@ -31,7 +31,7 @@
     "@pier/auth": "0.1.18",
     "@pier/backend": "0.1.18",
     "@pier/core": "0.1.18",
-    "@pier/db": "0.1.18",
+    "@pier/db": "0.1.20",
     "@pier/log": "0.1.18",
     "better-auth": "1.6.11",
     "drizzle-orm": "^0.45.1",
