@@ -19,3 +19,9 @@
   configured binding name (`DB` in `pier-demo`). Consumer apps currently need an
   adapter such as `{ HYPERDRIVE: env.DB }`; the package should accept generated
   Postgres bindings directly.
+- CLI auth/deploy failures are hard to diagnose when the stored local API key is
+  valid Better Auth material but has no organization scope. `pier auth status`
+  reports authenticated, while org/project/deploy commands fail later with
+  `Unauthorized`, `Authenticated user is required`, or `Service key is missing
+organization scope`. The CLI should identify the credential kind/scope and
+  guide operators to login or create a scoped service key before deploy.

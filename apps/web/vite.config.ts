@@ -13,7 +13,7 @@ export default defineConfig({
     },
   },
   server: {
-    allowedHosts: ["wayguest.dev.dawson.gg"],
+    allowedHosts: ["pierdemo.dev.dawson.gg"],
     port: Number(process.env.DEV_WEB_PORT ?? 5173),
   },
 });
