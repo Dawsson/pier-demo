@@ -8,10 +8,9 @@
   consumer lint rules (`no-unused-vars` and `unicorn/no-useless-fallback-in-spread`).
   The generator should emit lint-clean code or include generated-file ignore
   guidance/scaffolding.
-- The Pier CLI can inspect a local `platform.config.ts`, but cloud commands fail
-  with `Project not found` for a new external repo and there is no
-  `pier project create` / `pier project upsert` command or project-create API
-  contract exposed to consumers.
+- The Pier CLI can inspect a local `platform.config.ts`, but external project
+  setup needs a documented first-run flow around `pier project create`, cloud
+  env upload, and the first deploy so agents do not have to infer ordering.
 - `@pier/db` expects Postgres env as `DATABASE_URL` or `HYPERDRIVE`, while
   generated Pier env types expose `binding.postgres("shared")` under the
   configured binding name (`DB` in `pier-demo`). Consumer apps currently need an
@@ -47,10 +46,8 @@ organization scope`. The CLI should identify the credential kind/scope and
   forcing agents to choose between an incomplete allowlist and an org-scoped
   all-operation service key.
 - `pier config api-key set --value-stdin` fails in GitHub Actions with
-  `libsecret not available`. Core Pier API calls can use `PIER_API_KEY`
-  directly, but `pier package install` still expects a stored key, so CI has to
-  set `PIER_REGISTRY_TOKEN=$PIER_API_KEY` and call `bun install` directly. The
-  package command should accept env-based auth in noninteractive CI.
+  `libsecret not available`. CI should keep using `PIER_API_KEY` directly rather
+  than writing to the OS credential store.
 - Production API commands failed after switching the platform API to
   Hyperdrive-only DB access because the Hyperdrive runtime role did not have
   grants on newer control-plane tables. The platform should grant runtime roles
@@ -80,25 +77,10 @@ provision ...` appears in help, but flags are parsed only when placed before
   Pier should provide a clear `pier run --env <env> -- ...` path for local
   commands and warn when a dotenv file shadows a cloud-managed variable declared
   in `platform.config.ts`.
-- `pier env values prod --app api --json` failed locally with an unstructured
+- `pier env list --env prod --app api --json` failed locally with an unstructured
   `401 Unauthorized` even though the same project deployed from CI using
   `PIER_API_KEY`. The CLI should report which credential source was used and
   whether the active credential can read cloud env for the selected organization
   and project.
-- The CLI currently exposes both `pier env` and `pier secrets`, which creates
-  unnecessary ambiguity for agents and humans. Pier should treat this as one
-  environment manager: values can be public, private, or sensitive, but users
-  should not have to decide whether a command belongs under "env" or "secrets."
-  Preferred shape:
-  - `pier env set KEY=value --project pier-demo --env production`
-  - `pier env set DATABASE_URL=postgres://... API_SECRET=... --env production`
-  - `pier env upload .env.production --project pier-demo --env production`
-  - `pier env get DATABASE_URL --project pier-demo --env production`
-  - `pier env list --project pier-demo --env production`
-  - `pier env delete OLD_KEY --project pier-demo --env production`
-  - `pier env run --project pier-demo --env production -- bun run dev`
-  Upload should clearly state when it is a full override, prompt before
-  replacing existing values, parse standard dotenv syntax including comments and
-  quoted multiline values, and mask sensitive values in list output. The CLI
-  should use configured defaults for project and environment so common commands
-  can omit repetitive flags.
+- `pier env upload` now has the right command shape, but the CLI should still
+  add interactive confirmation for destructive replacement when stdin is a TTY.
