@@ -1,17 +1,9 @@
 # Pier Issues Found During Demo Migration
 
-- `@pier/cli` is not installable from `https://api.buildwithharbor.com/npm/`.
-  External repos can install framework packages with `pier package install`,
-  but CI has no clean way to run `pier env types`, `pier run`, or `pier deploy`
-  without either a preinstalled CLI or checking out the private platform source.
-  `pier-demo` currently needs `PIER_PLATFORM_CHECKOUT_TOKEN` only for that
-  source-checkout bridge. Once the CLI is published as a public package or
-  installer, GitHub Actions should only need one Pier key plus non-secret org
-  configuration.
-- The temporary CLI source checkout is branch-coupled. A demo deploy rerun kept
-  failing with a stale CLI because the workflow cloned `withharbor/hosting@main`
-  while local platform commits had only been pushed to `master`. Publishing the
-  CLI as a normal public install removes this class of CI drift entirely.
+- The Pier CLI is now published publicly as `@buildwithharbor/pier`, so
+  `pier-demo` no longer needs `PIER_PLATFORM_CHECKOUT_TOKEN` or a private source
+  checkout in CI. The earlier source-checkout bridge was branch-coupled and
+  failed when the workflow cloned stale `withharbor/hosting@main`.
 - `pier env types` emits generated `apps/*/src/.pier/*` files that fail
   consumer lint rules (`no-unused-vars` and `unicorn/no-useless-fallback-in-spread`).
   The generator should emit lint-clean code or include generated-file ignore
