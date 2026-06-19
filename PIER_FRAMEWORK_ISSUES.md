@@ -5,8 +5,9 @@
   but CI has no clean way to run `pier env types`, `pier run`, or `pier deploy`
   without either a preinstalled CLI or checking out the private platform source.
   `pier-demo` currently needs `PIER_PLATFORM_CHECKOUT_TOKEN` only for that
-  source-checkout bridge. Once the CLI is published, GitHub Actions should only
-  need one Pier key.
+  source-checkout bridge. Once the CLI is published as a public package or
+  installer, GitHub Actions should only need one Pier key plus non-secret org
+  configuration.
 - `pier env types` emits generated `apps/*/src/.pier/*` files that fail
   consumer lint rules (`no-unused-vars` and `unicorn/no-useless-fallback-in-spread`).
   The generator should emit lint-clean code or include generated-file ignore
@@ -69,12 +70,12 @@ provision ...` appears in help, but flags are parsed only when placed before
   file can choke on unquoted URLs containing `&`. The CLI should provide a
   direct `pier shared-postgres provision ... --set-cloud-env --app api` style
   path so agents never parse or pipe secret URLs by hand.
-- `pier run --env prod --api "$PIER_API_URL" -- ...` failed in GitHub Actions
-  through the source-installed CLI by resolving `prod` as a config module path.
-  `pier-demo` now calls `pier deploy all --env prod --api "$PIER_API_URL"`
-  directly, but `pier run` flag parsing should be hardened because it is the
-  nicer long-term cloud-env wrapper.
+- `pier run --env prod -- ...` failed in GitHub Actions through the
+  source-installed CLI by resolving `prod` as a config module path. `pier-demo`
+  now calls `pier deploy all --env prod` directly, but `pier run` flag parsing
+  should be hardened because it is the nicer long-term cloud-env wrapper.
 - External CI still needs `PIER_ORGANIZATION_ID` next to the single
-  `PIER_API_KEY` so deploy commands target the intended organization. That is
+  `PIER_API_KEY` so deploy commands target the intended organization. It now
+  comes from GitHub Actions variables rather than being hard-coded. That is
   acceptable as non-secret metadata, but the CLI should make missing or
   mismatched org context obvious before deploy.

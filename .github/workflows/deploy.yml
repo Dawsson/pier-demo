@@ -17,8 +17,7 @@ jobs:
     timeout-minutes: 20
     env:
       PIER_API_KEY: ${{ secrets.PIER_API_KEY }}
-      PIER_API_URL: https://api.buildwithharbor.com
-      PIER_ORGANIZATION_ID: org_pier_platform
+      PIER_ORGANIZATION_ID: ${{ vars.PIER_ORGANIZATION_ID }}
       PIER_REGISTRY_TOKEN: ${{ secrets.PIER_API_KEY }}
     steps:
       - name: Checkout
@@ -46,10 +45,10 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Generate Pier env types
-        run: pier env types --api "$PIER_API_URL"
+        run: pier env types
 
       - name: Run checks
         run: bun run check
 
       - name: Deploy
-        run: pier deploy all --env prod --api "$PIER_API_URL"
+        run: pier deploy all --env prod
