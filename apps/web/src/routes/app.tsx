@@ -1,8 +1,18 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { SyncProvider } from "@pier/sync";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { api, counterQueryOptions, meQueryOptions } from "../api";
+import {
+  accountMeQueryOptions,
+  counterQueryOptions,
+  endpointClient,
+  rpcClient,
+  syncClient,
+  syncConfig,
+} from "../api";
 import { authClient } from "../auth";
 import { hasServerSession } from "../session";
+import { contract } from "../../../api/src/contract";
+import { schema } from "../../../api/src/sync-schema";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
@@ -14,24 +24,44 @@ export const Route = createFileRoute("/app")({
   loader: async ({ context }) => {
     const [counter] = await Promise.all([
       context.queryClient.ensureQueryData(counterQueryOptions()),
-      context.queryClient.ensureQueryData(meQueryOptions()),
+      context.queryClient.ensureQueryData(accountMeQueryOptions()),
     ]);
     return counter;
   },
 });
 
 function AppRoute() {
+  const session = authClient.useSession();
+
+  if (!session.data?.user) {
+    return null;
+  }
+
+  return (
+    <SyncProvider
+      authEndpoint={endpointClient.sync.auth}
+      client={syncClient}
+      clientContext={contract.clientContext as never}
+      config={syncConfig}
+      schema={schema}
+      user={session.data.user as never}
+    >
+      <AccountCounter />
+    </SyncProvider>
+  );
+}
+
+function AccountCounter() {
   const initialCounter = Route.useLoaderData();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const counter = useQuery(counterQueryOptions());
   const counterValue = counter.data?.value ?? initialCounter.value;
-  const me = useQuery(meQueryOptions());
-  const increment = useMutation(
-    api.counter.increment.mutationOptions({
-      onSuccess: (nextCounter) => queryClient.setQueryData(api.counter.get.queryKey(), nextCounter),
-    }),
-  );
+  const me = syncClient.account.me.useQuery();
+  const increment = rpcClient.counter.increment.useMutation({
+    onSuccess: (nextCounter) =>
+      queryClient.setQueryData(rpcClient.counter.get.queryKey(), nextCounter),
+  });
 
   const signOut = async () => {
     await authClient.signOut();
@@ -44,7 +74,7 @@ function AppRoute() {
       <section className="counter-panel" aria-labelledby="counter-title">
         <div className="counter-header">
           <div>
-            <p className="section-label">{me.data?.user?.email ?? "Account"}</p>
+            <p className="section-label">{me.data?.email ?? "Account"}</p>
             <h1 id="counter-title">Count</h1>
           </div>
           <nav aria-label="Counter mode" className="mode-switch">
@@ -72,7 +102,7 @@ function AppRoute() {
             className="primary-button"
             disabled={increment.isPending}
             type="button"
-            onClick={() => increment.mutate()}
+            onClick={() => increment.mutate({})}
           >
             {increment.isPending ? "Adding" : "Add 5"}
           </button>
@@ -81,7 +111,7 @@ function AppRoute() {
           </button>
         </div>
 
-        {increment.error ? <p className="error">{increment.error.message}</p> : null}
+        {increment.error ? <p className="error">{String(increment.error)}</p> : null}
       </section>
     </main>
   );

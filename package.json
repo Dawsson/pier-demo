@@ -33,8 +33,11 @@
     "@pier/core": "0.1.21",
     "@pier/db": "0.1.23",
     "@pier/log": "0.1.18",
+    "@pier/sync": "^0.1.21",
+    "@rocicorp/zero": "1.6.2",
     "better-auth": "1.6.11",
     "drizzle-orm": "^0.45.1",
+    "hono": "^4.11.4",
     "zod": "^4.1.13"
   },
   "devDependencies": {

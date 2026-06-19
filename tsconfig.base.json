@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "declaration": true,
-    "declarationMap": true,
+    "declaration": false,
+    "declarationMap": false,
     "exactOptionalPropertyTypes": true,
     "isolatedModules": true,
     "lib": ["ES2024"],

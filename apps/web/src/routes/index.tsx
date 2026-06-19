@@ -1,6 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { api, counterQueryOptions } from "../api";
+import { counterQueryOptions, endpointClient, rpcClient } from "../api";
 
 export const Route = createFileRoute("/")({
   component: HomeRoute,
@@ -12,9 +12,14 @@ function HomeRoute() {
   const queryClient = useQueryClient();
   const counter = useQuery(counterQueryOptions());
   const counterValue = counter.data?.value ?? initialCounter.value;
-  const increment = useMutation({
-    ...api.counter.increment.mutationOptions(),
-    onSuccess: (nextCounter) => queryClient.setQueryData(api.counter.get.queryKey(), nextCounter),
+  const status = useQuery({
+    queryFn: () => endpointClient.system.status.json(),
+    queryKey: ["endpoint", endpointClient.system.status.href()],
+    staleTime: 30_000,
+  });
+  const increment = rpcClient.counter.increment.useMutation({
+    onSuccess: (nextCounter) =>
+      queryClient.setQueryData(rpcClient.counter.get.queryKey(), nextCounter),
   });
 
   return (
@@ -44,13 +49,17 @@ function HomeRoute() {
           <span>Step</span>
           <strong>+1</strong>
         </div>
+        <div className="counter-meta">
+          <span>Endpoint</span>
+          <strong>{status.data?.ok ? "Healthy" : "Checking"}</strong>
+        </div>
 
         <div className="actions primary-actions">
           <button
             className="primary-button"
             disabled={increment.isPending}
             type="button"
-            onClick={() => increment.mutate()}
+            onClick={() => increment.mutate({})}
           >
             {increment.isPending ? "Adding" : "Add 1"}
           </button>
@@ -59,7 +68,7 @@ function HomeRoute() {
           </Link>
         </div>
 
-        {increment.error ? <p className="error">{increment.error.message}</p> : null}
+        {increment.error ? <p className="error">{String(increment.error)}</p> : null}
       </section>
     </main>
   );

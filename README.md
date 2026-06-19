@@ -18,6 +18,25 @@ Signed-in users increment through the same API mutation with a `5x` multiplier.
 The API Worker uses `RateLimiterObject` to rate-limit counter mutations before
 writing to Postgres.
 
+## API Surfaces
+
+The demo uses Pier's split client surface instead of a catch-all API wrapper:
+
+```ts
+import { endpointClient, rpcClient, syncClient } from "./api";
+```
+
+- `syncClient.account.me.useQuery()` reads the signed-in profile from Pier Sync.
+- `rpcClient.counter.get.call()` and
+  `rpcClient.counter.increment.useMutation()` demonstrate RPC query and
+  mutation usage.
+- `endpointClient.system.status.json()` demonstrates a normal typed HTTP
+  endpoint.
+
+Use Pier Sync for app data that should stay live in the browser. Use RPC for
+commands, privileged reads, or one-shot server work. Use endpoints for
+HTTP-shaped routes such as health checks, downloads, and webhooks.
+
 ## Auth
 
 The API mounts Better Auth at `/auth/*` through Pier's API Worker wrapper.
