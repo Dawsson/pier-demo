@@ -45,6 +45,27 @@ cloud env. Do not use local dotenv files for normal development or deploys; the
 Pier CLI resolves cloud env from `platform.config.ts` and the active Pier
 project context.
 
+## First Run
+
+Use the hosted Pier API unless you are deliberately testing the control plane
+locally.
+
+```sh
+pier login
+pier org select <organization-id>
+pier project create
+pier package install
+pier env upload .env.production --env prod --app api
+pier env types
+bun run check
+pier deploy all --env prod
+```
+
+For CI, set one secret named `PIER_API_KEY` and one repository variable named
+`PIER_ORGANIZATION_ID`. The workflow installs `@buildwithharbor/pier@latest`,
+uses the Pier package registry through that key, generates env types, checks the
+repo, and deploys with cloud env.
+
 ## Development
 
 ```sh

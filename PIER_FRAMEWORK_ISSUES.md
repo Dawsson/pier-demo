@@ -1,8 +1,5 @@
 # Pier Issues Found During Demo Migration
 
-- The Pier CLI can inspect a local `platform.config.ts`, but external project
-  setup needs a documented first-run flow around `pier project create`, cloud
-  env upload, and the first deploy so agents do not have to infer ordering.
 - Managed deploys silently drop `binding.postgres("shared")` as a Cloudflare
   binding. The manifest and generated env types preserve `DB`, but the platform
   deploy resolver only materializes KV, D1, R2, Hyperdrive, service, images,
@@ -11,12 +8,6 @@
   generated env synthesis create `DB: { connectionString }`. Pier should make
   `binding.postgres` first-class by provisioning the shared schema/role and
   wiring the runtime value automatically.
-- CLI auth/deploy failures are hard to diagnose when the stored local API key is
-  valid Better Auth material but has no organization scope. `pier auth status`
-  reports authenticated, while org/project/deploy commands fail later with
-  `Unauthorized`, `Authenticated user is required`, or `Service key is missing
-organization scope`. The CLI should identify the credential kind/scope and
-  guide operators to login or create a scoped service key before deploy.
 - `pier config api-key create --store` looks like a recovery path, but it
   depends on an already-valid human credential. With a legacy/unscoped service
   key, production returned a blank 500 instead of a structured 401/403 and a
@@ -57,8 +48,3 @@ provision ...` appears in help, but flags are parsed only when placed before
   Pier should provide a clear `pier run --env <env> -- ...` path for local
   commands and warn when a dotenv file shadows a cloud-managed variable declared
   in `platform.config.ts`.
-- `pier env list --env prod --app api --json` failed locally with an unstructured
-  `401 Unauthorized` even though the same project deployed from CI using
-  `PIER_API_KEY`. The CLI should report which credential source was used and
-  whether the active credential can read cloud env for the selected organization
-  and project.
