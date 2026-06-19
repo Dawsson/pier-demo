@@ -58,7 +58,10 @@ pier logs dump --api local --state local --project pier-demo --markdown
 
 ## Guardrails
 
-- Never commit `.env.dev` or secrets.
+- Never commit `.env`, `.env.dev`, or secrets.
+- Prefer Pier cloud env for required runtime values. Use `platform.config.ts`
+  plus `pier env types`; do not add product-owned dotenv loading or local
+  dotenv fallbacks.
 - Keep app code declarative; prefer `platform.config.ts` over bespoke
   Cloudflare glue.
 - Do not import API runtime modules into the browser bundle.

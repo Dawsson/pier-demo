@@ -3,5 +3,5 @@ node_modules/
 /.pier/
 dist/
 apps/*/dist/
-.env.dev
-.env.workspace
+.env
+.env.*

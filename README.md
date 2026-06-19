@@ -40,6 +40,11 @@ context. Regenerate them after config changes:
 bun run env:types
 ```
 
+Required values such as `DATABASE_URL` and `BETTER_AUTH_SECRET` live in Pier
+cloud env. Do not use local dotenv files for normal development or deploys; the
+Pier CLI resolves cloud env from `platform.config.ts` and the active Pier
+project context.
+
 ## Development
 
 ```sh

@@ -75,3 +75,13 @@ provision ...` appears in help, but flags are parsed only when placed before
   comes from GitHub Actions variables rather than being hard-coded. That is
   acceptable as non-secret metadata, but the CLI should make missing or
   mismatched org context obvious before deploy.
+- Consumer projects can accidentally mask Pier cloud env with a local `.env`
+  because Bun auto-loads `.env` and generated env helpers merge `process.env`.
+  Pier should provide a clear `pier run --env <env> -- ...` path for local
+  commands and warn when a dotenv file shadows a cloud-managed variable declared
+  in `platform.config.ts`.
+- `pier env values prod --app api --json` failed locally with an unstructured
+  `401 Unauthorized` even though the same project deployed from CI using
+  `PIER_API_KEY`. The CLI should report which credential source was used and
+  whether the active credential can read cloud env for the selected organization
+  and project.
