@@ -6,7 +6,7 @@ export type PierEnvironment = "dev" | "preview" | "staging" | "prod";
 
 const config = app({
   apps: {
-    "api": appSlot.apiWorker("apps/api/src/index.ts", {"bindings":["CACHE","DB","INTERNAL","RATE_LIMITER"],"domain":"api.pier-demo.buildwithharbor.com","vars":["ADMIN_URL","API_URL","BETTER_AUTH_SECRET","DATABASE_URL","PUBLIC_ADMIN_URL","PUBLIC_API_URL","PUBLIC_APP_NAME","PUBLIC_WEB_URL","WEB_URL"]}),
+    "api": appSlot.apiWorker("apps/api/src/index.ts", {"bindings":["CACHE","DB","INTERNAL","RATE_LIMITER"],"domain":"api.pier-demo.buildwithharbor.com","vars":["ADMIN_URL","API_URL","BETTER_AUTH_SECRET","PUBLIC_ADMIN_URL","PUBLIC_API_URL","PUBLIC_APP_NAME","PUBLIC_WEB_URL","WEB_URL"]}),
   },
   bindings: {
     "CACHE": binding.kv(),
@@ -19,7 +19,6 @@ const config = app({
     "ADMIN_URL": variable.url().default("https://admin.pier-demo.buildwithharbor.com"),
     "API_URL": variable.url().default("https://api.pier-demo.buildwithharbor.com"),
     "BETTER_AUTH_SECRET": variable.string().random(32).sensitive(),
-    "DATABASE_URL": variable.string().sensitive(),
     "PUBLIC_ADMIN_URL": variable.url().default("https://admin.pier-demo.buildwithharbor.com").public(),
     "PUBLIC_API_URL": variable.url().default("https://api.pier-demo.buildwithharbor.com").public(),
     "PUBLIC_APP_NAME": variable.string().default("Pier Demo"),
@@ -37,7 +36,6 @@ export interface ServerEnv {
   readonly ADMIN_URL: PierUrl;
   readonly API_URL: PierUrl;
   readonly BETTER_AUTH_SECRET: string;
-  readonly DATABASE_URL: string;
   readonly PUBLIC_ADMIN_URL: PierUrl;
   readonly PUBLIC_API_URL: PierUrl;
   readonly PUBLIC_APP_NAME: string;

@@ -16,7 +16,7 @@ apps/internal  Internal Worker RPC service
 The counter is global. Public users can read and increment it by `1`.
 Signed-in users increment through the same API mutation with a `5x` multiplier.
 The API Worker uses `RateLimiterObject` to rate-limit counter mutations before
-writing to D1.
+writing to Postgres.
 
 ## Auth
 
@@ -40,10 +40,10 @@ context. Regenerate them after config changes:
 bun run env:types
 ```
 
-Required values such as `DATABASE_URL` and `BETTER_AUTH_SECRET` live in Pier
-cloud env. Do not use local dotenv files for normal development or deploys; the
-Pier CLI resolves cloud env from `platform.config.ts` and the active Pier
-project context.
+Required values such as `BETTER_AUTH_SECRET` live in Pier cloud env. The
+shared Postgres binding is provisioned and injected by Pier during deploy. Do
+not use local dotenv files for normal development or deploys; the Pier CLI
+resolves cloud env from `platform.config.ts` and the Pier project context.
 
 ## First Run
 
@@ -52,19 +52,26 @@ locally.
 
 ```sh
 pier login
-pier org select <organization-id>
 pier project create
 pier package install
-pier env upload .env.production --env prod --app api
 pier env types
 bun run check
 pier deploy all --env prod
 ```
 
-For CI, set one secret named `PIER_API_KEY` and one repository variable named
-`PIER_ORGANIZATION_ID`. The workflow installs `@buildwithharbor/pier@latest`,
-uses the Pier package registry through that key, generates env types, checks the
-repo, and deploys with cloud env.
+Create one CI key for GitHub Actions:
+
+```sh
+pier auth service-key create-preset github-project-ci \
+  --organization-id org_pier_platform \
+  --repo <owner/pier-demo> \
+  --project pier-demo \
+  --env prod
+```
+
+Store the returned key as one GitHub secret named `PIER_API_KEY`. The workflows
+install the Pier CLI and private Pier packages from the Pier registry, generate
+env types, run checks, and deploy with cloud env.
 
 ## Development
 

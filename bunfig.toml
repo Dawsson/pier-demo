@@ -1,2 +1,3 @@
 [install.scopes]
+"@buildwithharbor" = { url = "https://api.buildwithharbor.com/npm/", token = "$PIER_API_KEY" }
 "@pier" = { url = "https://api.buildwithharbor.com/npm/", token = "$PIER_API_KEY" }
