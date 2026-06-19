@@ -69,3 +69,8 @@ provision ...` appears in help, but flags are parsed only when placed before
   file can choke on unquoted URLs containing `&`. The CLI should provide a
   direct `pier shared-postgres provision ... --set-cloud-env --app api` style
   path so agents never parse or pipe secret URLs by hand.
+- `pier run --env prod --api "$PIER_API_URL" -- ...` failed in GitHub Actions
+  through the source-installed CLI by resolving `prod` as a config module path.
+  `pier-demo` now calls `pier deploy all --env prod --api "$PIER_API_URL"`
+  directly, but `pier run` flag parsing should be hardened because it is the
+  nicer long-term cloud-env wrapper.
