@@ -24,7 +24,7 @@
   valid Better Auth material but has no organization scope. `pier auth status`
   reports authenticated, while org/project/deploy commands fail later with
   `Unauthorized`, `Authenticated user is required`, or `Service key is missing
-organization scope`. The CLI should identify the credential kind/scope and
+  organization scope`. The CLI should identify the credential kind/scope and
   guide operators to login or create a scoped service key before deploy.
 - `pier config api-key create --store` looks like a recovery path, but it
   depends on an already-valid human credential. With a legacy/unscoped service
@@ -35,3 +35,9 @@ organization scope`. The CLI should identify the credential kind/scope and
   500 responses. This blocks the safest recovery path for external repo setup
   and should emit structured `pier.auth.handler.failed` logs plus user-facing
   CLI errors.
+- A single external-project CI key currently has to be broader than ideal. The
+  same key must install private Pier packages, resolve Pier cloud env for
+  `pier run`, generate env types, and deploy. The framework should provide a
+  first-class project CI preset that encodes those operations safely instead of
+  forcing agents to choose between an incomplete allowlist and an org-scoped
+  all-operation service key.
