@@ -38,7 +38,7 @@ export const counterIncrementMutation = publicProcedure.counter.increment.mutati
       });
     }
 
-    const counter = await incrementCounter(ctx.env.CACHE, {
+    const counter = await incrementCounter(ctx.env.CACHE, ctx.db, {
       authenticated: Boolean(ctx.session),
       identity,
       ...(ctx.session?.user.id ? { userId: ctx.session.user.id } : {}),

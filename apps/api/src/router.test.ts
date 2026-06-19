@@ -42,7 +42,7 @@ const agentContext: z.infer<typeof agentContextOutputSchema> = {
     checkTypes: "bun run check-types",
     dev: "bun run dev",
     inspect: "bun run inspect",
-    logs: "pier logs --api local --state local --project pier-demo",
+    logs: "pier logs --project pier-demo",
     plan: "bun run plan",
   },
   project: {

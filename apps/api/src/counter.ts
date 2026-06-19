@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import type { AppDb } from "./db";
+import { counter, counterIncrement } from "./db/schema";
 
 const counterId = "global";
 const counterKey = `counter:${counterId}`;
@@ -40,6 +41,7 @@ export const readCounter = async (
 
 export const incrementCounter = async (
   kv: KVNamespace,
+  db: AppDb,
   input: {
     readonly authenticated: boolean;
     readonly identity: string;
@@ -52,6 +54,22 @@ export const incrementCounter = async (
   const value = (current?.value ?? 0) + amount;
 
   await kv.put(counterKey, JSON.stringify({ updatedAt: now, value }));
+  await db
+    .insert(counter)
+    .values({ id: counterId, updatedAt: new Date(now), value })
+    .onConflictDoUpdate({
+      set: { updatedAt: new Date(now), value },
+      target: counter.id,
+    });
+  await db.insert(counterIncrement).values({
+    amount,
+    authenticated: input.authenticated,
+    counterValue: value,
+    createdAt: new Date(now),
+    id: crypto.randomUUID(),
+    identity: input.identity,
+    userId: input.userId ?? null,
+  });
 
   return {
     amount,
