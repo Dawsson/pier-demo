@@ -8,10 +8,6 @@
   generated env synthesis create `DB: { connectionString }`. Pier should make
   `binding.postgres` first-class by provisioning the shared schema/role and
   wiring the runtime value automatically.
-- `pier config api-key create --store` looks like a recovery path, but it
-  depends on an already-valid human credential. With a legacy/unscoped service
-  key, production returned a blank 500 instead of a structured 401/403 and a
-  clear instruction to run `pier login`.
 - Device login had propagation/health instability while testing:
   `/auth/device/code` alternated between valid device-code responses and blank
   500 responses. This blocks the safest recovery path for external repo setup
