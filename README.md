@@ -77,8 +77,15 @@ with cloud env.
 
 ## Development
 
+Use the repo `dev.json` for the normal local session:
+
 ```sh
 bun run dev
+```
+
+Individual services are available when you need a focused process:
+
+```sh
 bun run dev:web
 bun run dev:admin
 bun run dev:api
@@ -90,7 +97,7 @@ Local logs:
 
 ```sh
 bun run logs
-pier logs dump --api local --state local --project pier-demo --markdown
+pier logs dump --state local --project pier-demo --markdown
 ```
 
 ## Checks
