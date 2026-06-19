@@ -24,7 +24,7 @@
   valid Better Auth material but has no organization scope. `pier auth status`
   reports authenticated, while org/project/deploy commands fail later with
   `Unauthorized`, `Authenticated user is required`, or `Service key is missing
-  organization scope`. The CLI should identify the credential kind/scope and
+organization scope`. The CLI should identify the credential kind/scope and
   guide operators to login or create a scoped service key before deploy.
 - `pier config api-key create --store` looks like a recovery path, but it
   depends on an already-valid human credential. With a legacy/unscoped service

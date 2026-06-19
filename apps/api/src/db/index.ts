@@ -4,7 +4,10 @@ import * as schema from "./schema";
 
 export const createDb = (env: Env) => {
   const db = createPierPostgresDb({
-    env: { HYPERDRIVE: env.DB },
+    env: {
+      HYPERDRIVE: env.DB,
+      PIER_ENV: "prod",
+    },
     schema,
   });
 
