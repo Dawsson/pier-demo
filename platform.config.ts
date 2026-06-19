@@ -23,15 +23,16 @@ export const appRoles = roles({
 export default app({
   apps: {
     admin: appSlot.tanstackStart("apps/admin/src/start.ts", {
+      domain: "admin.pier-demo.buildwithharbor.com",
       vars: ["PUBLIC_ADMIN_URL", "PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_WEB_URL"],
     }),
     api: appSlot.apiWorker("apps/api/src/index.ts", {
+      domain: "api.pier-demo.buildwithharbor.com",
       bindings: ["CACHE", "DB", "INTERNAL", "RATE_LIMITER"],
       vars: [
         "ADMIN_URL",
         "API_URL",
         "BETTER_AUTH_SECRET",
-        "DATABASE_URL",
         "PUBLIC_ADMIN_URL",
         "PUBLIC_API_URL",
         "PUBLIC_APP_NAME",
@@ -41,6 +42,7 @@ export default app({
     }),
     internal: appSlot.internalWorker("apps/internal/src/index.ts", { bindings: ["CACHE"] }),
     web: appSlot.tanstackStart("apps/web/src/start.ts", {
+      domain: "pier-demo.buildwithharbor.com",
       vars: ["PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_WEB_URL"],
     }),
   },
@@ -81,14 +83,16 @@ export default app({
   name: "pier-demo",
   permissions: permissionCatalog,
   vars: {
-    ADMIN_URL: variable.url(),
-    API_URL: variable.url(),
+    ADMIN_URL: variable.url().default("https://admin.pier-demo.buildwithharbor.com"),
+    API_URL: variable.url().default("https://api.pier-demo.buildwithharbor.com"),
     BETTER_AUTH_SECRET: variable.string().sensitive().random(32),
-    DATABASE_URL: variable.string().sensitive(),
-    PUBLIC_ADMIN_URL: variable.url().public(),
-    PUBLIC_API_URL: variable.url().public(),
-    PUBLIC_APP_NAME: variable.string(),
-    PUBLIC_WEB_URL: variable.url().public(),
-    WEB_URL: variable.url(),
+    PUBLIC_ADMIN_URL: variable
+      .url()
+      .default("https://admin.pier-demo.buildwithharbor.com")
+      .public(),
+    PUBLIC_API_URL: variable.url().default("https://api.pier-demo.buildwithharbor.com").public(),
+    PUBLIC_APP_NAME: variable.string().default("Pier Demo"),
+    PUBLIC_WEB_URL: variable.url().default("https://pier-demo.buildwithharbor.com").public(),
+    WEB_URL: variable.url().default("https://pier-demo.buildwithharbor.com"),
   },
 });

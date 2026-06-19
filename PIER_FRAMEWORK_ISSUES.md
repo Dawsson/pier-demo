@@ -10,3 +10,12 @@
   consumer lint rules (`no-unused-vars` and `unicorn/no-useless-fallback-in-spread`).
   The generator should emit lint-clean code or include generated-file ignore
   guidance/scaffolding.
+- The Pier CLI can inspect a local `platform.config.ts`, but cloud commands fail
+  with `Project not found` for a new external repo and there is no
+  `pier project create` / `pier project upsert` command or project-create API
+  contract exposed to consumers.
+- `@pier/db` expects Postgres env as `DATABASE_URL` or `HYPERDRIVE`, while
+  generated Pier env types expose `binding.postgres("shared")` under the
+  configured binding name (`DB` in `pier-demo`). Consumer apps currently need an
+  adapter such as `{ HYPERDRIVE: env.DB }`; the package should accept generated
+  Postgres bindings directly.

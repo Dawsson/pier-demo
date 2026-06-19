@@ -6,22 +6,22 @@ export type PierEnvironment = "dev" | "preview" | "staging" | "prod";
 
 const config = app({
   apps: {
-    "admin": appSlot.tanstackStart("apps/admin/src/start.ts", {"bindings":[],"vars":["PUBLIC_ADMIN_URL","PUBLIC_API_URL","PUBLIC_APP_NAME","PUBLIC_WEB_URL"]}),
+    "admin": appSlot.tanstackStart("apps/admin/src/start.ts", {"bindings":[],"domain":"admin.pier-demo.buildwithharbor.com","vars":["PUBLIC_ADMIN_URL","PUBLIC_API_URL","PUBLIC_APP_NAME","PUBLIC_WEB_URL"]}),
   },
   bindings: {},
   name: "pier-demo",
   vars: {
-    "PUBLIC_ADMIN_URL": variable.url().public(),
-    "PUBLIC_API_URL": variable.url().public(),
-    "PUBLIC_APP_NAME": variable.string(),
-    "PUBLIC_WEB_URL": variable.url().public()
+    "PUBLIC_ADMIN_URL": variable.url().default("https://admin.pier-demo.buildwithharbor.com").public(),
+    "PUBLIC_API_URL": variable.url().default("https://api.pier-demo.buildwithharbor.com").public(),
+    "PUBLIC_APP_NAME": variable.string().default("Pier Demo"),
+    "PUBLIC_WEB_URL": variable.url().default("https://pier-demo.buildwithharbor.com").public()
   },
 });
 
 const publicAliases: Record<string, readonly string[]> = {"PUBLIC_ADMIN_URL":["ADMIN_URL","VITE_ADMIN_URL","VITE_PUBLIC_ADMIN_URL"],"PUBLIC_API_URL":["API_URL","VITE_API_URL","VITE_PUBLIC_API_URL"],"PUBLIC_WEB_URL":["VITE_PUBLIC_WEB_URL","VITE_WEB_URL","WEB_URL"]};
 const clientEnvKeys = ["PUBLIC_ADMIN_URL","VITE_ADMIN_URL","VITE_PUBLIC_ADMIN_URL","PUBLIC_API_URL","VITE_API_URL","VITE_PUBLIC_API_URL","PUBLIC_WEB_URL","VITE_PUBLIC_WEB_URL","VITE_WEB_URL"] as const;
 
-export const projectTopology = {"apps":[{"name":"admin","kind":"tanstack-start-app"},{"name":"api","kind":"worker-api"},{"name":"internal","kind":"worker-internal","internal":true},{"name":"web","kind":"tanstack-start-app"}],"currentApp":"admin","project":"pier-demo"} as const;
+export const projectTopology = {"apps":[{"name":"admin","kind":"tanstack-start-app","domain":"admin.pier-demo.buildwithharbor.com"},{"name":"api","kind":"worker-api","domain":"api.pier-demo.buildwithharbor.com"},{"name":"internal","kind":"worker-internal","internal":true},{"name":"web","kind":"tanstack-start-app","domain":"pier-demo.buildwithharbor.com"}],"currentApp":"admin","project":"pier-demo"} as const;
 
 export interface ServerEnv {
   readonly PUBLIC_ADMIN_URL: PierUrl;

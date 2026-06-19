@@ -18,7 +18,7 @@ const config = app({
 const publicAliases: Record<string, readonly string[]> = {};
 const clientEnvKeys = [] as const;
 
-export const projectTopology = {"apps":[{"name":"admin","kind":"tanstack-start-app"},{"name":"api","kind":"worker-api"},{"name":"internal","kind":"worker-internal","internal":true},{"name":"web","kind":"tanstack-start-app"}],"currentApp":"internal","project":"pier-demo"} as const;
+export const projectTopology = {"apps":[{"name":"admin","kind":"tanstack-start-app","domain":"admin.pier-demo.buildwithharbor.com"},{"name":"api","kind":"worker-api","domain":"api.pier-demo.buildwithharbor.com"},{"name":"internal","kind":"worker-internal","internal":true},{"name":"web","kind":"tanstack-start-app","domain":"pier-demo.buildwithharbor.com"}],"currentApp":"internal","project":"pier-demo"} as const;
 
 export interface ServerEnv {
   readonly CACHE: KVNamespace;

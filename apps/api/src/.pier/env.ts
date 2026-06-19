@@ -6,7 +6,7 @@ export type PierEnvironment = "dev" | "preview" | "staging" | "prod";
 
 const config = app({
   apps: {
-    "api": appSlot.apiWorker("apps/api/src/index.ts", {"bindings":["CACHE","DB","INTERNAL","RATE_LIMITER"],"vars":["ADMIN_URL","API_URL","BETTER_AUTH_SECRET","DATABASE_URL","PUBLIC_ADMIN_URL","PUBLIC_API_URL","PUBLIC_APP_NAME","PUBLIC_WEB_URL","WEB_URL"]}),
+    "api": appSlot.apiWorker("apps/api/src/index.ts", {"bindings":["CACHE","DB","INTERNAL","RATE_LIMITER"],"domain":"api.pier-demo.buildwithharbor.com","vars":["ADMIN_URL","API_URL","BETTER_AUTH_SECRET","PUBLIC_ADMIN_URL","PUBLIC_API_URL","PUBLIC_APP_NAME","PUBLIC_WEB_URL","WEB_URL"]}),
   },
   bindings: {
     "CACHE": binding.kv(),
@@ -16,28 +16,26 @@ const config = app({
   },
   name: "pier-demo",
   vars: {
-    "ADMIN_URL": variable.url(),
-    "API_URL": variable.url(),
+    "ADMIN_URL": variable.url().default("https://admin.pier-demo.buildwithharbor.com"),
+    "API_URL": variable.url().default("https://api.pier-demo.buildwithharbor.com"),
     "BETTER_AUTH_SECRET": variable.string().random(32).sensitive(),
-    "DATABASE_URL": variable.string().sensitive(),
-    "PUBLIC_ADMIN_URL": variable.url().public(),
-    "PUBLIC_API_URL": variable.url().public(),
-    "PUBLIC_APP_NAME": variable.string(),
-    "PUBLIC_WEB_URL": variable.url().public(),
-    "WEB_URL": variable.url()
+    "PUBLIC_ADMIN_URL": variable.url().default("https://admin.pier-demo.buildwithharbor.com").public(),
+    "PUBLIC_API_URL": variable.url().default("https://api.pier-demo.buildwithharbor.com").public(),
+    "PUBLIC_APP_NAME": variable.string().default("Pier Demo"),
+    "PUBLIC_WEB_URL": variable.url().default("https://pier-demo.buildwithharbor.com").public(),
+    "WEB_URL": variable.url().default("https://pier-demo.buildwithharbor.com")
   },
 });
 
 const publicAliases: Record<string, readonly string[]> = {"PUBLIC_ADMIN_URL":["ADMIN_URL","VITE_ADMIN_URL","VITE_PUBLIC_ADMIN_URL"],"PUBLIC_API_URL":["API_URL","VITE_API_URL","VITE_PUBLIC_API_URL"],"PUBLIC_WEB_URL":["VITE_PUBLIC_WEB_URL","VITE_WEB_URL","WEB_URL"]};
 const clientEnvKeys = ["PUBLIC_ADMIN_URL","VITE_ADMIN_URL","VITE_PUBLIC_ADMIN_URL","PUBLIC_API_URL","VITE_API_URL","VITE_PUBLIC_API_URL","PUBLIC_WEB_URL","VITE_PUBLIC_WEB_URL","VITE_WEB_URL"] as const;
 
-export const projectTopology = {"apps":[{"name":"admin","kind":"tanstack-start-app"},{"name":"api","kind":"worker-api"},{"name":"internal","kind":"worker-internal","internal":true},{"name":"web","kind":"tanstack-start-app"}],"currentApp":"api","project":"pier-demo"} as const;
+export const projectTopology = {"apps":[{"name":"admin","kind":"tanstack-start-app","domain":"admin.pier-demo.buildwithharbor.com"},{"name":"api","kind":"worker-api","domain":"api.pier-demo.buildwithharbor.com"},{"name":"internal","kind":"worker-internal","internal":true},{"name":"web","kind":"tanstack-start-app","domain":"pier-demo.buildwithharbor.com"}],"currentApp":"api","project":"pier-demo"} as const;
 
 export interface ServerEnv {
   readonly ADMIN_URL: PierUrl;
   readonly API_URL: PierUrl;
   readonly BETTER_AUTH_SECRET: string;
-  readonly DATABASE_URL: string;
   readonly PUBLIC_ADMIN_URL: PierUrl;
   readonly PUBLIC_API_URL: PierUrl;
   readonly PUBLIC_APP_NAME: string;
