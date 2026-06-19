@@ -17,7 +17,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
-      PIER_REGISTRY_TOKEN: ${{ secrets.PIER_REGISTRY_TOKEN }}
+      PIER_API_KEY: ${{ secrets.PIER_API_KEY }}
+      PIER_API_URL: https://api.buildwithharbor.com
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -42,11 +43,14 @@ jobs:
           mkdir -p "$HOME/.bun/bin"
           ln -sf "$PWD/packages/cli/src/index.ts" "$HOME/.bun/bin/pier"
 
+      - name: Store Pier API key
+        run: printf '%s' "$PIER_API_KEY" | pier config api-key set --value-stdin
+
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pier package install
 
       - name: Generate Pier env types
-        run: pier env types
+        run: pier env types --api "$PIER_API_URL"
 
       - name: Run checks
         run: bun run check
