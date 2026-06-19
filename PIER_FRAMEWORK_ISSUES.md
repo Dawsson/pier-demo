@@ -1,9 +1,5 @@
 # Pier Issues Found During Demo Migration
 
-- The Pier CLI is now published publicly as `@buildwithharbor/pier`, so
-  `pier-demo` no longer needs `PIER_PLATFORM_CHECKOUT_TOKEN` or a private source
-  checkout in CI. The earlier source-checkout bridge was branch-coupled and
-  failed when the workflow cloned stale `withharbor/hosting@main`.
 - `pier env types` emits generated `apps/*/src/.pier/*` files that fail
   consumer lint rules (`no-unused-vars` and `unicorn/no-useless-fallback-in-spread`).
   The generator should emit lint-clean code or include generated-file ignore
