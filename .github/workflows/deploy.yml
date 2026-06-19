@@ -17,6 +17,7 @@ jobs:
     timeout-minutes: 20
     env:
       PIER_API_KEY: ${{ secrets.PIER_API_KEY }}
+      PIER_ORGANIZATION_ID: ${{ vars.PIER_ORGANIZATION_ID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

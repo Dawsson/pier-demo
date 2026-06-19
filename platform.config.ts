@@ -20,6 +20,8 @@ export const appRoles = roles({
   },
 });
 
+const projectOrganizationId = process.env.PIER_ORGANIZATION_ID;
+
 export default app({
   apps: {
     admin: appSlot.tanstackStart("apps/admin/src/start.ts", {
@@ -82,9 +84,7 @@ export default app({
   }),
   name: "pier-demo",
   permissions: permissionCatalog,
-  project: {
-    organizationId: "org_pier_platform",
-  },
+  ...(projectOrganizationId ? { project: { organizationId: projectOrganizationId } } : {}),
   vars: {
     ADMIN_URL: variable.url().default("https://admin.pier-demo.buildwithharbor.com"),
     API_URL: variable.url().default("https://api.pier-demo.buildwithharbor.com"),

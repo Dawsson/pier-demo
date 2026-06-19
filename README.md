@@ -1,4 +1,4 @@
-# Pier Guest App
+# Pier Demo
 
 This repo is the product-template app for Pier. It demonstrates a small
 counter product deployed through Pier with separate public and admin
@@ -63,15 +63,17 @@ Create one CI key for GitHub Actions:
 
 ```sh
 pier auth service-key create-preset github-project-ci \
-  --organization-id org_pier_platform \
+  --organization-id <org-id> \
   --repo <owner/pier-demo> \
   --project pier-demo \
   --env prod
 ```
 
-Store the returned key as one GitHub secret named `PIER_API_KEY`. The workflows
-install the Pier CLI and private Pier packages from the Pier registry, generate
-env types, run checks, and deploy with cloud env.
+Store the returned key as one GitHub secret named `PIER_API_KEY`, and store the
+non-secret organization ID as one GitHub Actions variable named
+`PIER_ORGANIZATION_ID`. The workflows install the Pier CLI and private Pier
+packages from the Pier registry, generate env types, run checks, and deploy
+with cloud env.
 
 ## Development
 

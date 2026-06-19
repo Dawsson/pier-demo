@@ -11,7 +11,7 @@ Use this repo to demonstrate how a product consumes Pier:
 - Admin TanStack Start app in `apps/admin`.
 - Hono API Worker in `apps/api`.
 - internal Worker service in `apps/internal`.
-- D1 counter state plus a `RATE_LIMITER` Durable Object owned by the API Worker.
+- Postgres counter state plus a `RATE_LIMITER` Durable Object owned by the API Worker.
 - app intent, bindings, env vars, roles, permissions, and event catalogs in
   `platform.config.ts`.
 - typed app/agent guidance through `agent.context`.
