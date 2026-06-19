@@ -85,3 +85,20 @@ provision ...` appears in help, but flags are parsed only when placed before
   `PIER_API_KEY`. The CLI should report which credential source was used and
   whether the active credential can read cloud env for the selected organization
   and project.
+- The CLI currently exposes both `pier env` and `pier secrets`, which creates
+  unnecessary ambiguity for agents and humans. Pier should treat this as one
+  environment manager: values can be public, private, or sensitive, but users
+  should not have to decide whether a command belongs under "env" or "secrets."
+  Preferred shape:
+  - `pier env set KEY=value --project pier-demo --env production`
+  - `pier env set DATABASE_URL=postgres://... API_SECRET=... --env production`
+  - `pier env upload .env.production --project pier-demo --env production`
+  - `pier env get DATABASE_URL --project pier-demo --env production`
+  - `pier env list --project pier-demo --env production`
+  - `pier env delete OLD_KEY --project pier-demo --env production`
+  - `pier env run --project pier-demo --env production -- bun run dev`
+  Upload should clearly state when it is a full override, prompt before
+  replacing existing values, parse standard dotenv syntax including comments and
+  quoted multiline values, and mask sensitive values in list output. The CLI
+  should use configured defaults for project and environment so common commands
+  can omit repetitive flags.
