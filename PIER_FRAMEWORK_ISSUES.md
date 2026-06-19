@@ -74,3 +74,7 @@ provision ...` appears in help, but flags are parsed only when placed before
   `pier-demo` now calls `pier deploy all --env prod --api "$PIER_API_URL"`
   directly, but `pier run` flag parsing should be hardened because it is the
   nicer long-term cloud-env wrapper.
+- External CI still needs `PIER_ORGANIZATION_ID` next to the single
+  `PIER_API_KEY` so deploy commands target the intended organization. That is
+  acceptable as non-secret metadata, but the CLI should make missing or
+  mismatched org context obvious before deploy.

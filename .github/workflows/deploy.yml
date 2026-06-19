@@ -18,6 +18,7 @@ jobs:
     env:
       PIER_API_KEY: ${{ secrets.PIER_API_KEY }}
       PIER_API_URL: https://api.buildwithharbor.com
+      PIER_ORGANIZATION_ID: org_pier_platform
       PIER_REGISTRY_TOKEN: ${{ secrets.PIER_API_KEY }}
     steps:
       - name: Checkout
