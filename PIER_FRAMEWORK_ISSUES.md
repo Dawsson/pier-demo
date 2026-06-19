@@ -41,3 +41,12 @@
   first-class project CI preset that encodes those operations safely instead of
   forcing agents to choose between an incomplete allowlist and an org-scoped
   all-operation service key.
+- Production API commands failed after switching the platform API to
+  Hyperdrive-only DB access because the Hyperdrive runtime role did not have
+  grants on newer control-plane tables. The platform should grant runtime roles
+  automatically during DB provisioning/migration, including default privileges
+  for future tables.
+- `drizzle-kit generate --custom` failed in the platform API with a snapshot
+  parent collision around existing snapshot files. Custom migration creation
+  should be reliable, or the repo should have a documented Pier migration helper
+  for SQL-only migrations such as grants.
