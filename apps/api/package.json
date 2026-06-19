@@ -1,5 +1,5 @@
 {
-  "name": "@waypoint-guest-app/api",
+  "name": "@pier-demo/api",
   "private": true,
   "type": "module",
   "scripts": {
@@ -7,11 +7,11 @@
     "test": "bun test src/**/*.test.ts"
   },
   "dependencies": {
-    "@waypoint/auth": "0.1.4",
-    "@waypoint/backend": "0.1.4",
-    "@waypoint/core": "0.1.4",
-    "@waypoint/db": "0.1.4",
-    "@waypoint/log": "0.1.4",
+    "@pier/auth": "0.1.18",
+    "@pier/backend": "0.1.18",
+    "@pier/core": "0.1.18",
+    "@pier/db": "0.1.18",
+    "@pier/log": "0.1.18",
     "better-auth": "1.6.11",
     "drizzle-orm": "^0.45.1",
     "zod": "^4.1.13"

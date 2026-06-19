@@ -2,10 +2,10 @@
 
 ## Project
 
-This repo is `waypoint-guest-app`, the product-template/example app for
-Waypoint. The platform itself lives in `/Users/dawson/projects/hosting-platform`.
+This repo is `pier-demo`, the product-template/example app for
+Pier. The platform itself lives in `/Users/dawson/projects/hosting-platform`.
 
-Use this repo to demonstrate how a product consumes Waypoint:
+Use this repo to demonstrate how a product consumes Pier:
 
 - Public/user TanStack Start app in `apps/web`.
 - Admin TanStack Start app in `apps/admin`.
@@ -18,21 +18,21 @@ Use this repo to demonstrate how a product consumes Waypoint:
 
 Do not implement control-plane features here. Domains, previews, backups,
 restore planning, billing/usage ingestion, organization RBAC, invitations,
-Cloudflare account mutations, and platform-admin telemetry belong in Waypoint.
+Cloudflare account mutations, and platform-admin telemetry belong in Pier.
 
 ## Local Dev And Logs
 
 - Start the full local session with `bun run dev`, or run individual services
   with `bun run dev:daemon`, `bun run dev:internal`, `bun run dev:api`,
   `bun run dev:web`, and `bun run dev:admin`.
-- Worker services use Waypoint's Miniflare-backed local runtime and rebuild into
-  `.waypoint/build/dev/<app>` on source changes. Do not add product-owned
+- Worker services use Pier's Miniflare-backed local runtime and rebuild into
+  `.pier/build/dev/<app>` on source changes. Do not add product-owned
   Wrangler config.
-- `way dev` logs should be sent to the Waypoint local daemon, which always runs
+- `pier dev` logs should be sent to the Pier local daemon, which always runs
   locally on development devices.
-- Local-only projects belong in the Waypoint dashboard under `/dev`.
+- Local-only projects belong in the Pier dashboard under `/dev`.
 - Hosted/cloud projects belong under `/projects`.
-- For this template, inspect local logs at `/dev/waypoint-guest-app/logs`.
+- For this template, inspect local logs at `/dev/pier-demo/logs`.
 - Remote agents should use hosted control-plane logs unless they can reach this
   machine's local daemon.
 
@@ -52,8 +52,8 @@ Useful platform checks:
 bun run inspect
 bun run plan
 bun run env:types
-bun way logs --api local --state local --project waypoint-guest-app
-bun way logs dump --api local --state local --project waypoint-guest-app --markdown
+pier logs --api local --state local --project pier-demo
+pier logs dump --api local --state local --project pier-demo --markdown
 ```
 
 ## Guardrails
@@ -62,7 +62,7 @@ bun way logs dump --api local --state local --project waypoint-guest-app --markd
 - Keep app code declarative; prefer `platform.config.ts` over bespoke
   Cloudflare glue.
 - Do not import API runtime modules into the browser bundle.
-- Use generated `.waypoint` env helpers instead of hand-written env casts.
+- Use generated `.pier` env helpers instead of hand-written env casts.
 - Keep browser apps calling typed API clients; do not bind Durable Objects
   directly from TanStack Start apps.
 - Keep changes focused and run the smallest useful validation.

@@ -1,7 +1,7 @@
-# Waypoint Guest App
+# Pier Guest App
 
-This repo is the product-template app for Waypoint. It demonstrates a small
-counter product deployed through Waypoint with separate public and admin
+This repo is the product-template app for Pier. It demonstrates a small
+counter product deployed through Pier with separate public and admin
 TanStack Start apps.
 
 ## Apps
@@ -9,7 +9,7 @@ TanStack Start apps.
 ```text
 apps/web       Public/user TanStack Start app
 apps/admin     Admin TanStack Start app
-apps/api       API Worker with Better Auth, D1, KV, internal service binding, and Durable Object binding
+apps/api       API Worker with Better Auth, Postgres, KV, internal service binding, and Durable Object binding
 apps/internal  Internal Worker RPC service
 ```
 
@@ -20,20 +20,20 @@ writing to D1.
 
 ## Auth
 
-The API mounts Better Auth at `/auth/*` through Waypoint's API Worker wrapper.
+The API mounts Better Auth at `/auth/*` through Pier's API Worker wrapper.
 Auth is email/password only. Admin access uses the Better Auth admin plugin;
 there is intentionally no first-admin bootstrap helper in this template.
 
-## Waypoint
+## Pier
 
 The app declares its topology in `platform.config.ts`:
 
 - `web` and `admin` are TanStack Start apps.
-- `api` owns D1, KV, the internal service binding, and the `RATE_LIMITER`
+- `api` owns Postgres, KV, the internal service binding, and the `RATE_LIMITER`
   Durable Object namespace.
 - `internal` is an internal Worker service.
 
-Generated `.waypoint` modules are the source of truth for runtime env and API
+Generated `.pier` modules are the source of truth for runtime env and API
 context. Regenerate them after config changes:
 
 ```sh
@@ -55,7 +55,7 @@ Local logs:
 
 ```sh
 bun run logs
-bun way logs dump --api local --state local --project waypoint-guest-app --markdown
+pier logs dump --api local --state local --project pier-demo --markdown
 ```
 
 ## Checks
@@ -67,6 +67,6 @@ bun run inspect
 bun run plan
 ```
 
-This repo is not the Waypoint control plane. Domains, previews, backups,
+This repo is not the Pier control plane. Domains, previews, backups,
 billing, Cloudflare account operations, organization RBAC, and platform
 telemetry belong in `/Users/dawson/projects/hosting-platform`.

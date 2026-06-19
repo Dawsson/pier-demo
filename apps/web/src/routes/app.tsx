@@ -27,10 +27,11 @@ function AppRoute() {
   const counter = useQuery(counterQueryOptions());
   const counterValue = counter.data?.value ?? initialCounter.value;
   const me = useQuery(meQueryOptions());
-  const increment = useMutation({
-    ...api.counter.increment.mutationOptions(),
-    onSuccess: (nextCounter) => queryClient.setQueryData(api.counter.get.queryKey(), nextCounter),
-  });
+  const increment = useMutation(
+    api.counter.increment.mutationOptions({
+      onSuccess: (nextCounter) => queryClient.setQueryData(api.counter.get.queryKey(), nextCounter),
+    }),
+  );
 
   const signOut = async () => {
     await authClient.signOut();

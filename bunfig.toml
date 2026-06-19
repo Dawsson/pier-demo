@@ -1,3 +1,2 @@
 [install.scopes]
-"@waypoint" = { url = "https://api.buildwithharbor.com/npm/", token = "$WAYPOINT_REGISTRY_TOKEN" }
-"@repo" = { url = "https://api.buildwithharbor.com/npm/", token = "$WAYPOINT_REGISTRY_TOKEN" }
+"@pier" = { url = "https://api.buildwithharbor.com/npm/", token = "$PIER_REGISTRY_TOKEN" }

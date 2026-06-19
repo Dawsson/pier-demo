@@ -1,7 +1,11 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "unicorn", "oxc", "react", "jsx-a11y"],
-  "ignorePatterns": ["apps/admin/src/routeTree.gen.ts", "apps/web/src/routeTree.gen.ts"],
+  "ignorePatterns": [
+    "apps/*/src/.pier/**",
+    "apps/admin/src/routeTree.gen.ts",
+    "apps/web/src/routeTree.gen.ts"
+  ],
   "categories": {
     "correctness": "error"
   },

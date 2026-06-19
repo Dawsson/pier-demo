@@ -1,13 +1,4 @@
-import {
-  app,
-  appSlot,
-  binding,
-  deploy,
-  logging,
-  permissions,
-  roles,
-  variable,
-} from "@waypoint/core";
+import { app, appSlot, binding, deploy, logging, permissions, roles, variable } from "@pier/core";
 import { z } from "zod";
 
 const permissionCatalog = permissions({
@@ -87,13 +78,13 @@ export default app({
       }),
     },
   }),
-  name: "waypoint-guest-app",
+  name: "pier-demo",
   permissions: permissionCatalog,
   vars: {
     ADMIN_URL: variable.url(),
     API_URL: variable.url(),
-    BETTER_AUTH_SECRET: variable.secret().random(32),
-    DATABASE_URL: variable.secret(),
+    BETTER_AUTH_SECRET: variable.string().sensitive().random(32),
+    DATABASE_URL: variable.string().sensitive(),
     PUBLIC_ADMIN_URL: variable.url().public(),
     PUBLIC_API_URL: variable.url().public(),
     PUBLIC_APP_NAME: variable.string(),

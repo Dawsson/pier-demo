@@ -1,5 +1,5 @@
 import { WorkerEntrypoint } from "cloudflare:workers";
-import { json } from "@waypoint/backend";
+import { json } from "@pier/backend";
 
 export interface InternalEnv {
   CACHE: KVNamespace;

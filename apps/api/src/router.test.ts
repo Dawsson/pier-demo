@@ -42,12 +42,12 @@ const agentContext: z.infer<typeof agentContextOutputSchema> = {
     checkTypes: "bun run check-types",
     dev: "bun run dev",
     inspect: "bun run inspect",
-    logs: "bun way logs --api local --state local --project waypoint-guest-app",
+    logs: "pier logs --api local --state local --project pier-demo",
     plan: "bun run plan",
   },
   project: {
-    name: "waypoint-guest-app",
-    template: "waypoint-counter-template",
+    name: "pier-demo",
+    template: "pier-counter-template",
   },
 };
 

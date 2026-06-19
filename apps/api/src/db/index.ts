@@ -1,18 +1,15 @@
-import { createWaypointPostgresDb } from "@waypoint/db";
-import type { Env } from "../.waypoint/env";
+import { createPierPostgresDb } from "@pier/db";
+import type { Env } from "../.pier/env";
 import * as schema from "./schema";
 
 export const createDb = (env: Env) => {
-  const db = createWaypointPostgresDb({
-    env: {
-      DATABASE_URL: env.DB.connectionString,
-      NODE_ENV: "dev",
-    },
+  const db = createPierPostgresDb({
+    env,
     schema,
   });
 
   if (!db) {
-    throw new Error("Waypoint Postgres DB binding is not configured.");
+    throw new Error("Pier Postgres DB binding is not configured.");
   }
 
   return db;

@@ -1,12 +1,12 @@
 {
-  "name": "@waypoint-guest-app/internal",
+  "name": "@pier-demo/internal",
   "private": true,
   "type": "module",
   "scripts": {
     "check-types": "tsc -p tsconfig.json"
   },
   "dependencies": {
-    "@waypoint/backend": "0.1.4"
+    "@pier/backend": "0.1.18"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260602.1",

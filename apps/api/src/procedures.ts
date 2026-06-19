@@ -1,5 +1,5 @@
-import { createApi } from "./.waypoint/api";
-import type { Env } from "./.waypoint/env";
+import { createApi } from "./.pier/api";
+import type { Env } from "./.pier/env";
 import { createAuth } from "./auth";
 import { contract } from "./contract";
 import { createDb } from "./db";

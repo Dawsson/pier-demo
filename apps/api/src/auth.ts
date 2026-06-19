@@ -1,11 +1,11 @@
-import { createWaypointAuth } from "@waypoint/auth";
+import { createKvSecondaryStorage, createPierAuth } from "@pier/auth";
 import { admin } from "better-auth/plugins";
-import { projectTopology, type Env } from "./.waypoint/env";
+import { projectTopology, type Env } from "./.pier/env";
 import type { AppDb } from "./db";
 import { schema } from "./db";
 
 export const createAuth = (env: Env, db: AppDb) =>
-  createWaypointAuth({
+  createPierAuth({
     betterAuth: {
       emailAndPassword: {
         enabled: true,
@@ -31,6 +31,9 @@ export const createAuth = (env: Env, db: AppDb) =>
       extra: [env.ADMIN_URL.href],
     },
     projectTopology,
+    secondaryStorage: createKvSecondaryStorage(env.CACHE, {
+      prefix: "pier-demo:auth:",
+    }),
   });
 
 export type AppAuth = ReturnType<typeof createAuth>;

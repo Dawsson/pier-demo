@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { serverEnv } from "./.waypoint/env";
+import { serverEnv } from "./.pier/env";
 
 export const hasServerSession = createServerFn({ method: "GET" }).handler(async ({ context }) => {
   const request = (context as { readonly request?: Request }).request;

@@ -1,4 +1,4 @@
-import { healthStatus } from "@waypoint/backend";
+import { healthStatus } from "@pier/backend";
 import { publicProcedure } from "../procedures";
 
 export const healthEndpoint = publicProcedure.health.query({

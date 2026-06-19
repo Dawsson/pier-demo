@@ -10,7 +10,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     meta: [
       { charSet: "utf-8" },
       { content: "width=device-width, initial-scale=1", name: "viewport" },
-      { title: "Waypoint Counter Admin" },
+      { title: "Pier Counter Admin" },
     ],
   }),
 });

@@ -1,4 +1,4 @@
-import { contractBuilder as c } from "@waypoint/backend";
+import { contractBuilder as c } from "@pier/backend";
 import { z } from "zod";
 
 export const counterOutputSchema = z.object({
@@ -70,8 +70,8 @@ export const agentContextOutputSchema = z.object({
     plan: z.string(),
   }),
   project: z.object({
-    name: z.literal("waypoint-guest-app"),
-    template: z.literal("waypoint-counter-template"),
+    name: z.literal("pier-demo"),
+    template: z.literal("pier-counter-template"),
   }),
 });
 

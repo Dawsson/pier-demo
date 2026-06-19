@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { WaypointObject } from "@waypoint/backend";
-import type { Env } from "./.waypoint/env";
+import { PierObject } from "@pier/backend";
+import type { Env } from "./.pier/env";
 
 const limitInputSchema = z.object({
   key: z.string().min(1),
@@ -19,7 +19,7 @@ interface RateLimitBucket {
   readonly resetAt: number;
 }
 
-export class RateLimiterObject extends WaypointObject<Env> {
+export class RateLimiterObject extends PierObject<Env> {
   check = this.method()
     .input(limitInputSchema)
     .internal()

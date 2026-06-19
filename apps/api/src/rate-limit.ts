@@ -1,4 +1,4 @@
-import type { Env } from "./.waypoint/env";
+import type { Env } from "./.pier/env";
 import type { RateLimitDecision } from "./rate-limiter";
 
 export const checkRateLimit = async (

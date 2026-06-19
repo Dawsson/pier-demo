@@ -41,12 +41,12 @@ export const agentContextQuery = publicProcedure.agent.context.query({
       checkTypes: "bun run check-types",
       dev: "bun run dev",
       inspect: "bun run inspect",
-      logs: "bun way logs --api local --state local --project waypoint-guest-app",
+      logs: "pier logs --api local --state local --project pier-demo",
       plan: "bun run plan",
     },
     project: {
-      name: "waypoint-guest-app" as const,
-      template: "waypoint-counter-template" as const,
+      name: "pier-demo" as const,
+      template: "pier-counter-template" as const,
     },
   }),
 });
