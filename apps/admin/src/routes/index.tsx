@@ -1,10 +1,10 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { rpcClient } from "../lib/api";
-import { hasAdminSession } from "../lib/session";
+import { hasAdminSessionCookie } from "../lib/session";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async () => {
-    if (!(await hasAdminSession())) {
+    if (!(await hasAdminSessionCookie())) {
       throw redirect({ search: {}, to: "/sign-in" });
     }
   },
