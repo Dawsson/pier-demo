@@ -65,13 +65,6 @@ const applySchema = async (db: AppDb) => {
     )
   `);
   await db.execute(sql`
-    create table if not exists "counter" (
-      "id" text primary key not null,
-      "value" integer not null default 0,
-      "updated_at" timestamp with time zone not null
-    )
-  `);
-  await db.execute(sql`
     create table if not exists "counter_increment" (
       "id" text primary key not null,
       "amount" integer not null,

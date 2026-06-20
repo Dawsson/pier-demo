@@ -24,7 +24,7 @@ export const createCounterApi = (t: DemoSyncBuilder) => ({
       tags: ["counter"],
     })
     .rpc.query(async ({ ctx }) =>
-      counterSnapshotJson(await readCounter(ctx.db, { authenticated: Boolean(ctx.user) })),
+      counterSnapshotJson(await readCounter(ctx.env.CACHE, { authenticated: Boolean(ctx.user) })),
     ),
   increment: t.procedure
     .input(emptyInput)
@@ -40,7 +40,7 @@ export const createCounterApi = (t: DemoSyncBuilder) => ({
         operation: "counter.increment",
       });
 
-      const counter = await incrementCounter(ctx.db, {
+      const counter = await incrementCounter(ctx.env.CACHE, ctx.db, {
         authenticated: Boolean(ctx.user),
         identity,
         ...(ctx.user?.id ? { userId: ctx.user.id } : {}),
