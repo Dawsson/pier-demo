@@ -29,11 +29,11 @@
   },
   "dependencies": {
     "@pier/auth": "0.1.18",
-    "@pier/backend": "0.1.18",
+    "@pier/backend": "0.1.19",
     "@pier/core": "0.1.24",
     "@pier/db": "0.1.23",
     "@pier/log": "0.1.18",
-    "@pier/sync": "0.1.22",
+    "@pier/sync": "0.1.23",
     "@rocicorp/zero": "1.6.2",
     "better-auth": "1.6.11",
     "drizzle-orm": "^0.45.1",

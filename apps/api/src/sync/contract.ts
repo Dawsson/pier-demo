@@ -1,12 +1,10 @@
 import type { SyncAuthTokenResult, SyncContext } from "@pier/sync/auth";
+import { createApiSyncContract } from "@pier/sync/operation-contract";
 import { createProcedureFactory } from "@pier/sync/procedure";
-import type { EndpointOperation, OperationTree } from "@pier/sync/rpc";
+import type { EndpointOperation } from "@pier/sync/rpc";
 
 import { createAccountApi } from "#/modules/account/api";
-import { createAdminApi } from "#/modules/admin/api";
-import { createAgentApi } from "#/modules/agent/api";
-import { createCounterApi } from "#/modules/counter/api";
-import { createSystemApi } from "#/modules/system/api";
+import { contractModules } from "#/contract";
 import type { DemoSyncContext } from "./context";
 import { createDemoSyncBuilder } from "./definition";
 
@@ -28,26 +26,12 @@ const syncAuthEndpoint: EndpointOperation<undefined, SyncAuthTokenResult> = {
 
 const routes = t.router({
   account: createAccountApi(t),
-  admin: createAdminApi(t),
-  agent: createAgentApi(t),
-  counter: createCounterApi(t),
-  system: createSystemApi(t),
 });
 
 const implemented = routes.implement({});
 
-export const operationDefinitions = {
-  admin: implemented.definitions.admin,
-  agent: implemented.definitions.agent,
-  counter: implemented.definitions.counter,
-  system: implemented.definitions.system,
-  sync: {
-    auth: syncAuthEndpoint,
-  },
-} as const as unknown as OperationTree<DemoSyncContext>;
-
-export const contract = {
-  ...implemented,
+export const contract = createApiSyncContract({
+  backend: contractModules,
   clientContext: {
     accessFromToken: (_token: string): DemoSyncClientAccess => ({}),
     create: (user: SyncContext["user"]) => ({
@@ -56,12 +40,12 @@ export const contract = {
     }),
     getUserID: (user: SyncContext["user"]) => user?.id ?? null,
   },
-  definitions: {
-    ...implemented.definitions,
+  extraDefinitions: {
     sync: {
       auth: syncAuthEndpoint,
     },
   },
-} as const;
+  sync: implemented,
+});
 
 export type ApiContract = typeof contract;

@@ -6,11 +6,11 @@
       "name": "pier-demo",
       "dependencies": {
         "@pier/auth": "0.1.18",
-        "@pier/backend": "0.1.18",
+        "@pier/backend": "0.1.19",
         "@pier/core": "0.1.24",
         "@pier/db": "0.1.23",
         "@pier/log": "0.1.18",
-        "@pier/sync": "0.1.22",
+        "@pier/sync": "0.1.23",
         "@rocicorp/zero": "1.6.2",
         "better-auth": "1.6.11",
         "drizzle-orm": "^0.45.1",
@@ -31,8 +31,8 @@
       "name": "@pier-demo/admin",
       "dependencies": {
         "@pier-demo/api": "workspace:*",
-        "@pier/backend": "0.1.18",
-        "@pier/sync": "0.1.22",
+        "@pier/backend": "0.1.19",
+        "@pier/sync": "0.1.23",
         "@tanstack/react-query": "^5.95.0",
         "@tanstack/react-router": "^1.170.10",
         "@tanstack/react-start": "^1.168.18",
@@ -52,11 +52,11 @@
       "name": "@pier-demo/api",
       "dependencies": {
         "@pier/auth": "0.1.18",
-        "@pier/backend": "0.1.18",
+        "@pier/backend": "0.1.19",
         "@pier/core": "0.1.21",
         "@pier/db": "0.1.23",
         "@pier/log": "0.1.18",
-        "@pier/sync": "0.1.22",
+        "@pier/sync": "0.1.23",
         "@rocicorp/zero": "1.6.2",
         "better-auth": "1.6.11",
         "drizzle-orm": "^0.45.1",
@@ -70,7 +70,7 @@
     "apps/internal": {
       "name": "@pier-demo/internal",
       "dependencies": {
-        "@pier/backend": "0.1.18",
+        "@pier/backend": "0.1.19",
       },
       "devDependencies": {
         "@cloudflare/workers-types": "^4.20260602.1",
@@ -81,8 +81,8 @@
       "dependencies": {
         "@fontsource-variable/geist": "^5.2.9",
         "@pier-demo/api": "workspace:*",
-        "@pier/backend": "0.1.18",
-        "@pier/sync": "0.1.22",
+        "@pier/backend": "0.1.19",
+        "@pier/sync": "0.1.23",
         "@tanstack/react-query": "^5.95.0",
         "@tanstack/react-router": "^1.170.10",
         "@tanstack/react-start": "^1.168.18",
@@ -646,7 +646,7 @@
 
     "@pier/auth": ["@pier/auth@0.1.18", "https://api.buildwithharbor.com/npm/@pier/auth/-/pier-auth-0.1.18.tgz", { "dependencies": { "@better-auth/drizzle-adapter": "1.6.11", "@pier/core": "0.1.18", "better-auth": "1.6.11", "drizzle-orm": "^0.45.1" } }, "sha512-NbRIOIGo0kaZgk6+5BEyfH1csAZwIoQPQ29S8O+XQPmEeJhFDhyK4Q8kMpDKoHBFPT386Tx3AZJLTetxGCJ8TQ=="],
 
-    "@pier/backend": ["@pier/backend@0.1.18", "https://api.buildwithharbor.com/npm/@pier/backend/-/pier-backend-0.1.18.tgz", { "dependencies": { "@pier/auth": "0.1.18", "@pier/core": "0.1.18", "@pier/log": "0.1.18", "@scalar/hono-api-reference": "^0.10.20", "@tanstack/query-core": "^5.101.0", "capnweb": "^0.8.0", "evlog": "2.18.1", "hono": "^4.12.23", "zod": "^4.4.3" } }, "sha512-lnQIBOORHNc/nv9iBYALHnekYpz3BHPlZ14Vfhgbz6K8Qs3I4fjagbUZwFJqfS5VRe9+PjuRWndNk9PXpIcRnw=="],
+    "@pier/backend": ["@pier/backend@0.1.19", "https://api.buildwithharbor.com/npm/@pier/backend/-/pier-backend-0.1.19.tgz", { "dependencies": { "@pier/auth": "0.1.18", "@pier/core": "0.1.24", "@pier/log": "0.1.18", "@scalar/hono-api-reference": "^0.10.20", "@tanstack/query-core": "^5.101.0", "capnweb": "^0.8.0", "evlog": "2.18.1", "hono": "^4.12.23", "zod": "^4.4.3" } }, "sha512-e6LIByVO45b+RJ5mdkjnuAwOFwzGHhZpgFBYQTZU201GvUoBOA/PVGhnySUZwA3BJPFxPq+kUC8vh50KEwQc7w=="],
 
     "@pier/core": ["@pier/core@0.1.24", "https://api.buildwithharbor.com/npm/@pier/core/-/pier-core-0.1.24.tgz", { "dependencies": { "@cloudflare/workers-types": "^4.20260602.1", "zod": "^4.4.3" } }, "sha512-2ThPmfTcQgosjDVxISxbVzaj7G3di0ceMZ9ozsOJ5ZUMvMm8JqHkYQuu7Bcnf4clUOb7Fe19gxjfAYCKV4sMcA=="],
 
@@ -654,7 +654,7 @@
 
     "@pier/log": ["@pier/log@0.1.18", "https://api.buildwithharbor.com/npm/@pier/log/-/pier-log-0.1.18.tgz", { "dependencies": { "evlog": "2.18.1", "zod": "^4.4.3" } }, "sha512-o9uP1W9SyjeO0pKu/S5+pTa3wv7pJ/2svTGxVS3f9Qbw+VNbnN7a4fxVMyGNRO7zaMy8JpG7+na8WD0Dt9Z8LA=="],
 
-    "@pier/sync": ["@pier/sync@0.1.22", "https://api.buildwithharbor.com/npm/@pier/sync/-/pier-sync-0.1.22.tgz", { "dependencies": { "@pier/log": "0.1.18", "@rocicorp/zero": "^1.6.1", "@standard-schema/spec": "^1.0.0", "@tanstack/react-query": "^5.101.0", "better-auth": "1.6.11", "hono": "^4.12.23", "ky": "^2.0.2", "react": "^19.2.1", "zod": "^4.4.3" } }, "sha512-w8cNOouu7U1vjSZ9KPuBCgx1PVTH6l90vjBA8k0v9CRGHzfiCWsP96BOh+9MK9xajy5Lpcwr7rEVWpUeDLXEsQ=="],
+    "@pier/sync": ["@pier/sync@0.1.23", "https://api.buildwithharbor.com/npm/@pier/sync/-/pier-sync-0.1.23.tgz", { "dependencies": { "@pier/log": "0.1.18", "@rocicorp/zero": "^1.6.1", "@standard-schema/spec": "^1.0.0", "@tanstack/react-query": "^5.101.0", "better-auth": "1.6.11", "hono": "^4.12.23", "ky": "^2.0.2", "react": "^19.2.1", "zod": "^4.4.3" } }, "sha512-m8u2QuWEtYu9CqIloyMRk7J9X7TD2BzfqwFaM6cYLvAXNSK873ByWqN6vRuNDjibuF8X6IjYy0eC9Of7FEsoEA=="],
 
     "@pinojs/redact": ["@pinojs/redact@0.4.0", "", {}, "sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg=="],
 
