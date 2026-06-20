@@ -9,6 +9,7 @@ export default defineConfig({
   plugins: [tailwindcss(), tanstackStart(), react()],
   resolve: {
     alias: {
+      "#": fileURLToPath(new URL("../api/src", import.meta.url)),
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
