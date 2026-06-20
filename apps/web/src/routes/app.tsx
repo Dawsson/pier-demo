@@ -1,14 +1,7 @@
 import { SyncProvider } from "@pier/sync";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import {
-  accountMeQueryOptions,
-  counterQueryOptions,
-  endpointClient,
-  rpcClient,
-  syncClient,
-  syncConfig,
-} from "../api";
+import { endpointClient, rpcClient, syncClient, syncConfig } from "../api";
 import { authClient } from "../auth";
 import { hasServerSession } from "../session";
 import { contract } from "../../../api/src/contract";
@@ -21,13 +14,6 @@ export const Route = createFileRoute("/app")({
     }
   },
   component: AppRoute,
-  loader: async ({ context }) => {
-    const [counter] = await Promise.all([
-      context.queryClient.ensureQueryData(counterQueryOptions()),
-      context.queryClient.ensureQueryData(accountMeQueryOptions()),
-    ]);
-    return counter;
-  },
 });
 
 function AppRoute() {
@@ -52,11 +38,10 @@ function AppRoute() {
 }
 
 function AccountCounter() {
-  const initialCounter = Route.useLoaderData();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const counter = useQuery(counterQueryOptions());
-  const counterValue = counter.data?.value ?? initialCounter.value;
+  const counter = rpcClient.counter.get.useQuery({ staleTime: 5_000 });
+  const counterValue = counter.data?.value ?? 0;
   const me = syncClient.account.me.useQuery();
   const increment = rpcClient.counter.increment.useMutation({
     onSuccess: (nextCounter) =>

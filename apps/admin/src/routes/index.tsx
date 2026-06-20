@@ -1,6 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { adminSummaryQueryOptions } from "../api";
+import { rpcClient } from "../api";
 import { hasAdminSession } from "../session";
 
 export const Route = createFileRoute("/")({
@@ -10,11 +9,10 @@ export const Route = createFileRoute("/")({
     }
   },
   component: AdminHome,
-  loader: ({ context }) => context.queryClient.ensureQueryData(adminSummaryQueryOptions()),
 });
 
 function AdminHome() {
-  const summary = useQuery(adminSummaryQueryOptions());
+  const summary = rpcClient.admin.summary.useQuery({ staleTime: 5_000 });
   const data = summary.data;
 
   return (

@@ -1,17 +1,15 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { counterQueryOptions, endpointClient, rpcClient } from "../api";
+import { endpointClient, rpcClient } from "../api";
 
 export const Route = createFileRoute("/")({
   component: HomeRoute,
-  loader: ({ context }) => context.queryClient.ensureQueryData(counterQueryOptions()),
 });
 
 function HomeRoute() {
-  const initialCounter = Route.useLoaderData();
   const queryClient = useQueryClient();
-  const counter = useQuery(counterQueryOptions());
-  const counterValue = counter.data?.value ?? initialCounter.value;
+  const counter = rpcClient.counter.get.useQuery({ staleTime: 5_000 });
+  const counterValue = counter.data?.value ?? 0;
   const status = useQuery({
     queryFn: () => endpointClient.system.status.json(),
     queryKey: ["endpoint", endpointClient.system.status.href()],

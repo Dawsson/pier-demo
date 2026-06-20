@@ -27,7 +27,7 @@ import { endpointClient, rpcClient, syncClient } from "./api";
 ```
 
 - `syncClient.account.me.useQuery()` reads the signed-in profile from Pier Sync.
-- `rpcClient.counter.get.call()` and
+- `rpcClient.counter.get.useQuery()` and
   `rpcClient.counter.increment.useMutation()` demonstrate RPC query and
   mutation usage.
 - `endpointClient.system.status.json()` demonstrates a normal typed HTTP
