@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "check-types": "tsc -p tsconfig.json",
+    "check-types": "tsgo -p tsconfig.json",
     "dev": "vite --host 127.0.0.1"
   },
   "dependencies": {
@@ -23,7 +23,6 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.7",
-    "@types/react-dom": "^19.2.3",
-    "typescript": "7.0.1-rc"
+    "@types/react-dom": "^19.2.3"
   }
 }

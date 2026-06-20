@@ -3,13 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check-types": "tsc -p tsconfig.json"
+    "check-types": "tsgo -p tsconfig.json"
   },
   "dependencies": {
     "@pier/backend": "0.1.18"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260602.1",
-    "typescript": "7.0.1-rc"
+    "@cloudflare/workers-types": "^4.20260602.1"
   }
 }

@@ -16,7 +16,7 @@
     }
   },
   "scripts": {
-    "check-types": "tsc -p tsconfig.json",
+    "check-types": "tsgo -p tsconfig.json",
     "test": "bun test src/**/*.test.ts"
   },
   "dependencies": {
@@ -33,7 +33,6 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20260602.1",
-    "typescript": "7.0.1-rc"
+    "@cloudflare/workers-types": "^4.20260602.1"
   }
 }
