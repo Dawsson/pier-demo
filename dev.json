@@ -3,17 +3,6 @@
   "name": "pier-demo",
   "slug": "pierdemo",
   "services": ["web", "admin", "api"],
-  "serviceAliases": {
-    "admin": {
-      "url": ["PUBLIC_ADMIN_URL"]
-    },
-    "api": {
-      "url": ["PUBLIC_API_URL"]
-    },
-    "web": {
-      "url": ["PUBLIC_WEB_URL"]
-    }
-  },
   "session": {
     "name": "pierdemo",
     "selectWindow": 0,
