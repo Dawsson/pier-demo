@@ -1,14 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { useState, type FormEvent } from "react";
-import { SignUpForm } from "../components/sign-up-form";
-import { authClient } from "../lib/auth";
+import { LoginForm } from "../../components/login-form";
+import { authClient } from "../../lib/auth";
 
-export const Route = createFileRoute("/sign-up")({
-  component: SignUpRoute,
+export const Route = createFileRoute("/auth/sign-in")({
+  component: SignInRoute,
 });
 
-function SignUpRoute() {
+function SignInRoute() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,10 +17,9 @@ function SignUpRoute() {
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-    const name = email.split("@")[0]?.trim() || email;
-    const result = await authClient.signUp.email({ email, name, password });
+    const result = await authClient.signIn.email({ email, password });
     if (result.error) {
-      setError(result.error.message ?? "Sign up failed.");
+      setError(result.error.message ?? "Sign in failed.");
       return;
     }
     await navigate({ to: "/app" });
@@ -28,10 +27,10 @@ function SignUpRoute() {
 
   return (
     <main className="auth-page">
-      <Link aria-label="Close sign up" className="close-link" to="/">
+      <Link aria-label="Close sign in" className="close-link" to="/">
         <X aria-hidden size={32} strokeWidth={1.75} />
       </Link>
-      <SignUpForm
+      <LoginForm
         className="auth-card"
         email={email}
         error={error}

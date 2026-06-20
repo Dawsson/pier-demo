@@ -10,7 +10,7 @@ import { hasServerSessionCookie } from "../lib/session";
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {
     if (!(await hasServerSessionCookie())) {
-      throw redirect({ to: "/sign-in" });
+      throw redirect({ to: "/auth/sign-in" });
     }
   },
   component: AppRoute,

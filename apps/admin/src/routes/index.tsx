@@ -5,7 +5,7 @@ import { hasAdminSessionCookie } from "../lib/session";
 export const Route = createFileRoute("/")({
   beforeLoad: async () => {
     if (!(await hasAdminSessionCookie())) {
-      throw redirect({ search: {}, to: "/sign-in" });
+      throw redirect({ search: {}, to: "/auth/sign-in" });
     }
   },
   component: AdminHome,

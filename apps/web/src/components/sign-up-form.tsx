@@ -66,7 +66,7 @@ export function SignUpForm({
               </Field>
               {error ? <p className="text-destructive text-sm font-medium">{error}</p> : null}
               <FieldDescription className="text-center">
-                Have an account? <Link to="/sign-in">Sign in</Link>
+                Have an account? <Link to="/auth/sign-in">Sign in</Link>
               </FieldDescription>
             </FieldGroup>
           </form>

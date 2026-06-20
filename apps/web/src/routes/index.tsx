@@ -61,7 +61,7 @@ function HomeRoute() {
           >
             {increment.isPending ? "Adding" : "Add 1"}
           </button>
-          <Link className="text-link" to="/sign-in">
+          <Link className="text-link" to="/auth/sign-in">
             Sign in
           </Link>
         </div>

@@ -66,7 +66,7 @@ export function LoginForm({
               </Field>
               {error ? <p className="text-destructive text-sm font-medium">{error}</p> : null}
               <FieldDescription className="text-center">
-                No account? <Link to="/sign-up">Create account</Link>
+                No account? <Link to="/auth/sign-up">Create account</Link>
               </FieldDescription>
             </FieldGroup>
           </form>
