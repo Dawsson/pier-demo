@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { rpcClient } from "../lib/api";
-import { hasAdminSessionCookie } from "../lib/session";
+import { rpcClient } from "@/lib/api";
+import { hasAdminSessionCookie } from "@/lib/session";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async () => {

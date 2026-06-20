@@ -3,9 +3,9 @@ import { contract } from "@pier-demo/api/contract";
 import { schema } from "@pier-demo/api/sync-schema";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { endpointClient, rpcClient, syncClient, syncConfig } from "../lib/api";
-import { authClient } from "../lib/auth";
-import { hasServerSessionCookie } from "../lib/session";
+import { endpointClient, rpcClient, syncClient, syncConfig } from "@/lib/api";
+import { authClient } from "@/lib/auth";
+import { hasServerSessionCookie } from "@/lib/session";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {

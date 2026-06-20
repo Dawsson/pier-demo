@@ -3,6 +3,9 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ES2024"],
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "types": ["@cloudflare/workers-types", "vite/client"]
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts"]

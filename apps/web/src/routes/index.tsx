@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { endpointClient, rpcClient } from "../lib/api";
+import { endpointClient, rpcClient } from "@/lib/api";
 
 export const Route = createFileRoute("/")({
   component: HomeRoute,
