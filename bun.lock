@@ -10,7 +10,7 @@
         "@pier/core": "0.1.21",
         "@pier/db": "0.1.23",
         "@pier/log": "0.1.18",
-        "@pier/sync": "^0.1.21",
+        "@pier/sync": "0.1.22",
         "@rocicorp/zero": "1.6.2",
         "better-auth": "1.6.11",
         "drizzle-orm": "^0.45.1",
@@ -31,7 +31,7 @@
       "name": "@pier-demo/admin",
       "dependencies": {
         "@pier/backend": "0.1.18",
-        "@pier/sync": "^0.1.21",
+        "@pier/sync": "0.1.22",
         "@tanstack/react-query": "^5.95.0",
         "@tanstack/react-router": "^1.170.10",
         "@tanstack/react-start": "^1.168.18",
@@ -56,7 +56,7 @@
         "@pier/core": "0.1.21",
         "@pier/db": "0.1.23",
         "@pier/log": "0.1.18",
-        "@pier/sync": "^0.1.21",
+        "@pier/sync": "0.1.22",
         "@rocicorp/zero": "1.6.2",
         "better-auth": "1.6.11",
         "drizzle-orm": "^0.45.1",
@@ -83,7 +83,7 @@
       "dependencies": {
         "@fontsource-variable/geist": "^5.2.9",
         "@pier/backend": "0.1.18",
-        "@pier/sync": "^0.1.21",
+        "@pier/sync": "0.1.22",
         "@tanstack/react-query": "^5.95.0",
         "@tanstack/react-router": "^1.170.10",
         "@tanstack/react-start": "^1.168.18",
@@ -656,7 +656,7 @@
 
     "@pier/log": ["@pier/log@0.1.18", "https://api.buildwithharbor.com/npm/@pier/log/-/pier-log-0.1.18.tgz", { "dependencies": { "evlog": "2.18.1", "zod": "^4.4.3" } }, "sha512-o9uP1W9SyjeO0pKu/S5+pTa3wv7pJ/2svTGxVS3f9Qbw+VNbnN7a4fxVMyGNRO7zaMy8JpG7+na8WD0Dt9Z8LA=="],
 
-    "@pier/sync": ["@pier/sync@0.1.21", "https://api.buildwithharbor.com/npm/@pier/sync/-/pier-sync-0.1.21.tgz", { "dependencies": { "@pier/log": "0.1.18", "@rocicorp/zero": "^1.6.1", "@standard-schema/spec": "^1.0.0", "@tanstack/react-query": "^5.101.0", "better-auth": "1.6.11", "hono": "^4.12.23", "ky": "^2.0.2", "react": "^19.2.1", "zod": "^4.4.3" } }, "sha512-tHVxzKNZMUSY3Uyc7dxcQjhk96ZWZwK/c/zcRAHg6iUkFmBagPfSIv8Kl63X7MC/utLX678OiXmMxGLomztrXQ=="],
+    "@pier/sync": ["@pier/sync@0.1.22", "https://api.buildwithharbor.com/npm/@pier/sync/-/pier-sync-0.1.22.tgz", { "dependencies": { "@pier/log": "0.1.18", "@rocicorp/zero": "^1.6.1", "@standard-schema/spec": "^1.0.0", "@tanstack/react-query": "^5.101.0", "better-auth": "1.6.11", "hono": "^4.12.23", "ky": "^2.0.2", "react": "^19.2.1", "zod": "^4.4.3" } }, "sha512-w8cNOouu7U1vjSZ9KPuBCgx1PVTH6l90vjBA8k0v9CRGHzfiCWsP96BOh+9MK9xajy5Lpcwr7rEVWpUeDLXEsQ=="],
 
     "@pinojs/redact": ["@pinojs/redact@0.4.0", "", {}, "sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg=="],
 

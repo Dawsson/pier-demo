@@ -1,21 +1,20 @@
 import { createServerFn } from "@tanstack/react-start";
-import { serverEnv } from "../.pier/env";
+import { rpcClient } from "./api";
 
 export const hasAdminSession = createServerFn({ method: "GET" }).handler(async ({ context }) => {
   const request = (context as { readonly request?: Request }).request;
-  const cookie = request?.headers.get("cookie");
+  if (!request) {
+    return false;
+  }
+
+  const cookie = request.headers.get("cookie");
   if (!cookie) {
     return false;
   }
 
-  const response = await fetch(`${serverEnv.PUBLIC_API_URL.href}/query/admin.summary`, {
-    body: "{}",
-    headers: {
-      "content-type": "application/json",
-      cookie,
-    },
-    method: "POST",
-  }).catch(() => null);
+  const session = await rpcClient.auth.session
+    .call({}, { headers: request.headers })
+    .catch(() => null);
 
-  return Boolean(response?.ok);
+  return session?.user?.role === "admin";
 });

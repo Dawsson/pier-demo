@@ -8,6 +8,7 @@ import { forbidden } from "@pier/sync";
 import { initSync } from "@pier/sync/init";
 import { createProcedureFactory } from "@pier/sync/procedure";
 import type { EndpointOperation, OperationTree } from "@pier/sync/rpc";
+import type { ReadonlyJSONValue } from "@rocicorp/zero";
 import type { User } from "better-auth";
 import { z } from "zod";
 
@@ -63,6 +64,22 @@ export const healthOutputSchema = z.object({
   ok: z.boolean(),
   surface: z.literal("api"),
 });
+
+type JsonObject = {
+  readonly [key: string]: ReadonlyJSONValue | undefined;
+};
+
+type AuthSessionOutput = {
+  readonly session?: JsonObject | null;
+  readonly user?:
+    | (JsonObject & {
+        readonly id: string;
+        readonly role?: string | undefined;
+      })
+    | null;
+} | null;
+
+export const authSessionOutputSchema = z.custom<AuthSessionOutput>();
 
 export const agentContextOutputSchema = z.object({
   apps: z.array(
@@ -211,6 +228,18 @@ const routes = t.router({
         },
       })),
   },
+  auth: {
+    session: t.procedure
+      .input(emptyInput)
+      .output(authSessionOutputSchema)
+      .meta({
+        description: "Read the current Better Auth session through the RPC transport.",
+        tags: ["auth"],
+      })
+      .rpc.query(async ({ ctx }) =>
+        authSessionJson(await ctx.betterAuth.api.getSession({ headers: ctx.request.headers })),
+      ),
+  },
   counter: {
     get: t.procedure
       .input(emptyInput)
@@ -293,6 +322,7 @@ const implemented = routes.implement({});
 export const operationDefinitions = {
   admin: implemented.definitions.admin,
   agent: implemented.definitions.agent,
+  auth: implemented.definitions.auth,
   counter: implemented.definitions.counter,
   system: implemented.definitions.system,
   sync: {
@@ -327,6 +357,9 @@ const roleForUser = (user: User) => {
 
 const secondsUntil = (timestamp: string) =>
   String(Math.max(Math.ceil((Date.parse(timestamp) - Date.now()) / 1000), 0));
+
+const authSessionJson = (session: unknown): AuthSessionOutput =>
+  JSON.parse(JSON.stringify(session)) as AuthSessionOutput;
 
 const counterSnapshotJson = (counter: {
   readonly authenticated: boolean;

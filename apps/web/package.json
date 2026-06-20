@@ -10,7 +10,7 @@
   "dependencies": {
     "@fontsource-variable/geist": "^5.2.9",
     "@pier/backend": "0.1.18",
-    "@pier/sync": "^0.1.21",
+    "@pier/sync": "0.1.22",
     "@tanstack/react-query": "^5.95.0",
     "@tanstack/react-router": "^1.170.10",
     "@tanstack/react-start": "^1.168.18",

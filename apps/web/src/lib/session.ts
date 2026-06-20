@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { serverEnv } from "../.pier/env";
+import { rpcClient } from "./api";
 
 export const hasServerSession = createServerFn({ method: "GET" }).handler(async ({ context }) => {
   const request = (context as { readonly request?: Request }).request;
@@ -12,9 +12,9 @@ export const hasServerSession = createServerFn({ method: "GET" }).handler(async 
     return false;
   }
 
-  const response = await fetch(`${serverEnv.PUBLIC_API_URL.href}/auth/get-session`, {
-    headers: { cookie },
-  }).catch(() => null);
+  const session = await rpcClient.auth.session
+    .call({}, { headers: request.headers })
+    .catch(() => null);
 
-  return Boolean(response?.ok && (await response.json().catch(() => null)));
+  return Boolean(session?.user);
 });

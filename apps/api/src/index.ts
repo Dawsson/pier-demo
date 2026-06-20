@@ -13,7 +13,7 @@ const handler: ExportedHandler<Env> = api.worker(
       {
         createRoutes: () => operationRoutes as never,
         name: "pier-operations",
-        path: "/",
+        path: "/operations",
       },
       {
         createRoutes: () => syncRoutes as never,
