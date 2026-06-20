@@ -1,8 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { useState, type FormEvent } from "react";
-import { authClient } from "../auth";
 import { LoginForm } from "../components/login-form";
+import { authClient } from "../lib/auth";
 
 export const Route = createFileRoute("/sign-in")({
   component: SignInRoute,

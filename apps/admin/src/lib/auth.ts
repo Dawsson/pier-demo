@@ -1,6 +1,6 @@
 import { createAuthClient } from "better-auth/react";
 import { adminClient } from "better-auth/client/plugins";
-import { clientEnv, serverEnv } from "./.pier/env";
+import { clientEnv, serverEnv } from "../.pier/env";
 
 type AuthClientOptions = {
   readonly baseURL: string;

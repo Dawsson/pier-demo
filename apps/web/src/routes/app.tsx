@@ -1,11 +1,11 @@
 import { SyncProvider } from "@pier/sync";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { endpointClient, rpcClient, syncClient, syncConfig } from "../api";
-import { authClient } from "../auth";
-import { hasServerSession } from "../session";
 import { contract } from "../../../api/src/contract";
 import { schema } from "../../../api/src/sync-schema";
+import { endpointClient, rpcClient, syncClient, syncConfig } from "../lib/api";
+import { authClient } from "../lib/auth";
+import { hasServerSession } from "../lib/session";
 
 export const Route = createFileRoute("/app")({
   beforeLoad: async () => {

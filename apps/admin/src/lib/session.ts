@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { serverEnv } from "./.pier/env";
+import { serverEnv } from "../.pier/env";
 
 export const hasAdminSession = createServerFn({ method: "GET" }).handler(async ({ context }) => {
   const request = (context as { readonly request?: Request }).request;
