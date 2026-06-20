@@ -24,19 +24,24 @@ const syncAuthEndpoint: EndpointOperation<undefined, SyncAuthTokenResult> = {
   transport: "http",
 };
 
-const syncContract = t
-  .router({
-    account: {
-      me: t.procedure
-        .input(emptyInputSchema)
-        .meta({
-          description: "Read the current user's profile from the local sync replica.",
-          tags: ["account"],
-        })
-        .sync.query(({ ctx }) => zql.user.where("id", "=", ctx.user?.id ?? "").one()),
-    },
-  })
-  .implement({});
+const syncRouter = t.router({
+  account: {
+    me: t.procedure
+      .input(emptyInputSchema)
+      .meta({
+        description: "Read the current user's profile from the local sync replica.",
+        tags: ["account"],
+      })
+      .sync.query(({ ctx }) => zql.user.where("id", "=", ctx.user?.id ?? "").one()),
+  },
+});
+
+const syncContract = {
+  clientMutators: syncRouter.mutators,
+  definitions: syncRouter.definitions,
+  queries: syncRouter.queries,
+  serverMutators: {},
+};
 
 export const contract = createApiSyncContract({
   backend: contractModules,
