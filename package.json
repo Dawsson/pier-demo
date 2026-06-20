@@ -47,7 +47,7 @@
     "drizzle-kit": "^0.31.8",
     "oxfmt": "^0.53.0",
     "oxlint": "^1.68.0",
-    "typescript": "^5.9.3"
+    "typescript": "7.0.1-rc"
   },
   "overrides": {
     "@better-auth/core": "1.6.11",
