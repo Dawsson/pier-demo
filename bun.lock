@@ -30,6 +30,7 @@
     "apps/admin": {
       "name": "@pier-demo/admin",
       "dependencies": {
+        "@pier-demo/api": "workspace:*",
         "@pier/backend": "0.1.18",
         "@pier/sync": "0.1.22",
         "@tanstack/react-query": "^5.95.0",
@@ -82,6 +83,7 @@
       "name": "@pier-demo/web",
       "dependencies": {
         "@fontsource-variable/geist": "^5.2.9",
+        "@pier-demo/api": "workspace:*",
         "@pier/backend": "0.1.18",
         "@pier/sync": "0.1.22",
         "@tanstack/react-query": "^5.95.0",

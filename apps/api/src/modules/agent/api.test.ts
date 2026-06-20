@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import type { z } from "zod";
-import { agentContextOutputSchema } from "./contract";
+import { agentContextOutputSchema } from "./api";
 
 const agentContext: z.infer<typeof agentContextOutputSchema> = {
   apps: [

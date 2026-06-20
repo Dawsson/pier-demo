@@ -1,10 +1,11 @@
 import { healthStatus } from "@pier/backend";
 
 import type { Env } from "./.pier/env";
-import { api } from "./procedures";
-import { operationRoutes, syncRoutes } from "./router";
+import { api } from "./api";
+import { RateLimiterObject } from "./modules/counter/rate-limiter";
+import { operationRoutes, syncRoutes } from "./sync/routes";
 
-export { RateLimiterObject } from "./rate-limiter";
+export { RateLimiterObject };
 
 const handler: ExportedHandler<Env> = api.worker(
   {},

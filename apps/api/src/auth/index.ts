@@ -1,8 +1,8 @@
 import { createKvSecondaryStorage, createPierAuth } from "@pier/auth";
 import { admin } from "better-auth/plugins";
-import { projectTopology, type Env } from "./.pier/env";
-import type { AppDb } from "./db";
-import { schema } from "./db";
+import { projectTopology, type Env } from "../.pier/env";
+import type { AppDb } from "../db";
+import { schema } from "../db";
 
 export const createAuth = (env: Env, db: AppDb) =>
   createPierAuth({

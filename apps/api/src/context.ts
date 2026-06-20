@@ -1,4 +1,3 @@
-import { createApi } from "./.pier/api";
 import type { Env } from "./.pier/env";
 import { createAuth } from "./auth";
 import { createDb } from "./db";
@@ -24,5 +23,3 @@ export const createApiContext = async (env: Env) => {
 };
 
 export type ApiContext = Awaited<ReturnType<typeof createApiContext>>;
-
-export const api = createApi().context<ApiContext>(({ env }) => createApiContext(env));

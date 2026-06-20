@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
-import type { AppDb } from "./db";
-import { counter, counterIncrement } from "./db/schema";
+import type { AppDb } from "../../db";
+import { counter, counterIncrement } from "../../db/schema";
 
 const counterId = "global";
 const counterKey = `counter:${counterId}`;

@@ -8,6 +8,7 @@
     "dev": "vite --host 127.0.0.1"
   },
   "dependencies": {
+    "@pier-demo/api": "workspace:*",
     "@pier/backend": "0.1.18",
     "@pier/sync": "0.1.22",
     "@tanstack/react-query": "^5.95.0",

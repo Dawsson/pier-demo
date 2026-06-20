@@ -2,6 +2,16 @@
   "name": "@pier-demo/api",
   "private": true,
   "type": "module",
+  "exports": {
+    "./contract": {
+      "types": "./src/sync/contract.ts",
+      "import": "./src/sync/contract.ts"
+    },
+    "./sync-schema": {
+      "types": "./src/sync/schema.ts",
+      "import": "./src/sync/schema.ts"
+    }
+  },
   "scripts": {
     "check-types": "tsc -p tsconfig.json",
     "test": "bun test src/**/*.test.ts"

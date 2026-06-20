@@ -1,6 +1,6 @@
 import { createApiClients } from "@pier/sync/client";
+import { contract } from "@pier-demo/api/contract";
 
-import { contract } from "../../../api/src/contract";
 import { clientEnv, serverEnv } from "../.pier/env";
 
 const apiUrl = () =>
