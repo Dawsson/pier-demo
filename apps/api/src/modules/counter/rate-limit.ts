@@ -1,25 +1,22 @@
 import type { Env } from "#/.pier/env";
 
-export interface RateLimitDecision {
-  readonly allowed: boolean;
-  readonly remaining: number;
-  readonly resetAt: string;
-}
+const counterLimit = 20;
+const counterWindowSeconds = 60;
 
-interface RateLimitBinding {
-  limit(input: { readonly key: string }): Promise<{ readonly success: boolean }>;
-}
-
-export const checkRateLimit = async (
+export const enforceCounterRateLimit = async (
   env: Env,
   input: { readonly identity: string; readonly operation: string },
-): Promise<RateLimitDecision> => {
+): Promise<void> => {
   const key = `${input.operation}:${input.identity}`;
-  const { success } = await (env.RATE_LIMITER as unknown as RateLimitBinding).limit({ key });
+  const { success } = await env.RATE_LIMITER.limit({ key });
 
-  return {
-    allowed: success,
-    remaining: success ? 19 : 0,
-    resetAt: new Date(Date.now() + 60_000).toISOString(),
-  };
+  if (!success) {
+    throw new Response("Too many counter increments.", {
+      headers: {
+        "RateLimit-Limit": String(counterLimit),
+        "RateLimit-Policy": `${counterLimit};w=${counterWindowSeconds}`,
+      },
+      status: 429,
+    });
+  }
 };

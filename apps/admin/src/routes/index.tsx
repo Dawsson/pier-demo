@@ -24,8 +24,8 @@ function AdminHome() {
 
         <div className="stats-grid">
           <div>
-            <span>Multiplier</span>
-            <strong>{data?.counter.multiplier ?? 5}x</strong>
+            <span>Step</span>
+            <strong>+{data?.counter.step ?? 5}</strong>
           </div>
           <div>
             <span>Recent increments</span>

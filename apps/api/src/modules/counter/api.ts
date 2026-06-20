@@ -1,15 +1,12 @@
 import { z } from "zod";
 
 import { emptyInput, type DemoSyncBuilder } from "#/sync/definition";
-import { checkRateLimit } from "./rate-limit";
+import { enforceCounterRateLimit } from "./rate-limit";
 import { incrementCounter, readCounter, type CounterSnapshot } from "./service";
-
-const counterLimit = 20;
-const counterWindowSeconds = 60;
 
 export const counterOutputSchema = z.object({
   authenticated: z.boolean(),
-  multiplier: z.number(),
+  step: z.number(),
   updatedAt: z.string(),
   value: z.number(),
 });
@@ -27,7 +24,7 @@ export const createCounterApi = (t: DemoSyncBuilder) => ({
       tags: ["counter"],
     })
     .rpc.query(async ({ ctx }) =>
-      counterSnapshotJson(await readCounter(ctx.env.CACHE, { authenticated: Boolean(ctx.user) })),
+      counterSnapshotJson(await readCounter(ctx.db, { authenticated: Boolean(ctx.user) })),
     ),
   increment: t.procedure
     .input(emptyInput)
@@ -38,24 +35,12 @@ export const createCounterApi = (t: DemoSyncBuilder) => ({
     })
     .rpc.mutation(async ({ ctx, request }) => {
       const identity = clientIdentity(request, ctx.user?.id);
-      const rateLimit = await checkRateLimit(ctx.env, {
+      await enforceCounterRateLimit(ctx.env, {
         identity,
         operation: "counter.increment",
       });
 
-      if (!rateLimit.allowed) {
-        throw new Response("Too many counter increments.", {
-          headers: {
-            "RateLimit-Limit": String(counterLimit),
-            "RateLimit-Policy": `${counterLimit};w=${counterWindowSeconds}`,
-            "RateLimit-Remaining": String(rateLimit.remaining),
-            "RateLimit-Reset": secondsUntil(rateLimit.resetAt),
-          },
-          status: 429,
-        });
-      }
-
-      const counter = await incrementCounter(ctx.env.CACHE, ctx.db, {
+      const counter = await incrementCounter(ctx.db, {
         authenticated: Boolean(ctx.user),
         identity,
         ...(ctx.user?.id ? { userId: ctx.user.id } : {}),
@@ -70,7 +55,7 @@ export const createCounterApi = (t: DemoSyncBuilder) => ({
 
 export const counterSnapshotJson = (counter: CounterSnapshot) => ({
   authenticated: counter.authenticated,
-  multiplier: counter.multiplier,
+  step: counter.step,
   updatedAt: counter.updatedAt,
   value: counter.value,
 });
@@ -87,6 +72,3 @@ const clientIdentity = (request: Request, userId: string | undefined) => {
     "local"
   }`;
 };
-
-const secondsUntil = (timestamp: string) =>
-  String(Math.max(Math.ceil((Date.parse(timestamp) - Date.now()) / 1000), 0));
