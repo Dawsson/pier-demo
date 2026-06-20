@@ -89,7 +89,7 @@ export const agentContextOutputSchema = z.object({
 type DemoSyncClientAccess = Record<string, never>;
 const t = initSync<typeof schema>().context<DemoSyncContext>().create();
 const endpointProcedure = createProcedureFactory<DemoSyncContext>().procedure;
-const emptyInput = z.object({});
+const emptyInput = z.object({}).optional();
 const counterLimit = 20;
 const counterWindowSeconds = 60;
 

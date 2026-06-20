@@ -6,7 +6,7 @@ export default defineConfig({
   envPrefix: ["PUBLIC_", "VITE_"],
   plugins: [tanstackStart(), react()],
   server: {
-    allowedHosts: ["pierdemo-admin.dev.dawson.gg"],
+    allowedHosts: ["admin.pierdemo.dev.dawson.gg"],
     port: Number(process.env.DEV_ADMIN_PORT ?? 5174),
   },
 });
