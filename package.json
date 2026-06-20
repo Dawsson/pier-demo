@@ -30,7 +30,7 @@
   "dependencies": {
     "@pier/auth": "0.1.18",
     "@pier/backend": "0.1.18",
-    "@pier/core": "0.1.21",
+    "@pier/core": "0.1.24",
     "@pier/db": "0.1.23",
     "@pier/log": "0.1.18",
     "@pier/sync": "0.1.22",
@@ -41,7 +41,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
-    "@buildwithharbor/pier": "0.1.16",
+    "@buildwithharbor/pier": "0.1.17",
     "@cloudflare/workers-types": "^4.20260602.1",
     "@types/bun": "^1.3.14",
     "@typescript/native-preview": "7.0.0-dev.20260620.1",
@@ -52,7 +52,7 @@
   "overrides": {
     "@better-auth/core": "1.6.11",
     "@better-auth/utils": "0.4.0",
-    "@pier/core": "0.1.21",
+    "@pier/core": "0.1.24",
     "kysely": "0.28.17"
   },
   "packageManager": "bun@1.3.12"

@@ -1,16 +1,6 @@
 import { app, appSlot, binding, deploy, logging, permissions, roles, variable } from "@pier/core";
 import { z } from "zod";
 
-const rateLimitBinding = (
-  namespaceId: string,
-  simple: { readonly limit: number; readonly mitigationTimeout?: number; readonly period: number },
-) =>
-  ({
-    kind: "rateLimit",
-    simple,
-    target: namespaceId,
-  }) as never;
-
 const permissionCatalog = permissions({
   account: ["read", "manage"],
   project: ["read", "manage"],
@@ -62,7 +52,7 @@ export default app({
     CACHE: binding.kv(),
     DB: binding.postgres("shared"),
     INTERNAL: binding.worker("internal"),
-    RATE_LIMITER: rateLimitBinding("pier-demo-counter", {
+    RATE_LIMITER: binding.rateLimit("pier-demo-counter", {
       limit: 20,
       mitigationTimeout: 60,
       period: 60,

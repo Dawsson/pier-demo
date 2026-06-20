@@ -7,7 +7,7 @@
       "dependencies": {
         "@pier/auth": "0.1.18",
         "@pier/backend": "0.1.18",
-        "@pier/core": "0.1.21",
+        "@pier/core": "0.1.24",
         "@pier/db": "0.1.23",
         "@pier/log": "0.1.18",
         "@pier/sync": "0.1.22",
@@ -18,7 +18,7 @@
         "zod": "^4.1.13",
       },
       "devDependencies": {
-        "@buildwithharbor/pier": "0.1.16",
+        "@buildwithharbor/pier": "0.1.17",
         "@cloudflare/workers-types": "^4.20260602.1",
         "@types/bun": "^1.3.14",
         "@typescript/native-preview": "7.0.0-dev.20260620.1",
@@ -112,7 +112,7 @@
   "overrides": {
     "@better-auth/core": "1.6.11",
     "@better-auth/utils": "0.4.0",
-    "@pier/core": "0.1.21",
+    "@pier/core": "0.1.24",
     "kysely": "0.28.17",
   },
   "packages": {
@@ -196,7 +196,7 @@
 
     "@better-fetch/fetch": ["@better-fetch/fetch@1.1.21", "", {}, "sha512-/ImESw0sskqlVR94jB+5+Pxjf+xBwDZF/N5+y2/q4EqD7IARUTSpPfIo8uf39SYpCxyOCtbyYpUrZ3F/k0zT4A=="],
 
-    "@buildwithharbor/pier": ["@buildwithharbor/pier@0.1.16", "https://api.buildwithharbor.com/npm/@buildwithharbor/pier/-/buildwithharbor-pier-0.1.16.tgz", { "dependencies": { "cloudflare": "6.4.0", "esbuild": "0.28.0", "miniflare": "4.20260603.0", "wrangler": "4.98.0" }, "bin": { "pier": "dist/index.js" } }, "sha512-CkqdOUEefH11lP8DT1jO0Ag+Wm1SGe5khiyezpJxdfbu3b7wgMHoOBPqShgE1cubonfxFUrN4S5a3C0cO2Kobw=="],
+    "@buildwithharbor/pier": ["@buildwithharbor/pier@0.1.17", "https://api.buildwithharbor.com/npm/@buildwithharbor/pier/-/buildwithharbor-pier-0.1.17.tgz", { "dependencies": { "cloudflare": "6.4.0", "esbuild": "0.28.0", "miniflare": "4.20260603.0", "wrangler": "4.98.0" }, "bin": { "pier": "dist/index.js" } }, "sha512-pAG/zZwXyPs5yHqUDXjyLay1vgmKEvtFhKoGNtsKSQNSGtBzmg/TPmOMLLeQf8JYJsYOkkQJwc5Ivrq40zu/3w=="],
 
     "@cloudflare/kv-asset-handler": ["@cloudflare/kv-asset-handler@0.5.0", "", {}, "sha512-jxQYkj8dSIzc0cD6cMMNdOc1UVjqSqu8BZdor5s8cGjW2I8BjODt/kWPVdY+u9zj3ms75Q5qaZgnxUad83+eAg=="],
 
@@ -648,7 +648,7 @@
 
     "@pier/backend": ["@pier/backend@0.1.18", "https://api.buildwithharbor.com/npm/@pier/backend/-/pier-backend-0.1.18.tgz", { "dependencies": { "@pier/auth": "0.1.18", "@pier/core": "0.1.18", "@pier/log": "0.1.18", "@scalar/hono-api-reference": "^0.10.20", "@tanstack/query-core": "^5.101.0", "capnweb": "^0.8.0", "evlog": "2.18.1", "hono": "^4.12.23", "zod": "^4.4.3" } }, "sha512-lnQIBOORHNc/nv9iBYALHnekYpz3BHPlZ14Vfhgbz6K8Qs3I4fjagbUZwFJqfS5VRe9+PjuRWndNk9PXpIcRnw=="],
 
-    "@pier/core": ["@pier/core@0.1.21", "https://api.buildwithharbor.com/npm/@pier/core/-/pier-core-0.1.21.tgz", { "dependencies": { "zod": "^4.4.3" } }, "sha512-fLF5rfuBsxY7M3VkjIa/TE7JVEmwOMFTKsY4f4nkDNlL+WMHiOgmNF8QWcCcbqjM+t+pPE5OojyXpdsAC6AjHg=="],
+    "@pier/core": ["@pier/core@0.1.24", "https://api.buildwithharbor.com/npm/@pier/core/-/pier-core-0.1.24.tgz", { "dependencies": { "@cloudflare/workers-types": "^4.20260602.1", "zod": "^4.4.3" } }, "sha512-2ThPmfTcQgosjDVxISxbVzaj7G3di0ceMZ9ozsOJ5ZUMvMm8JqHkYQuu7Bcnf4clUOb7Fe19gxjfAYCKV4sMcA=="],
 
     "@pier/db": ["@pier/db@0.1.23", "https://api.buildwithharbor.com/npm/@pier/db/-/pier-db-0.1.23.tgz", { "dependencies": { "@electric-sql/pglite": "^0.5.1", "drizzle-orm": "^0.45.1", "postgres": "^3.4.9" } }, "sha512-zCZ2qETwIeO77GBXwP8dh73hr5cRd+n4fzmZnbI4OrvNG2ruCcqzDaGAYlmXFpo/YJ9aIwj0K83TeIED4WhN3Q=="],
 
