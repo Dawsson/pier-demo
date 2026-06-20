@@ -5,21 +5,12 @@
   "imports": {
     "#/*": "./src/*"
   },
-  "exports": {
-    "./contract": {
-      "types": "./src/sync/contract.ts",
-      "import": "./src/sync/contract.ts"
-    },
-    "./sync-schema": {
-      "types": "./src/sync/schema.ts",
-      "import": "./src/sync/schema.ts"
-    }
-  },
   "scripts": {
     "check-types": "tsgo -p tsconfig.json",
     "test": "bun test src/**/*.test.ts"
   },
   "dependencies": {
+    "@pier-demo/api-contract": "workspace:*",
     "@pier/auth": "0.1.18",
     "@pier/backend": "0.1.19",
     "@pier/core": "0.1.21",

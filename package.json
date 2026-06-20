@@ -3,7 +3,8 @@
   "private": true,
   "description": "Example app showing the ideal Pier project shape with TanStack Start, Cloudflare Workers, Better Auth, Postgres, and typed API contracts.",
   "workspaces": [
-    "apps/*"
+    "apps/*",
+    "packages/*"
   ],
   "type": "module",
   "scripts": {

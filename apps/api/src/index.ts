@@ -3,10 +3,10 @@ import { healthStatus } from "@pier/backend";
 import type { Env } from "./.pier/env";
 import { api } from "./api";
 import { routes } from "./routes";
-import { apiSyncFeature } from "./sync/routes";
+import { syncFeature } from "./sync/feature";
 
 const handler: ExportedHandler<Env> = api.worker(routes, {
-  features: [apiSyncFeature],
+  features: [syncFeature],
   health: (env) =>
     healthStatus({
       app: env.PUBLIC_APP_NAME,

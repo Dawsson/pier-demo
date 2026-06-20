@@ -1,6 +1,6 @@
 import { SyncProvider } from "@pier/sync";
-import { contract } from "@pier-demo/api/contract";
-import { schema } from "@pier-demo/api/sync-schema";
+import { contract } from "@pier-demo/api-contract";
+import { schema } from "@pier-demo/api-contract/sync-schema";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { endpointClient, rpcClient, syncClient, syncConfig } from "@/lib/api";

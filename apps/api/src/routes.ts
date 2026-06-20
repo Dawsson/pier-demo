@@ -1,10 +1,13 @@
 import { healthStatus, PierApiError } from "@pier/backend";
+import { counterOutputSchema } from "@pier-demo/api-contract";
 import type { User } from "better-auth";
+import type { z } from "zod";
 
 import { os, type ApiContext } from "./api";
-import { counterSnapshotJson } from "./modules/counter/api";
 import { enforceCounterRateLimit } from "./modules/counter/rate-limit";
 import { incrementCounter, readCounter, recentIncrements } from "./modules/counter/service";
+
+type CounterSnapshotJson = z.infer<typeof counterOutputSchema>;
 
 export const routes = os.router({
   admin: {
@@ -157,3 +160,15 @@ const clientIdentity = (request: Request, userId: string | undefined) => {
     "local"
   }`;
 };
+
+const counterSnapshotJson = (counter: {
+  readonly authenticated: boolean;
+  readonly step: number;
+  readonly updatedAt: string;
+  readonly value: number;
+}): CounterSnapshotJson => ({
+  authenticated: counter.authenticated,
+  step: counter.step,
+  updatedAt: counter.updatedAt,
+  value: counter.value,
+});

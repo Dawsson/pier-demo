@@ -1,17 +1,17 @@
 import type { SyncAuthTokenResult, SyncContext } from "@pier/sync/auth";
+import { initSync } from "@pier/sync/init";
 import { createApiSyncContract } from "@pier/sync/operation-contract";
 import { createProcedureFactory } from "@pier/sync/procedure";
 import type { EndpointOperation } from "@pier/sync/rpc";
 
-import { createAccountApi } from "#/modules/account/api";
-import { contractModules } from "#/contract";
-import type { DemoSyncContext } from "./context";
-import { createDemoSyncBuilder } from "./definition";
+import { contractModules } from "./backend";
+import { emptyInputSchema } from "./schemas";
+import { schema, zql } from "./sync-schema";
 
 type DemoSyncClientAccess = Record<string, never>;
 
-const t = createDemoSyncBuilder();
-const endpointProcedure = createProcedureFactory<DemoSyncContext>().procedure;
+const t = initSync<typeof schema>().context<SyncContext>().create();
+const endpointProcedure = createProcedureFactory<SyncContext>().procedure;
 
 const syncAuthEndpoint: EndpointOperation<undefined, SyncAuthTokenResult> = {
   kind: "endpoint",
@@ -24,11 +24,19 @@ const syncAuthEndpoint: EndpointOperation<undefined, SyncAuthTokenResult> = {
   transport: "http",
 };
 
-const routes = t.router({
-  account: createAccountApi(t),
-});
-
-const implemented = routes.implement({});
+const syncContract = t
+  .router({
+    account: {
+      me: t.procedure
+        .input(emptyInputSchema)
+        .meta({
+          description: "Read the current user's profile from the local sync replica.",
+          tags: ["account"],
+        })
+        .sync.query(({ ctx }) => zql.user.where("id", "=", ctx.user?.id ?? "").one()),
+    },
+  })
+  .implement({});
 
 export const contract = createApiSyncContract({
   backend: contractModules,
@@ -45,7 +53,15 @@ export const contract = createApiSyncContract({
       auth: syncAuthEndpoint,
     },
   },
-  sync: implemented,
+  sync: syncContract,
 });
 
 export type ApiContract = typeof contract;
+export {
+  adminSummaryOutputSchema,
+  agentContextOutputSchema,
+  counterOutputSchema,
+  emptyInputSchema,
+  healthOutputSchema,
+  incrementOutputSchema,
+} from "./schemas";

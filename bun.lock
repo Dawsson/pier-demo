@@ -30,7 +30,7 @@
     "apps/admin": {
       "name": "@pier-demo/admin",
       "dependencies": {
-        "@pier-demo/api": "workspace:*",
+        "@pier-demo/api-contract": "workspace:*",
         "@pier/backend": "0.1.19",
         "@pier/sync": "0.1.23",
         "@tanstack/react-query": "^5.95.0",
@@ -51,6 +51,7 @@
     "apps/api": {
       "name": "@pier-demo/api",
       "dependencies": {
+        "@pier-demo/api-contract": "workspace:*",
         "@pier/auth": "0.1.18",
         "@pier/backend": "0.1.19",
         "@pier/core": "0.1.21",
@@ -80,7 +81,7 @@
       "name": "@pier-demo/web",
       "dependencies": {
         "@fontsource-variable/geist": "^5.2.9",
-        "@pier-demo/api": "workspace:*",
+        "@pier-demo/api-contract": "workspace:*",
         "@pier/backend": "0.1.19",
         "@pier/sync": "0.1.23",
         "@tanstack/react-query": "^5.95.0",
@@ -106,6 +107,15 @@
         "@types/react-dom": "^19.2.3",
         "tailwindcss": "^4.3.0",
         "tw-animate-css": "^1.4.0",
+      },
+    },
+    "packages/api-contract": {
+      "name": "@pier-demo/api-contract",
+      "dependencies": {
+        "@pier/backend": "0.1.19",
+        "@pier/sync": "0.1.23",
+        "@rocicorp/zero": "1.6.2",
+        "zod": "^4.1.13",
       },
     },
   },
@@ -639,6 +649,8 @@
     "@pier-demo/admin": ["@pier-demo/admin@workspace:apps/admin"],
 
     "@pier-demo/api": ["@pier-demo/api@workspace:apps/api"],
+
+    "@pier-demo/api-contract": ["@pier-demo/api-contract@workspace:packages/api-contract"],
 
     "@pier-demo/internal": ["@pier-demo/internal@workspace:apps/internal"],
 
