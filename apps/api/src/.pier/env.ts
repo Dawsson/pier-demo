@@ -4,6 +4,16 @@ import { app, appSlot, parseAppEnv, binding, variable, type PierUrl } from "@pie
 
 export type PierEnvironment = "dev" | "preview" | "staging" | "prod";
 
+interface RateLimitBinding {
+  limit(input: { readonly key: string }): Promise<{ readonly success: boolean }>;
+}
+
+const rateLimitBinding = (target: string) =>
+  ({
+    kind: "rateLimit",
+    target,
+  }) as never;
+
 const config = app({
   apps: {
     "api": appSlot.apiWorker("apps/api/src/index.ts", {"bindings":["CACHE","DB","INTERNAL","RATE_LIMITER"],"domain":"api.pier-demo.buildwithharbor.com","vars":["ADMIN_URL","API_URL","BETTER_AUTH_SECRET","PUBLIC_ADMIN_URL","PUBLIC_API_URL","PUBLIC_APP_NAME","PUBLIC_WEB_URL","WEB_URL"]}),
@@ -12,7 +22,7 @@ const config = app({
     "CACHE": binding.kv(),
     "DB": binding.postgres("shared"),
     "INTERNAL": binding.service("internal"),
-    "RATE_LIMITER": binding.durableObject("RateLimiterObject")
+    "RATE_LIMITER": rateLimitBinding("pier-demo-counter")
   },
   name: "pier-demo",
   vars: {
@@ -44,7 +54,7 @@ export interface ServerEnv {
   readonly CACHE: KVNamespace;
   readonly DB: { readonly connectionString: string };
   readonly INTERNAL: Fetcher;
-  readonly RATE_LIMITER: DurableObjectNamespace;
+  readonly RATE_LIMITER: RateLimitBinding;
 }
 
 export interface ClientEnv {

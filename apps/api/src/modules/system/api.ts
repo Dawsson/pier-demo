@@ -34,7 +34,7 @@ export const createSystemApi = (t: DemoSyncBuilder) => ({
             auth: { detail: "Better Auth context initialized", ok: Boolean(ctx.betterAuth) },
             db: { detail: "Postgres binding initialized", ok: Boolean(ctx.env.DB) },
             rateLimiter: {
-              detail: "Durable Object binding initialized",
+              detail: "Rate limit binding initialized",
               ok: Boolean(ctx.env.RATE_LIMITER),
             },
           },
