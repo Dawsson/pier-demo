@@ -4,6 +4,7 @@
     "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ES2024"],
     "paths": {
+      "#/*": ["../api/src/*"],
       "@/*": ["./src/*"]
     },
     "types": ["@cloudflare/workers-types", "vite/client"]

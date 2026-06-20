@@ -3,9 +3,9 @@ import { requireAuthenticatedSyncContext } from "@pier/sync/auth";
 import type { User } from "better-auth";
 import { z } from "zod";
 
-import { counterOutputSchema, counterSnapshotJson } from "../counter/api";
-import { readCounter, recentIncrements } from "../counter/service";
-import { emptyInput, type DemoSyncBuilder } from "../../sync/definition";
+import { counterOutputSchema, counterSnapshotJson } from "#/modules/counter/api";
+import { readCounter, recentIncrements } from "#/modules/counter/service";
+import { emptyInput, type DemoSyncBuilder } from "#/sync/definition";
 
 export const adminSummaryOutputSchema = z.object({
   counter: counterOutputSchema,

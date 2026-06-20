@@ -2,7 +2,7 @@ import { createOperationRoutes } from "@pier/sync/rpc";
 import { createSyncRoutes } from "@pier/sync/server";
 import { zeroDrizzle } from "@rocicorp/zero/server/adapters/drizzle";
 
-import type { Env } from "../.pier/env";
+import type { Env } from "#/.pier/env";
 import { contract, operationDefinitions } from "./contract";
 import { createDemoSyncContext, type DemoSyncContext } from "./context";
 import { schema } from "./schema";

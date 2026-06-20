@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { emptyInput, type DemoSyncBuilder } from "../../sync/definition";
+import { emptyInput, type DemoSyncBuilder } from "#/sync/definition";
 import { checkRateLimit } from "./rate-limit";
 import { incrementCounter, readCounter, type CounterSnapshot } from "./service";
 

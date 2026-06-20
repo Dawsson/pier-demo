@@ -2,11 +2,11 @@ import type { SyncAuthTokenResult, SyncContext } from "@pier/sync/auth";
 import { createProcedureFactory } from "@pier/sync/procedure";
 import type { EndpointOperation, OperationTree } from "@pier/sync/rpc";
 
-import { createAccountApi } from "../modules/account/api";
-import { createAdminApi } from "../modules/admin/api";
-import { createAgentApi } from "../modules/agent/api";
-import { createCounterApi } from "../modules/counter/api";
-import { createSystemApi } from "../modules/system/api";
+import { createAccountApi } from "#/modules/account/api";
+import { createAdminApi } from "#/modules/admin/api";
+import { createAgentApi } from "#/modules/agent/api";
+import { createCounterApi } from "#/modules/counter/api";
+import { createSystemApi } from "#/modules/system/api";
 import type { DemoSyncContext } from "./context";
 import { createDemoSyncBuilder } from "./definition";
 

@@ -1,11 +1,11 @@
 import type { SyncContext } from "@pier/sync/auth";
 import type { Context as HonoContext } from "hono";
 
-import type { Env } from "../.pier/env";
-import { parseServerEnv } from "../.pier/env";
-import type { AppAuth } from "../auth";
-import type { AppDb } from "../db";
-import { createApiContext } from "../context";
+import type { Env } from "#/.pier/env";
+import { parseServerEnv } from "#/.pier/env";
+import type { AppAuth } from "#/auth";
+import { createApiContext } from "#/context";
+import type { AppDb } from "#/db";
 
 export type DemoSyncContext = SyncContext & {
   readonly betterAuth: AppAuth;
@@ -20,6 +20,7 @@ export const createDemoSyncContext = async (
 ): Promise<DemoSyncContext> => {
   const env = parseServerEnv(context.env);
   const baseContext = await createApiContext(env);
+
   const session = await baseContext.auth.api
     .getSession({ headers: request.headers })
     .catch(() => null);

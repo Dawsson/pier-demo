@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { emptyInput, type DemoSyncBuilder } from "../../sync/definition";
+import { emptyInput, type DemoSyncBuilder } from "#/sync/definition";
 
 export const agentContextOutputSchema = z.object({
   apps: z.array(

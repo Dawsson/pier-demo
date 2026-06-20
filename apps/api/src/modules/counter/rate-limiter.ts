@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { PierObject } from "@pier/backend";
-import type { Env } from "../../.pier/env";
+import type { Env } from "#/.pier/env";
 
 const limitInputSchema = z.object({
   key: z.string().min(1),

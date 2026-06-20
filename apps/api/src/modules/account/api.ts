@@ -1,5 +1,5 @@
-import { emptyInput, type DemoSyncBuilder } from "../../sync/definition";
-import { zql } from "../../sync/schema";
+import { emptyInput, type DemoSyncBuilder } from "#/sync/definition";
+import { zql } from "#/sync/schema";
 
 export const createAccountApi = (t: DemoSyncBuilder) => ({
   me: t.procedure

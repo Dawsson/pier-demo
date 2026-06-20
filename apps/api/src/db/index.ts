@@ -1,5 +1,5 @@
 import { createPierPostgresDb } from "@pier/db";
-import type { Env } from "../.pier/env";
+import type { Env } from "#/.pier/env";
 import * as schema from "./schema";
 
 export const createDb = (env: Env) => {

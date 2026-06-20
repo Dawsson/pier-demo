@@ -2,6 +2,9 @@
   "name": "@pier-demo/api",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
     "./contract": {
       "types": "./src/sync/contract.ts",

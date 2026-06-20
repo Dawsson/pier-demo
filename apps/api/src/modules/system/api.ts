@@ -1,7 +1,7 @@
 import { healthStatus } from "@pier/backend";
 import { z } from "zod";
 
-import { emptyInput, type DemoSyncBuilder } from "../../sync/definition";
+import { emptyInput, type DemoSyncBuilder } from "#/sync/definition";
 
 export const healthOutputSchema = z.object({
   app: z.string(),
