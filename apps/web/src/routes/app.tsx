@@ -40,13 +40,10 @@ function AppRoute() {
 function AccountCounter() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const counter = rpcClient.counter.get.useQuery({ staleTime: 5_000 });
+  const counter = syncClient.counter.current.useQuery();
   const counterValue = counter.data?.value ?? 0;
   const me = syncClient.account.me.useQuery();
-  const increment = rpcClient.counter.increment.useMutation({
-    onSuccess: (nextCounter) =>
-      queryClient.setQueryData(rpcClient.counter.get.queryKey(), nextCounter),
-  });
+  const increment = rpcClient.counter.increment.useMutation();
 
   const signOut = async () => {
     await authClient.signOut();
@@ -80,6 +77,10 @@ function AccountCounter() {
         <div className="counter-meta">
           <span>Step</span>
           <strong>+5</strong>
+        </div>
+        <div className="counter-meta">
+          <span>Source</span>
+          <strong>Sync</strong>
         </div>
 
         <div className="actions primary-actions">

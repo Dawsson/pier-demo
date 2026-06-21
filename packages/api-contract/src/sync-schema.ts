@@ -1,4 +1,12 @@
-import { boolean, createBuilder, createSchema, string, table } from "@rocicorp/zero";
+import { boolean, createBuilder, createSchema, number, string, table } from "@rocicorp/zero";
+
+export const counterStateTable = table("counter_state")
+  .columns({
+    id: string(),
+    updatedAt: string().from("updated_at"),
+    value: number(),
+  })
+  .primaryKey("id");
 
 export const userTable = table("user")
   .columns({
@@ -12,7 +20,7 @@ export const userTable = table("user")
   .primaryKey("id");
 
 export const schema = createSchema({
-  tables: [userTable],
+  tables: [counterStateTable, userTable],
 });
 
 export const zql = createBuilder(schema);

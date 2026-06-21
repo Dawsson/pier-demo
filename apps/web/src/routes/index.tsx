@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { endpointClient, rpcClient } from "@/lib/api";
 
@@ -7,66 +7,52 @@ export const Route = createFileRoute("/")({
 });
 
 function HomeRoute() {
-  const queryClient = useQueryClient();
-  const counter = rpcClient.counter.get.useQuery({ staleTime: 5_000 });
-  const counterValue = counter.data?.value ?? 0;
   const status = useQuery({
     queryFn: () => endpointClient.system.status.json(),
     queryKey: ["endpoint", endpointClient.system.status.href()],
-    staleTime: 30_000,
   });
-  const increment = rpcClient.counter.increment.useMutation({
-    onSuccess: (nextCounter) =>
-      queryClient.setQueryData(rpcClient.counter.get.queryKey(), nextCounter),
-  });
+  const agentContext = rpcClient.agent.context.useQuery({ staleTime: 30_000 });
 
   return (
     <main className="shell">
       <section className="counter-panel" aria-labelledby="counter-title">
         <div className="counter-header">
           <div>
-            <p className="section-label">Counter</p>
-            <h1 id="counter-title">Count</h1>
+            <p className="section-label">API demo</p>
+            <h1 id="counter-title">Pier Demo</h1>
           </div>
           <nav aria-label="Counter mode" className="mode-switch">
             <span aria-current="page" className="mode-option is-active">
-              Public
+              API
             </span>
             <Link className="mode-option" to="/app">
-              Account
+              Counter
             </Link>
           </nav>
         </div>
 
         <div className="counter-display" aria-live="polite">
-          <span className="counter-value">{counterValue}</span>
-          <span className="counter-caption">Current value</span>
+          <span className="counter-value">{agentContext.data?.apps.length ?? 0}</span>
+          <span className="counter-caption">Apps reported by RPC</span>
         </div>
 
-        <div className="counter-meta">
-          <span>Step</span>
-          <strong>+1</strong>
-        </div>
         <div className="counter-meta">
           <span>Endpoint</span>
           <strong>{status.data?.ok ? "Healthy" : "Checking"}</strong>
         </div>
+        <div className="counter-meta">
+          <span>RPC</span>
+          <strong>{agentContext.data?.project.template ?? "Loading"}</strong>
+        </div>
 
         <div className="actions primary-actions">
-          <button
-            className="primary-button"
-            disabled={increment.isPending}
-            type="button"
-            onClick={() => increment.mutate({})}
-          >
-            {increment.isPending ? "Adding" : "Add 1"}
-          </button>
+          <Link className="primary-button" to="/app">
+            Open counter
+          </Link>
           <Link className="text-link" to="/auth/sign-in">
             Sign in
           </Link>
         </div>
-
-        {increment.error ? <p className="error">{String(increment.error)}</p> : null}
       </section>
     </main>
   );

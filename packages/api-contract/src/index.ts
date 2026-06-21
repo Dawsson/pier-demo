@@ -34,6 +34,15 @@ const syncRouter = t.router({
       })
       .sync.query(({ ctx }) => zql.user.where("id", "=", ctx.user?.id ?? "").one()),
   },
+  counter: {
+    current: t.procedure
+      .input(emptyInputSchema)
+      .meta({
+        description: "Read the public demo counter from the local sync replica.",
+        tags: ["counter"],
+      })
+      .sync.query(() => zql.counter_state.where("id", "=", "global").one()),
+  },
 });
 
 const syncContract = {

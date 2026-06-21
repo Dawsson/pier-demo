@@ -10,7 +10,7 @@ type CounterSnapshotJson = z.infer<typeof counterOutputSchema>;
 export const counterRoutes = {
   get: os.counter.get.query(async ({ ctx }) =>
     counterSnapshotJson(
-      await readCounter(ctx.env.CACHE, { authenticated: Boolean(await currentSessionUser(ctx)) }),
+      await readCounter(ctx.db, { authenticated: Boolean(await currentSessionUser(ctx)) }),
     ),
   ),
   increment: os.counter.increment.mutation(async ({ ctx }) => {
@@ -21,7 +21,7 @@ export const counterRoutes = {
       operation: "counter.increment",
     });
 
-    const counter = await incrementCounter(ctx.env.CACHE, ctx.db, {
+    const counter = await incrementCounter(ctx.db, {
       authenticated: Boolean(user),
       identity,
       ...(user?.id ? { userId: user.id } : {}),

@@ -75,4 +75,20 @@ const applySchema = async (db: AppDb) => {
       "user_id" text
     )
   `);
+  await db.execute(sql`
+    create table if not exists "counter_state" (
+      "id" text primary key not null,
+      "value" integer not null,
+      "updated_at" text not null
+    )
+  `);
+  await db.execute(sql`
+    insert into "counter_state" ("id", "value", "updated_at")
+    values (
+      'global',
+      coalesce((select "counter_value" from "counter_increment" order by "created_at" desc limit 1), 0),
+      coalesce((select "created_at"::text from "counter_increment" order by "created_at" desc limit 1), now()::text)
+    )
+    on conflict ("id") do nothing
+  `);
 };

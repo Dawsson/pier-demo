@@ -1,8 +1,8 @@
-import { desc } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import type { AppDb } from "#/db";
-import { counterIncrement } from "#/db/schema";
+import { counterIncrement, counterState } from "#/db/schema";
 
-const counterKey = "counter:global";
+const globalCounterId = "global";
 const recentIncrementLimit = 20;
 const publicStep = 1;
 const authenticatedStep = 5;
@@ -36,11 +36,8 @@ export type IncrementCounterResult = CounterSnapshot & {
 export const counterStep = (authenticated: boolean) =>
   authenticated ? authenticatedStep : publicStep;
 
-export const readCounter = async (
-  kv: KVNamespace,
-  input: { authenticated: boolean },
-): Promise<CounterSnapshot> => {
-  const counter = await readCounterValue(kv);
+export const readCounter = async (db: AppDb, input: { authenticated: boolean }) => {
+  const counter = await readCounterValue(db);
 
   return {
     authenticated: input.authenticated,
@@ -50,28 +47,40 @@ export const readCounter = async (
   };
 };
 
-export const incrementCounter = async (
-  kv: KVNamespace,
-  db: AppDb,
-  input: IncrementCounterInput,
-) => {
+export const incrementCounter = async (db: AppDb, input: IncrementCounterInput) => {
   const amount = counterStep(input.authenticated);
   const now = new Date().toISOString();
-  const current = await readCounterValue(kv);
-  const next = {
-    updatedAt: now,
-    value: current.value + amount,
-  };
 
-  await kv.put(counterKey, JSON.stringify(next));
-  await db.insert(counterIncrement).values({
-    amount,
-    authenticated: input.authenticated,
-    counterValue: next.value,
-    createdAt: new Date(now),
-    id: crypto.randomUUID(),
-    identity: input.identity,
-    userId: input.userId ?? null,
+  const next = await db.transaction(async (tx) => {
+    const [counter] = await tx
+      .insert(counterState)
+      .values({
+        id: globalCounterId,
+        updatedAt: now,
+        value: amount,
+      })
+      .onConflictDoUpdate({
+        set: {
+          updatedAt: now,
+          value: sql`${counterState.value} + ${amount}`,
+        },
+        target: counterState.id,
+      })
+      .returning();
+
+    const nextCounter = counter ?? { updatedAt: now, value: amount };
+
+    await tx.insert(counterIncrement).values({
+      amount,
+      authenticated: input.authenticated,
+      counterValue: nextCounter.value,
+      createdAt: new Date(now),
+      id: crypto.randomUUID(),
+      identity: input.identity,
+      userId: input.userId ?? null,
+    });
+
+    return nextCounter;
   });
 
   return {
@@ -110,8 +119,15 @@ export const recentIncrements = async (db: AppDb): Promise<CounterIncrement[]> =
 const isoTimestamp = (value: Date | string | undefined) =>
   value instanceof Date ? value.toISOString() : (value ?? new Date().toISOString());
 
-const readCounterValue = async (kv: KVNamespace) => {
-  const row = await kv.get<{ updatedAt?: string; value?: number }>(counterKey, "json");
+const readCounterValue = async (db: AppDb) => {
+  const [row] = await db
+    .select({
+      updatedAt: counterState.updatedAt,
+      value: counterState.value,
+    })
+    .from(counterState)
+    .where(eq(counterState.id, globalCounterId))
+    .limit(1);
 
   return {
     updatedAt: row?.updatedAt ?? new Date().toISOString(),

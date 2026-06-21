@@ -15,7 +15,7 @@ export const adminRoutes = {
     }
 
     return {
-      counter: counterSnapshotJson(await readCounter(ctx.env.CACHE, { authenticated: true })),
+      counter: counterSnapshotJson(await readCounter(ctx.db, { authenticated: true })),
       recentIncrements: (await recentIncrements(ctx.db)).map((increment) => ({
         amount: increment.amount,
         authenticated: increment.authenticated,
