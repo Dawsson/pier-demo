@@ -48,8 +48,14 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
           title="Create account"
           description="Start with a simple demo account."
           footer={
-            <FieldDescription className="m-0 text-sm leading-normal [&>a]:font-medium [&>a]:no-underline hover:[&>a]:underline">
-              Have an account? <Link to="/auth/sign-in">Sign in</Link>
+            <FieldDescription className="m-0 text-sm leading-normal">
+              Have an account?{" "}
+              <Link
+                className="!font-normal !underline decoration-current underline-offset-3 [text-decoration-thickness:1px]"
+                to="/auth/sign-in"
+              >
+                Sign in
+              </Link>
             </FieldDescription>
           }
         >

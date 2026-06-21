@@ -19,7 +19,6 @@ export function AuthFormFrame({ children, description, footer, title }: AuthForm
   return (
     <Frame className="w-full">
       <FrameHeader className="items-center text-center">
-        <div className="font-semibold text-base text-foreground leading-tight">Pier Demo</div>
         <FrameTitle className="font-bold text-2xl leading-tight">{title}</FrameTitle>
         <FrameDescription className="text-[0.9375rem] leading-relaxed">
           {description}

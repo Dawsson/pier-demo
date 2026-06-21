@@ -47,8 +47,14 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
           title="Welcome back"
           description="Sign in to continue."
           footer={
-            <FieldDescription className="m-0 text-sm leading-normal [&>a]:font-medium [&>a]:no-underline hover:[&>a]:underline">
-              New here? <Link to="/auth/sign-up">Create an account</Link>
+            <FieldDescription className="m-0 text-sm leading-normal">
+              New here?{" "}
+              <Link
+                className="!font-normal !underline decoration-current underline-offset-3 [text-decoration-thickness:1px]"
+                to="/auth/sign-up"
+              >
+                Create an account
+              </Link>
             </FieldDescription>
           }
         >

@@ -3,9 +3,9 @@ import { X } from "lucide-react";
 
 export function AuthLayout() {
   return (
-    <main className="relative grid min-h-screen overflow-hidden bg-neutral-100 text-foreground dark:bg-background lg:grid-cols-[minmax(0,1fr)_minmax(400px,40vw)]">
+    <main className="relative grid min-h-screen overflow-hidden bg-background text-foreground lg:grid-cols-[minmax(0,1fr)_minmax(400px,40vw)]">
       <AuthPatternPanel />
-      <section className="relative z-1 flex min-h-auto min-w-0 items-center justify-center bg-neutral-100 px-4 pt-14 pb-8 dark:bg-background lg:min-h-screen lg:bg-neutral-50 lg:px-7 lg:py-18 dark:lg:bg-background">
+      <section className="relative z-1 flex min-h-auto min-w-0 items-center justify-center bg-background px-4 pt-14 pb-8 lg:min-h-screen lg:px-7 lg:py-18">
         <Link
           aria-label="Close auth"
           className="absolute top-5 right-5 inline-flex size-10 items-center justify-center rounded-lg border-0 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:top-6 lg:right-6"
