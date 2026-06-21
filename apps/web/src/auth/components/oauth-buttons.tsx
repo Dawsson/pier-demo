@@ -12,25 +12,31 @@ const showProviderToast = (provider: string) => {
 
 export function OAuthButtons() {
   return (
-    <div className="auth-oauth-group">
+    <div className="grid min-w-0 gap-2.5">
       <Button
-        className="auth-oauth-button"
+        className="h-[42px] min-w-0 justify-center bg-background text-foreground"
         type="button"
         variant="outline"
         onClick={() => showProviderToast("GitHub")}
       >
-        <span className="auth-provider-mark" aria-hidden>
+        <span
+          className="inline-flex size-4 items-center justify-center rounded bg-foreground font-extrabold text-[0.55rem] text-background tracking-normal"
+          aria-hidden
+        >
           GH
         </span>
         Continue with GitHub
       </Button>
       <Button
-        className="auth-oauth-button"
+        className="h-[42px] min-w-0 justify-center bg-background text-foreground"
         type="button"
         variant="outline"
         onClick={() => showProviderToast("Microsoft")}
       >
-        <span className="auth-provider-mark" aria-hidden>
+        <span
+          className="inline-flex size-4 items-center justify-center rounded bg-foreground font-extrabold text-[0.55rem] text-background tracking-normal"
+          aria-hidden
+        >
           MS
         </span>
         Continue with Microsoft

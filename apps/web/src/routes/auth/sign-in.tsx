@@ -6,5 +6,5 @@ export const Route = createFileRoute("/auth/sign-in")({
 });
 
 function SignInRoute() {
-  return <LoginForm className="auth-card" />;
+  return <LoginForm className="w-full min-w-0 max-w-[calc(100vw-32px)] sm:max-w-[396px]" />;
 }

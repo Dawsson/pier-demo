@@ -1,6 +1,7 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { ThemeProvider } from "@/components/theme-provider";
 import { ToastProvider } from "@/components/ui/toast";
 import type { RouterContext } from "@/router-context";
 import "@/styles.css";
@@ -22,11 +23,13 @@ function RootComponent() {
 
   return (
     <RootDocument>
-      <QueryClientProvider client={context.queryClient}>
-        <ToastProvider timeout={1400}>
-          <Outlet />
-        </ToastProvider>
-      </QueryClientProvider>
+      <ThemeProvider>
+        <QueryClientProvider client={context.queryClient}>
+          <ToastProvider timeout={1400}>
+            <Outlet />
+          </ToastProvider>
+        </QueryClientProvider>
+      </ThemeProvider>
     </RootDocument>
   );
 }
