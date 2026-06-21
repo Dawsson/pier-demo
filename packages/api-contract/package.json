@@ -24,7 +24,7 @@
     "check-types": "tsgo -p tsconfig.json"
   },
   "dependencies": {
-    "@pier/backend": "0.1.19",
+    "@pier/backend": "0.1.20",
     "@pier/sync": "0.1.23",
     "@rocicorp/zero": "1.6.2",
     "zod": "^4.1.13"

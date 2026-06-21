@@ -6,7 +6,7 @@
     "check-types": "tsgo -p tsconfig.json"
   },
   "dependencies": {
-    "@pier/backend": "0.1.19"
+    "@pier/backend": "0.1.20"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20260602.1"
