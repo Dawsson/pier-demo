@@ -4,15 +4,9 @@ import type { ComponentProps } from "react";
 import { useForm } from "react-hook-form";
 import { loginSchema, type LoginValues } from "@/auth/schemas";
 import { useLogin } from "@/auth/hooks/use-login";
+import { OAuthButtons } from "@/auth/components/oauth-buttons";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Field,
   FieldContent,
@@ -46,13 +40,21 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
   return (
     <div className={cn("flex w-full flex-col gap-4", className)} {...props}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Card className="overflow-hidden p-0 shadow-none">
-          <CardHeader className="p-6 pb-0 sm:p-7 sm:pb-0">
-            <CardTitle>Sign in</CardTitle>
-            <CardDescription>Use your account to add five at a time.</CardDescription>
+        <Card className="auth-form-card">
+          <CardHeader className="auth-form-header">
+            <div className="auth-form-brand">Pier Demo</div>
+            <CardTitle className="auth-form-title">Welcome back</CardTitle>
+            <CardDescription className="auth-form-description">
+              Sign in to continue.
+            </CardDescription>
           </CardHeader>
 
-          <CardContent className="p-6 sm:p-7">
+          <CardContent className="auth-form-content">
+            <OAuthButtons />
+            <div className="auth-divider">
+              <span>or continue with email</span>
+            </div>
+
             <FieldGroup>
               <Field data-invalid={!!form.formState.errors.email}>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
@@ -86,16 +88,17 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
                 <FieldError>{login.error.message || "Sign in failed."}</FieldError>
               ) : null}
             </FieldGroup>
+
+            <Button className="auth-submit-button" disabled={login.isPending} type="submit">
+              {login.isPending ? "Signing in" : "Continue"}
+            </Button>
           </CardContent>
 
-          <CardFooter className="auth-card-footer">
+          <div className="auth-card-footer">
             <FieldDescription className="m-0">
-              No account? <Link to="/auth/sign-up">Create account</Link>
+              New here? <Link to="/auth/sign-up">Create an account</Link>
             </FieldDescription>
-            <Button disabled={login.isPending} type="submit">
-              {login.isPending ? "Signing in" : "Sign in"}
-            </Button>
-          </CardFooter>
+          </div>
         </Card>
       </form>
     </div>

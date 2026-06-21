@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import {
   Frame,
@@ -16,17 +16,19 @@ export const Route = createFileRoute("/")({
 });
 
 function HomeRoute() {
+  const navigate = useNavigate();
   const counter = rpcClient.publicCounter.current.useQuery({
     retry: false,
   });
   const counterValue = counter.data?.value ?? 0;
-  const showLoginToast = () => {
+  const redirectToSignIn = async () => {
     toastManager.add({
       description: "Sign in first, then you can increment the shared counter.",
       id: "counter-login-required",
       title: "Login required",
       type: "info",
     });
+    await navigate({ to: "/auth/sign-in" });
   };
 
   return (
@@ -37,7 +39,9 @@ function HomeRoute() {
           Pier Demo
         </Link>
         <nav className="site-nav" aria-label="Primary">
-          <Link to="/auth/sign-in">Sign in</Link>
+          <Button asChild size="sm" variant="ghost">
+            <Link to="/auth/sign-in">Sign in</Link>
+          </Button>
         </nav>
       </header>
 
@@ -58,7 +62,7 @@ function HomeRoute() {
         </FramePanel>
 
         <FrameFooter className="counter-footer">
-          <Button size="lg" type="button" onClick={showLoginToast}>
+          <Button size="lg" type="button" onClick={redirectToSignIn}>
             Increment counter
           </Button>
           <Button asChild size="lg" variant="ghost">

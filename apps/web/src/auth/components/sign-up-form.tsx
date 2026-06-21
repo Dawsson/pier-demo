@@ -4,15 +4,9 @@ import type { ComponentProps } from "react";
 import { useForm } from "react-hook-form";
 import { signUpSchema, type SignUpValues } from "@/auth/schemas";
 import { useRegisterUser } from "@/auth/hooks/use-register-user";
+import { OAuthButtons } from "@/auth/components/oauth-buttons";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Field,
   FieldContent,
@@ -47,13 +41,21 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
   return (
     <div className={cn("flex w-full flex-col gap-4", className)} {...props}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <Card className="overflow-hidden p-0 shadow-none">
-          <CardHeader className="p-6 pb-0 sm:p-7 sm:pb-0">
-            <CardTitle>Create account</CardTitle>
-            <CardDescription>Create an account to increment the shared counter.</CardDescription>
+        <Card className="auth-form-card">
+          <CardHeader className="auth-form-header">
+            <div className="auth-form-brand">Pier Demo</div>
+            <CardTitle className="auth-form-title">Create account</CardTitle>
+            <CardDescription className="auth-form-description">
+              Start with a simple demo account.
+            </CardDescription>
           </CardHeader>
 
-          <CardContent className="p-6 sm:p-7">
+          <CardContent className="auth-form-content">
+            <OAuthButtons />
+            <div className="auth-divider">
+              <span>or create one with email</span>
+            </div>
+
             <FieldGroup>
               <Field data-invalid={!!form.formState.errors.name}>
                 <FieldLabel htmlFor="name">Name</FieldLabel>
@@ -100,16 +102,17 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
                 <FieldError>{registerUser.error.message || "Account creation failed."}</FieldError>
               ) : null}
             </FieldGroup>
+
+            <Button className="auth-submit-button" disabled={registerUser.isPending} type="submit">
+              {registerUser.isPending ? "Creating account" : "Continue"}
+            </Button>
           </CardContent>
 
-          <CardFooter className="auth-card-footer">
+          <div className="auth-card-footer">
             <FieldDescription className="m-0">
               Have an account? <Link to="/auth/sign-in">Sign in</Link>
             </FieldDescription>
-            <Button disabled={registerUser.isPending} type="submit">
-              {registerUser.isPending ? "Creating account" : "Create account"}
-            </Button>
-          </CardFooter>
+          </div>
         </Card>
       </form>
     </div>

@@ -23,7 +23,7 @@ function RootComponent() {
   return (
     <RootDocument>
       <QueryClientProvider client={context.queryClient}>
-        <ToastProvider>
+        <ToastProvider timeout={1400}>
           <Outlet />
         </ToastProvider>
       </QueryClientProvider>
