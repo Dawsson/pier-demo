@@ -8,6 +8,7 @@ import {
   FramePanel,
   FrameTitle,
 } from "@/components/ui/frame";
+import { toastManager } from "@/components/ui/toast";
 import { rpcClient } from "@/lib/api";
 
 export const Route = createFileRoute("/")({
@@ -19,6 +20,14 @@ function HomeRoute() {
     retry: false,
   });
   const counterValue = counter.data?.value ?? 0;
+  const showLoginToast = () => {
+    toastManager.add({
+      description: "Sign in first, then you can increment the shared counter.",
+      id: "counter-login-required",
+      title: "Login required",
+      type: "info",
+    });
+  };
 
   return (
     <main className="app-shell">
@@ -49,8 +58,8 @@ function HomeRoute() {
         </FramePanel>
 
         <FrameFooter className="counter-footer">
-          <Button asChild size="lg">
-            <Link to="/app">Increment counter</Link>
+          <Button size="lg" type="button" onClick={showLoginToast}>
+            Increment counter
           </Button>
           <Button asChild size="lg" variant="ghost">
             <Link to="/auth/sign-in">Sign in</Link>

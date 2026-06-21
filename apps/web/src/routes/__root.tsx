@@ -1,6 +1,7 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { ToastProvider } from "@/components/ui/toast";
 import type { RouterContext } from "@/router-context";
 import "@/styles.css";
 
@@ -22,7 +23,9 @@ function RootComponent() {
   return (
     <RootDocument>
       <QueryClientProvider client={context.queryClient}>
-        <Outlet />
+        <ToastProvider>
+          <Outlet />
+        </ToastProvider>
       </QueryClientProvider>
     </RootDocument>
   );

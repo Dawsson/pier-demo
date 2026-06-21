@@ -8,6 +8,7 @@
     "dev": "vite --host 127.0.0.1"
   },
   "dependencies": {
+    "@base-ui/react": "^1.6.0",
     "@fontsource-variable/geist": "^5.2.9",
     "@pier-demo/api-contract": "workspace:*",
     "@pier/backend": "0.1.20",
