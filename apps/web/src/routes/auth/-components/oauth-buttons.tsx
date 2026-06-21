@@ -14,7 +14,7 @@ export function OAuthButtons() {
   return (
     <div className="grid min-w-0 gap-2.5">
       <Button
-        className="h-[42px] min-w-0 justify-center bg-background text-foreground"
+        className="h-[42px] min-w-0 justify-center"
         type="button"
         variant="outline"
         onClick={() => showProviderToast("GitHub")}
@@ -23,7 +23,7 @@ export function OAuthButtons() {
         Continue with GitHub
       </Button>
       <Button
-        className="h-[42px] min-w-0 justify-center bg-background text-foreground"
+        className="h-[42px] min-w-0 justify-center"
         type="button"
         variant="outline"
         onClick={() => showProviderToast("Microsoft")}
