@@ -12,7 +12,7 @@ const config = app({
     "CACHE": binding.kv(),
     "DB": binding.postgres("shared"),
     "INTERNAL": binding.service("internal"),
-    "RATE_LIMITER": binding.rateLimit("pier-demo-counter", {"limit":20,"mitigationTimeout":60,"period":60})
+    "RATE_LIMITER": binding.rateLimit("1001", {"limit":20,"period":60})
   },
   name: "pier-demo",
   vars: {
