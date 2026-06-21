@@ -14,7 +14,7 @@ export const syncMutators = syncRouter.implement({
         operation: "counter.increment",
       });
 
-      await incrementCounter(appContext.env.CACHE, appContext.db, {
+      await incrementCounter(appContext.db, {
         authenticated: Boolean(appContext.user),
         identity,
         ...(appContext.user?.id ? { userId: appContext.user.id } : {}),

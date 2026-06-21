@@ -1,9 +1,8 @@
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import type { AppDb } from "#/db";
 import { counterIncrement, counterState } from "#/db/schema";
 
 const globalCounterId = "global";
-const globalCounterKey = "counter:global";
 const recentIncrementLimit = 20;
 const publicStep = 1;
 const authenticatedStep = 5;
@@ -37,26 +36,8 @@ export type IncrementCounterResult = CounterSnapshot & {
 export const counterStep = (authenticated: boolean) =>
   authenticated ? authenticatedStep : publicStep;
 
-export const ensureCounterStore = async (cache: KVNamespace, db: AppDb) => {
-  const storedCounter = await readStoredCounterValue(cache);
-  if (storedCounter) {
-    await writeCounterProjection(db, storedCounter);
-    return storedCounter;
-  }
-
-  const initialCounter = (await readLatestCounterFromHistory(db)) ?? {
-    updatedAt: new Date().toISOString(),
-    value: 0,
-  };
-
-  await cache.put(globalCounterKey, JSON.stringify(initialCounter));
-  await writeCounterProjection(db, initialCounter);
-
-  return initialCounter;
-};
-
-export const readCounter = async (cache: KVNamespace, input: { authenticated: boolean }) => {
-  const counter = await readCounterValue(cache);
+export const readCounter = async (db: AppDb, input: { authenticated: boolean }) => {
+  const counter = await readCounterValue(db);
 
   return {
     authenticated: input.authenticated,
@@ -66,46 +47,40 @@ export const readCounter = async (cache: KVNamespace, input: { authenticated: bo
   };
 };
 
-export const incrementCounter = async (
-  cache: KVNamespace,
-  db: AppDb,
-  input: IncrementCounterInput,
-) => {
+export const incrementCounter = async (db: AppDb, input: IncrementCounterInput) => {
   const amount = counterStep(input.authenticated);
   const now = new Date().toISOString();
-  const current = await readCounterValue(cache);
-  const next = {
-    updatedAt: now,
-    value: current.value + amount,
-  };
 
-  await cache.put(globalCounterKey, JSON.stringify(next));
+  const next = await db.transaction(async (tx) => {
+    const [counter] = await tx
+      .insert(counterState)
+      .values({
+        id: globalCounterId,
+        updatedAt: now,
+        value: amount,
+      })
+      .onConflictDoUpdate({
+        set: {
+          updatedAt: now,
+          value: sql`${counterState.value} + ${amount}`,
+        },
+        target: counterState.id,
+      })
+      .returning();
 
-  await db.transaction(async (tx) => {
+    const nextCounter = counter ?? { updatedAt: now, value: amount };
+
     await tx.insert(counterIncrement).values({
       amount,
       authenticated: input.authenticated,
-      counterValue: next.value,
+      counterValue: nextCounter.value,
       createdAt: new Date(now),
       id: crypto.randomUUID(),
       identity: input.identity,
       userId: input.userId ?? null,
     });
 
-    await tx
-      .insert(counterState)
-      .values({
-        id: globalCounterId,
-        updatedAt: next.updatedAt,
-        value: next.value,
-      })
-      .onConflictDoUpdate({
-        set: {
-          updatedAt: next.updatedAt,
-          value: next.value,
-        },
-        target: counterState.id,
-      });
+    return nextCounter;
   });
 
   return {
@@ -144,40 +119,8 @@ export const recentIncrements = async (db: AppDb): Promise<CounterIncrement[]> =
 const isoTimestamp = (value: Date | string | undefined) =>
   value instanceof Date ? value.toISOString() : (value ?? new Date().toISOString());
 
-const readCounterValue = async (cache: KVNamespace) => {
-  const parsedCounter = await readStoredCounterValue(cache);
-
-  return {
-    updatedAt: parsedCounter?.updatedAt ?? new Date().toISOString(),
-    value: parsedCounter?.value ?? 0,
-  };
-};
-
-const readStoredCounterValue = async (cache: KVNamespace) =>
-  parseCounterValue(await cache.get(globalCounterKey));
-
-const readLatestCounterFromHistory = async (db: AppDb) => {
+const readCounterValue = async (db: AppDb) => {
   const [row] = await db
-    .select({
-      updatedAt: counterIncrement.createdAt,
-      value: counterIncrement.counterValue,
-    })
-    .from(counterIncrement)
-    .orderBy(desc(counterIncrement.createdAt))
-    .limit(1);
-
-  if (!row) {
-    return null;
-  }
-
-  return {
-    updatedAt: isoTimestamp(row.updatedAt),
-    value: row.value,
-  };
-};
-
-const writeCounterProjection = async (db: AppDb, counter: { updatedAt: string; value: number }) => {
-  const [projection] = await db
     .select({
       updatedAt: counterState.updatedAt,
       value: counterState.value,
@@ -186,45 +129,8 @@ const writeCounterProjection = async (db: AppDb, counter: { updatedAt: string; v
     .where(eq(counterState.id, globalCounterId))
     .limit(1);
 
-  if (projection?.updatedAt === counter.updatedAt && projection.value === counter.value) {
-    return;
-  }
-
-  await upsertCounterProjection(db, counter);
-};
-
-const upsertCounterProjection = (db: AppDb, counter: { updatedAt: string; value: number }) =>
-  db
-    .insert(counterState)
-    .values({
-      id: globalCounterId,
-      updatedAt: counter.updatedAt,
-      value: counter.value,
-    })
-    .onConflictDoUpdate({
-      set: {
-        updatedAt: counter.updatedAt,
-        value: counter.value,
-      },
-      target: counterState.id,
-    });
-
-const parseCounterValue = (rawCounter: string | null) => {
-  if (!rawCounter) {
-    return null;
-  }
-
-  try {
-    const value = JSON.parse(rawCounter) as { updatedAt?: unknown; value?: unknown };
-    if (typeof value.updatedAt !== "string" || typeof value.value !== "number") {
-      return null;
-    }
-
-    return {
-      updatedAt: value.updatedAt,
-      value: value.value,
-    };
-  } catch {
-    return null;
-  }
+  return {
+    updatedAt: row?.updatedAt ?? new Date().toISOString(),
+    value: row?.value ?? 0,
+  };
 };

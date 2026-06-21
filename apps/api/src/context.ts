@@ -2,13 +2,11 @@ import type { Env } from "./.pier/env";
 import { createAuth } from "./auth";
 import { createDb } from "./db";
 import { ensureDatabaseSchema } from "./db/bootstrap";
-import { ensureCounterStore } from "./modules/counter/service";
 
 export const createApiContext = async (env: Env) => {
   try {
     const db = createDb(env);
     await ensureDatabaseSchema(db);
-    await ensureCounterStore(env.CACHE, db);
     const auth = createAuth(env, db);
 
     return {
