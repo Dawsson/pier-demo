@@ -29,6 +29,7 @@
     "test": "bun test"
   },
   "dependencies": {
+    "@pier-demo/api-contract": "workspace:*",
     "@pier/auth": "0.1.18",
     "@pier/backend": "0.1.20",
     "@pier/core": "0.1.24",
