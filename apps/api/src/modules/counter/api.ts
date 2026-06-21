@@ -3,16 +3,11 @@ import type { z } from "zod";
 import { currentSessionUser } from "#/auth/session";
 import { os } from "#/api";
 import { enforceCounterRateLimit } from "./rate-limit";
-import { incrementCounter, readCounter } from "./service";
+import { incrementCounter } from "./service";
 
 type CounterSnapshotJson = z.infer<typeof counterOutputSchema>;
 
 export const counterRoutes = {
-  get: os.counter.get.query(async ({ ctx }) =>
-    counterSnapshotJson(
-      await readCounter(ctx.db, { authenticated: Boolean(await currentSessionUser(ctx)) }),
-    ),
-  ),
   increment: os.counter.increment.mutation(async ({ ctx }) => {
     const user = await currentSessionUser(ctx);
     const identity = clientIdentity(ctx.request, user?.id);
@@ -21,7 +16,7 @@ export const counterRoutes = {
       operation: "counter.increment",
     });
 
-    const counter = await incrementCounter(ctx.db, {
+    const counter = await incrementCounter(ctx.env.CACHE, ctx.db, {
       authenticated: Boolean(user),
       identity,
       ...(user?.id ? { userId: user.id } : {}),

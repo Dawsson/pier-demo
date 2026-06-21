@@ -3,7 +3,6 @@ import { contractBuilder as c } from "@pier/backend/contract";
 import {
   adminSummaryOutputSchema,
   agentContextOutputSchema,
-  counterOutputSchema,
   emptyInputSchema,
   healthOutputSchema,
   incrementOutputSchema,
@@ -17,7 +16,6 @@ export const contractModules = {
     context: c.query().input(emptyInputSchema).output(agentContextOutputSchema),
   },
   counter: {
-    get: c.query().input(emptyInputSchema).output(counterOutputSchema),
     increment: c.mutation().input(emptyInputSchema).output(incrementOutputSchema),
   },
   system: {

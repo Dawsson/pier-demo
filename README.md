@@ -14,8 +14,9 @@ apps/internal  Internal Worker RPC service
 ```
 
 The counter is global. Signed-in users read it through Pier Sync and increment
-through an API mutation with a `5x` multiplier. The API Worker uses the native
-Cloudflare rate-limit binding before writing to Postgres.
+through an API mutation with a `5x` multiplier. KV stores the live count,
+Postgres stores increment history and the tiny sync projection, and the API
+Worker checks the native Cloudflare rate-limit binding before every increment.
 
 ## API Surfaces
 
