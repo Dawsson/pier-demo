@@ -3,6 +3,7 @@ import { contract } from "@pier-demo/api-contract";
 import { schema } from "@pier-demo/api-contract/sync-schema";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { Button } from "@/components/ui/button";
 import { endpointClient, syncClient, syncConfig } from "@/lib/api";
 import { authClient } from "@/lib/auth";
 import { hasServerSessionCookie } from "@/lib/session";
@@ -55,21 +56,26 @@ function AccountCounter() {
   };
 
   return (
-    <main className="shell">
+    <main className="app-shell">
+      <header className="site-header">
+        <Link className="brand" to="/">
+          <span className="brand-mark" aria-hidden />
+          Pier Demo
+        </Link>
+        <nav className="site-nav" aria-label="Primary">
+          <button className="link-button" type="button" onClick={signOut}>
+            Sign out
+          </button>
+        </nav>
+      </header>
+
       <section className="counter-panel" aria-labelledby="counter-title">
-        <div className="counter-header">
+        <div className="panel-heading">
           <div>
             <p className="section-label">{me.data?.email ?? "Account"}</p>
-            <h1 id="counter-title">Count</h1>
+            <h1 id="counter-title">Increment the counter.</h1>
           </div>
-          <nav aria-label="Counter mode" className="mode-switch">
-            <Link className="mode-option" to="/">
-              Public
-            </Link>
-            <span aria-current="page" className="mode-option is-active">
-              Account
-            </span>
-          </nav>
+          <p className="summary">A tiny authenticated screen you can replace with your product.</p>
         </div>
 
         <div className="counter-display" aria-live="polite">
@@ -77,27 +83,18 @@ function AccountCounter() {
           <span className="counter-caption">Current value</span>
         </div>
 
-        <div className="counter-meta">
-          <span>Step</span>
-          <strong>+5</strong>
-        </div>
-        <div className="counter-meta">
-          <span>Source</span>
-          <strong>Sync</strong>
-        </div>
-
         <div className="actions primary-actions">
-          <button
-            className="primary-button"
+          <Button
             disabled={increment.isPending}
+            size="lg"
             type="button"
             onClick={() => increment.mutate({})}
           >
             {increment.isPending ? "Adding" : "Add 5"}
-          </button>
-          <button className="secondary-button" type="button" onClick={signOut}>
-            Sign out
-          </button>
+          </Button>
+          <Button asChild size="lg" variant="ghost">
+            <Link to="/">View public page</Link>
+          </Button>
         </div>
 
         {increment.error ? <p className="error">{String(increment.error)}</p> : null}

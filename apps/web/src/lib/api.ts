@@ -4,7 +4,9 @@ import { contract } from "@pier-demo/api-contract";
 import { clientEnv, serverEnv } from "@/.pier/env";
 
 const apiUrl = () =>
-  typeof window === "undefined" ? serverEnv.PUBLIC_API_URL : clientEnv.PUBLIC_API_URL;
+  typeof window === "undefined"
+    ? (process.env.DEV_API_URL ?? serverEnv.PUBLIC_API_URL)
+    : ((import.meta.env.DEV_API_URL as string | undefined) ?? clientEnv.PUBLIC_API_URL);
 
 export const { endpointClient, rpcClient, syncClient, syncConfig } = createApiClients(contract, {
   apiUrl: apiUrl(),

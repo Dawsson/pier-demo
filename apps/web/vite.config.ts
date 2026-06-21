@@ -5,7 +5,7 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  envPrefix: ["PUBLIC_", "VITE_"],
+  envPrefix: ["DEV_", "PUBLIC_", "VITE_"],
   plugins: [tailwindcss(), tanstackStart(), react()],
   resolve: {
     alias: {

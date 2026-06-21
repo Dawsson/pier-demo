@@ -1,5 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { X } from "lucide-react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
 import { LoginForm } from "@/components/login-form";
 import { authClient } from "@/lib/auth";
@@ -26,19 +25,14 @@ function SignInRoute() {
   };
 
   return (
-    <main className="auth-page">
-      <Link aria-label="Close sign in" className="close-link" to="/">
-        <X aria-hidden size={32} strokeWidth={1.75} />
-      </Link>
-      <LoginForm
-        className="auth-card"
-        email={email}
-        error={error}
-        password={password}
-        onEmailChange={setEmail}
-        onPasswordChange={setPassword}
-        onSubmit={submit}
-      />
-    </main>
+    <LoginForm
+      className="auth-card"
+      email={email}
+      error={error}
+      password={password}
+      onEmailChange={setEmail}
+      onPasswordChange={setPassword}
+      onSubmit={submit}
+    />
   );
 }

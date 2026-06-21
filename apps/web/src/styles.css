@@ -9,10 +9,10 @@
 
 body {
   margin: 0;
-  background: radial-gradient(circle at 50% 0%, rgb(44 66 86 / 10%), transparent 32rem), #f4f6f8;
-  color: #172026;
+  background: #f4f2ee;
+  color: #252522;
   font-family:
-    Inter,
+    "Geist Variable",
     ui-sans-serif,
     system-ui,
     -apple-system,
@@ -27,59 +27,179 @@ input:not([data-slot="input"]) {
 }
 
 a {
-  color: #1d5fbf;
+  color: #343431;
   font-weight: 700;
   text-decoration: none;
 }
 
-.shell {
-  display: grid;
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
   min-height: 100vh;
-  place-items: center;
-  padding: 24px;
+  padding: 28px;
 }
 
-.auth-page {
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 auto;
+  width: min(100%, 920px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #252522;
+  font-size: 0.9375rem;
+  font-weight: 800;
+}
+
+.brand-mark {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #252522;
+  border-radius: 3px;
+  background: #d8d4cc;
+  box-shadow: 4px 4px 0 #252522;
+}
+
+.site-nav {
+  align-items: center;
+  display: inline-flex;
+  gap: 14px;
+}
+
+.link-button {
+  border: 0;
+  background: transparent;
+  color: #343431;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 750;
+  padding: 0;
+}
+
+.link-button:hover,
+.site-nav a:hover,
+.text-link:hover {
+  color: #172026;
+}
+
+.auth-layout {
   display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(420px, 42vw);
   min-height: 100vh;
-  place-items: center;
-  padding: 24px;
+  background: #252522;
+}
+
+.auth-art {
   position: relative;
+  overflow: hidden;
+  border-right: 1px solid rgb(255 255 255 / 14%);
+  color: #f8f4ea;
+}
+
+.auth-art-grid {
+  position: absolute;
+  inset: -80px;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 10%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 10%) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: rotate(-8deg);
+}
+
+.auth-art::after {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 36%, transparent 0, transparent 18%, #252522 72%),
+    linear-gradient(to bottom, #252522 0%, rgb(37 37 34 / 18%) 36%, #252522 100%);
+  content: "";
+}
+
+.auth-art-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100%;
+  padding: 34px;
+}
+
+.auth-brand {
+  color: #f8f4ea;
+}
+
+.auth-brand .brand-mark {
+  border-color: #f8f4ea;
+  box-shadow: 4px 4px 0 #f8f4ea;
+}
+
+.auth-art-content p {
+  max-width: 440px;
+  margin: 0;
+  color: rgb(248 244 234 / 78%);
+  font-size: 1.35rem;
+  font-weight: 650;
+  line-height: 1.35;
+}
+
+.auth-form-region {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 72px 28px;
+  background: #f6f4ef;
 }
 
 .auth-card {
-  width: min(100%, 390px);
+  width: min(100%, 400px);
 }
 
 .close-link {
   align-items: center;
+  border: 1px solid #d8d2c7;
+  border-radius: 8px;
   color: #4b5c68;
   display: inline-flex;
-  height: 44px;
+  height: 40px;
   justify-content: center;
-  position: fixed;
+  position: absolute;
   right: 24px;
   top: 24px;
-  transition: color 180ms ease;
-  width: 44px;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+  width: 40px;
 }
 
 .close-link:hover {
-  color: #172026;
+  background: #ffffff;
+  color: #252522;
 }
 
 .counter-panel,
 .auth-panel {
-  width: min(100%, 520px);
-  border: 1px solid #d6dde2;
-  border-radius: 14px;
-  background: #ffffff;
-  padding: 24px;
+  width: min(100%, 720px);
+  margin: 0 auto;
+  border: 1px solid #d9d2c5;
+  border-radius: 8px;
+  background: #fffdfa;
+  padding: 28px;
 }
 
 .counter-panel {
   display: grid;
-  gap: 22px;
+  gap: 24px;
 }
 
 .auth-panel {
@@ -87,108 +207,55 @@ a {
   gap: 18px;
 }
 
-.counter-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.mode-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  border: 1px solid #ccd5da;
-  border-radius: 10px;
-  background: #f7f9fa;
-  padding: 3px;
-}
-
-.mode-option {
-  border-radius: 7px;
-  color: #4b5c68;
-  font-size: 0.875rem;
-  font-weight: 750;
-  line-height: 1;
-  padding: 8px 10px;
-  transition:
-    background-color 180ms ease,
-    color 180ms ease;
-}
-
-.mode-option:hover {
-  color: #172026;
-}
-
-.mode-option.is-active {
-  background: #ffffff;
-  box-shadow: 0 1px 2px rgb(23 32 38 / 8%);
-  color: #172026;
+.panel-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.45fr);
+  align-items: end;
+  gap: 24px;
 }
 
 .section-label {
   margin: 0 0 6px;
-  color: #596873;
+  color: #6c6256;
   font-size: 0.875rem;
   font-weight: 700;
 }
 
 h1 {
   margin: 0;
-  color: #11181d;
-  font-size: 1.75rem;
+  color: #20201d;
+  font-size: 2rem;
   letter-spacing: 0;
-  line-height: 1.1;
+  line-height: 1.05;
   text-wrap: balance;
 }
 
 .summary {
   margin: 0;
-  color: #4b5c68;
+  color: #5d625d;
   line-height: 1.55;
 }
 
 .counter-display {
   display: grid;
   gap: 8px;
-  border-block: 1px solid #e3e8eb;
-  padding-block: 28px;
+  border-block: 1px solid #e2d9ca;
+  padding-block: 34px;
 }
 
 .counter-value {
-  color: #0d151a;
+  color: #20201d;
   font-size: 6rem;
   font-variant-numeric: tabular-nums;
   font-weight: 800;
-  letter-spacing: -0.03em;
+  letter-spacing: 0;
   line-height: 0.9;
 }
 
 .counter-caption {
-  color: #62717c;
+  color: #6c6256;
   font-size: 0.9375rem;
   font-weight: 650;
-}
-
-.counter-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: 1px solid #dfe5e8;
-  border-radius: 10px;
-  background: #f8fafb;
-  padding: 12px 14px;
-}
-
-.counter-meta span {
-  color: #4e5f6b;
-  font-weight: 650;
-}
-
-.counter-meta strong {
-  color: #172026;
-  font-size: 1.25rem;
-  font-variant-numeric: tabular-nums;
 }
 
 .actions {
@@ -214,20 +281,17 @@ button:not([data-slot="button"]) {
     color 180ms ease;
 }
 
-.primary-button,
 form button:not([data-slot="button"]) {
-  background: #172026;
+  background: #252522;
   color: #ffffff;
 }
 
-.primary-button:hover,
 form button:not([data-slot="button"]):hover {
-  background: #24313a;
+  background: #343431;
 }
 
-.secondary-button,
-.secondary-action {
-  border: 1px solid #ccd5da;
+.secondary-button {
+  border: 1px solid #d8d2c7;
   border-radius: 8px;
   background: #ffffff;
   color: #21313b;
@@ -235,14 +299,13 @@ form button:not([data-slot="button"]):hover {
   padding: 9px 12px;
 }
 
-.secondary-button:hover,
-.secondary-action:hover {
-  border-color: #aebbc3;
-  background: #f7f9fa;
+.secondary-button:hover {
+  border-color: #bcb2a2;
+  background: #f8f4ea;
 }
 
 .text-link {
-  color: #1d5fbf;
+  color: #343431;
   font-size: 0.9375rem;
   font-weight: 750;
 }
@@ -276,7 +339,7 @@ input:not([data-slot="input"]) {
 input:not([data-slot="input"]):focus,
 button:not([data-slot="button"]):focus-visible,
 a:focus-visible {
-  outline: 3px solid rgb(29 95 191 / 24%);
+  outline: 3px solid rgb(37 37 34 / 24%);
   outline-offset: 2px;
 }
 
@@ -287,43 +350,39 @@ a:focus-visible {
 }
 
 @media (max-width: 520px) {
-  .shell,
-  .auth-page {
-    place-items: stretch;
+  .app-shell {
+    gap: 36px;
+    padding: 18px;
   }
 
-  .auth-card {
-    align-self: center;
-    justify-self: center;
+  .site-header {
+    align-items: flex-start;
+  }
+
+  .auth-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-art {
+    display: none;
+  }
+
+  .auth-form-region {
+    padding: 84px 18px 32px;
   }
 
   .close-link {
-    right: 16px;
-    top: 16px;
+    right: 18px;
+    top: 18px;
   }
 
   .counter-panel,
   .auth-panel {
-    align-self: center;
+    padding: 22px;
   }
 
-  .counter-header {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .mode-switch {
-    width: 100%;
-  }
-
-  .mode-option {
-    flex: 1;
-    text-align: center;
-  }
-
-  .secondary-action,
-  .secondary-button {
-    text-align: center;
+  .panel-heading {
+    grid-template-columns: 1fr;
   }
 
   .counter-value {

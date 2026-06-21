@@ -14,7 +14,7 @@ const hasBetterAuthSessionCookie = (cookie: string | null) =>
   }) ?? false;
 
 export const hasServerSessionCookie = createServerFn({ method: "GET" }).handler(({ context }) => {
-  const request = (context as { readonly request?: Request }).request;
+  const request = (context as unknown as { readonly request?: Request }).request;
   if (!request) {
     return false;
   }
