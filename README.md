@@ -9,14 +9,13 @@ TanStack Start apps.
 ```text
 apps/web       Public/user TanStack Start app
 apps/admin     Admin TanStack Start app
-apps/api       API Worker with Better Auth, Postgres, KV, internal service binding, and Durable Object binding
+apps/api       API Worker with Better Auth, Postgres, KV, internal service binding, and rate-limit binding
 apps/internal  Internal Worker RPC service
 ```
 
-The counter is global. Public users can read and increment it by `1`.
-Signed-in users increment through the same API mutation with a `5x` multiplier.
-The API Worker uses `RateLimiterObject` to rate-limit counter mutations before
-writing to Postgres.
+The counter is global. Signed-in users read it through Pier Sync and increment
+through an API mutation with a `5x` multiplier. The API Worker uses the native
+Cloudflare rate-limit binding before writing to Postgres.
 
 ## API Surfaces
 
@@ -27,9 +26,9 @@ import { endpointClient, rpcClient, syncClient } from "./api";
 ```
 
 - `syncClient.account.me.useQuery()` reads the signed-in profile from Pier Sync.
-- `rpcClient.counter.get.useQuery()` and
-  `rpcClient.counter.increment.useMutation()` demonstrate RPC query and
-  mutation usage.
+- `syncClient.counter.current.useQuery()` reads the live counter from Pier Sync.
+- `rpcClient.counter.increment.useMutation()` demonstrates RPC mutation usage.
+- `rpcClient.agent.context.useQuery()` demonstrates a one-shot RPC query.
 - `endpointClient.system.status.json()` demonstrates a normal typed HTTP
   endpoint.
 
@@ -48,8 +47,8 @@ there is intentionally no first-admin bootstrap helper in this template.
 The app declares its topology in `platform.config.ts`:
 
 - `web` and `admin` are TanStack Start apps.
-- `api` owns Postgres, KV, the internal service binding, and the `RATE_LIMITER`
-  Durable Object namespace.
+- `api` owns Postgres, KV, the internal service binding, and the native
+  `RATE_LIMITER` binding.
 - `internal` is an internal Worker service.
 
 Generated `.pier` modules are the source of truth for runtime env and API
