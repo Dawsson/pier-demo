@@ -1,8 +1,8 @@
 import { PierApiError } from "@pier/backend";
 import { requireSessionUser, roleForUser } from "#/auth/session";
 import { os } from "#/api";
-import { counterSnapshotJson } from "#/modules/counter/api";
 import { readCounter, recentIncrements } from "#/modules/counter/service";
+import { counterSnapshotJson } from "#/modules/counter/snapshot";
 
 export const adminRoutes = {
   summary: os.admin.summary.query(async ({ ctx }) => {

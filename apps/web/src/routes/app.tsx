@@ -3,7 +3,7 @@ import { contract } from "@pier-demo/api-contract";
 import { schema } from "@pier-demo/api-contract/sync-schema";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { endpointClient, rpcClient, syncClient, syncConfig } from "@/lib/api";
+import { endpointClient, syncClient, syncConfig } from "@/lib/api";
 import { authClient } from "@/lib/auth";
 import { hasServerSessionCookie } from "@/lib/session";
 
@@ -40,10 +40,13 @@ function AppRoute() {
 function AccountCounter() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const counter = syncClient.counter.current.useQuery();
-  const counterValue = counter.data?.value ?? 0;
+
   const me = syncClient.account.me.useQuery();
-  const increment = rpcClient.counter.increment.useMutation();
+
+  const counter = syncClient.counter.current.useQuery();
+  const increment = syncClient.counter.increment.useMutation();
+
+  const counterValue = counter.data?.value ?? 0;
 
   const signOut = async () => {
     await authClient.signOut();

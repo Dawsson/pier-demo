@@ -9,10 +9,6 @@ export const counterOutputSchema = z.object({
   value: z.number(),
 });
 
-export const incrementOutputSchema = counterOutputSchema.extend({
-  amount: z.number(),
-});
-
 export const adminSummaryOutputSchema = z.object({
   counter: counterOutputSchema,
   recentIncrements: z.array(

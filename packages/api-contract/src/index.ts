@@ -42,11 +42,24 @@ const syncRouter = t.router({
         tags: ["counter"],
       })
       .sync.query(() => zql.counter_state.where("id", "=", "global").one()),
+    increment: t.procedure
+      .input(emptyInputSchema)
+      .meta({
+        description: "Increment the signed-in demo counter through Pier Sync.",
+        tags: ["counter"],
+      })
+      .sync.mutation(),
+  },
+});
+
+const syncClientContract = syncRouter.implement({
+  counter: {
+    increment: async () => {},
   },
 });
 
 const syncContract = {
-  clientMutators: syncRouter.mutators,
+  clientMutators: syncClientContract.clientMutators,
   definitions: syncRouter.definitions,
   queries: syncRouter.queries,
   serverMutators: {},
@@ -77,5 +90,5 @@ export {
   counterOutputSchema,
   emptyInputSchema,
   healthOutputSchema,
-  incrementOutputSchema,
 } from "./schemas";
+export { syncRouter };

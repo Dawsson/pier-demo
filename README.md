@@ -28,14 +28,15 @@ import { endpointClient, rpcClient, syncClient } from "./api";
 
 - `syncClient.account.me.useQuery()` reads the signed-in profile from Pier Sync.
 - `syncClient.counter.current.useQuery()` reads the live counter from Pier Sync.
-- `rpcClient.counter.increment.useMutation()` demonstrates RPC mutation usage.
+- `syncClient.counter.increment.useMutation()` increments through Pier Sync.
 - `rpcClient.agent.context.useQuery()` demonstrates a one-shot RPC query.
 - `endpointClient.system.status.json()` demonstrates a normal typed HTTP
   endpoint.
 
-Use Pier Sync for app data that should stay live in the browser. Use RPC for
-commands, privileged reads, or one-shot server work. Use endpoints for
-HTTP-shaped routes such as health checks, downloads, and webhooks.
+Use Pier Sync for live app data and app-local mutations that should flow
+through the sync engine. Use RPC for privileged reads or one-shot server work.
+Use endpoints for HTTP-shaped routes such as health checks, downloads, and
+webhooks.
 
 ## Auth
 

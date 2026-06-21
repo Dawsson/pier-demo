@@ -5,12 +5,13 @@ import { zeroDrizzle } from "@rocicorp/zero/server/adapters/drizzle";
 
 import type { Env } from "#/.pier/env";
 import { createDemoSyncContext, type DemoSyncContext } from "./context";
+import { syncMutators } from "./mutators";
 
 export const syncFeature = pierSync<Env, DemoSyncContext, never>({
   createContext: createDemoSyncContext,
   dbProvider: (context) => zeroDrizzle(schema, context.db as never),
   getUserId: (context) => context.user?.id ?? null,
-  mutators: contract.serverMutators,
+  mutators: syncMutators.serverMutators,
   queries: contract.queries,
   schema,
   syncAuth: {

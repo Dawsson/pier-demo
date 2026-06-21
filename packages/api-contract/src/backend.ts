@@ -5,7 +5,6 @@ import {
   agentContextOutputSchema,
   emptyInputSchema,
   healthOutputSchema,
-  incrementOutputSchema,
 } from "./schemas";
 
 export const contractModules = {
@@ -14,9 +13,6 @@ export const contractModules = {
   },
   agent: {
     context: c.query().input(emptyInputSchema).output(agentContextOutputSchema),
-  },
-  counter: {
-    increment: c.mutation().input(emptyInputSchema).output(incrementOutputSchema),
   },
   system: {
     status: c
