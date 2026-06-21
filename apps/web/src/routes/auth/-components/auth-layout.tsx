@@ -22,12 +22,12 @@ export function AuthLayout() {
 function AuthPatternPanel() {
   return (
     <section
-      className="relative min-h-[168px] overflow-hidden border-border border-b bg-[radial-gradient(circle_at_26%_22%,rgb(245_245_244_/_0.16)_0,transparent_28%),radial-gradient(circle_at_82%_76%,rgb(168_162_158_/_0.16)_0,transparent_32%),linear-gradient(145deg,var(--color-neutral-950),var(--color-neutral-900)_58%,var(--color-stone-900))] text-white lg:min-h-screen lg:border-r lg:border-b-0"
+      className="relative min-h-[168px] overflow-hidden border-border border-b bg-neutral-950 text-white lg:min-h-screen lg:border-r lg:border-b-0"
       aria-hidden
     >
       <CubePattern />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,transparent_0,transparent_26%,rgb(10_10_10_/_0.72)_72%),linear-gradient(to_bottom,rgb(10_10_10_/_0.92)_0%,transparent_25%,transparent_70%,rgb(10_10_10_/_0.94)_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,transparent_70%,rgb(10_10_10_/_0.38)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgb(10_10_10_/_0.80)_0%,transparent_22%,transparent_68%,rgb(10_10_10_/_0.88)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,transparent_70%,rgb(10_10_10_/_0.34)_100%)]" />
       <div className="relative z-1 flex min-h-[168px] flex-col justify-between p-5 lg:min-h-full lg:p-8">
         <Link
           className="inline-flex items-center gap-2.5 font-extrabold text-[0.9375rem] !text-white"
