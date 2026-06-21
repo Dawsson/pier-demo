@@ -217,7 +217,7 @@ button:not([data-slot="button"]):disabled {
   margin: 0;
 }
 
-label:not([data-slot="label"]) {
+label:not([data-slot="label"]):not([data-slot="field-label"]) {
   display: grid;
   gap: 7px;
   color: var(--foreground);

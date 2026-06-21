@@ -46,7 +46,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
       <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
         <AuthFormFrame
           title="Create account"
-          description="Start with a simple demo account."
+          description="Create an account to continue."
           footer={
             <FieldDescription className="m-0 text-sm leading-normal">
               Have an account?{" "}
@@ -61,12 +61,12 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
         >
           <OAuthButtons />
           <div className="flex items-center gap-3 text-[0.8125rem] text-muted-foreground leading-none before:h-px before:flex-1 before:bg-border before:content-[''] after:h-px after:flex-1 after:bg-border after:content-['']">
-            <span>or create one with email</span>
+            <span>Email</span>
           </div>
 
           <FieldGroup className="gap-[15px]">
             <Field data-invalid={!!form.formState.errors.name}>
-              <FieldLabel className="font-medium text-foreground text-sm" htmlFor="name">
+              <FieldLabel className="font-normal text-foreground text-sm" htmlFor="name">
                 Name
               </FieldLabel>
               <FieldContent>
@@ -85,7 +85,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
             </Field>
 
             <Field data-invalid={!!form.formState.errors.email}>
-              <FieldLabel className="font-medium text-foreground text-sm" htmlFor="email">
+              <FieldLabel className="font-normal text-foreground text-sm" htmlFor="email">
                 Email
               </FieldLabel>
               <FieldContent>
@@ -105,7 +105,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
             </Field>
 
             <Field data-invalid={!!form.formState.errors.password}>
-              <FieldLabel className="font-medium text-foreground text-sm" htmlFor="password">
+              <FieldLabel className="font-normal text-foreground text-sm" htmlFor="password">
                 Password
               </FieldLabel>
               <FieldContent>

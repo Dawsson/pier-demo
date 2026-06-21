@@ -60,12 +60,12 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
         >
           <OAuthButtons />
           <div className="flex items-center gap-3 text-[0.8125rem] text-muted-foreground leading-none before:h-px before:flex-1 before:bg-border before:content-[''] after:h-px after:flex-1 after:bg-border after:content-['']">
-            <span>or continue with email</span>
+            <span>Email</span>
           </div>
 
           <FieldGroup className="gap-[15px]">
             <Field data-invalid={!!form.formState.errors.email}>
-              <FieldLabel className="font-medium text-foreground text-sm" htmlFor="email">
+              <FieldLabel className="font-normal text-foreground text-sm" htmlFor="email">
                 Email
               </FieldLabel>
               <FieldContent>
@@ -85,7 +85,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
             </Field>
 
             <Field data-invalid={!!form.formState.errors.password}>
-              <FieldLabel className="font-medium text-foreground text-sm" htmlFor="password">
+              <FieldLabel className="font-normal text-foreground text-sm" htmlFor="password">
                 Password
               </FieldLabel>
               <FieldContent>
