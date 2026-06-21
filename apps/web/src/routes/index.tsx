@@ -1,5 +1,13 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import {
+  Frame,
+  FrameDescription,
+  FrameFooter,
+  FrameHeader,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
 import { rpcClient } from "@/lib/api";
 
 export const Route = createFileRoute("/")({
@@ -24,29 +32,31 @@ function HomeRoute() {
         </nav>
       </header>
 
-      <section className="counter-panel" aria-labelledby="counter-title">
-        <div className="panel-heading">
-          <div>
-            <p className="section-label">Starter app</p>
-            <h1 id="counter-title">A simple shared counter.</h1>
+      <Frame className="counter-frame" aria-labelledby="counter-title">
+        <FrameHeader>
+          <FrameTitle id="counter-title" className="counter-title">
+            A simple shared counter.
+          </FrameTitle>
+          <FrameDescription>Sign in to increment it and make the template yours.</FrameDescription>
+        </FrameHeader>
+
+        <FramePanel>
+          <div className="counter-display" aria-live="polite">
+            <span className="section-label">Starter app</span>
+            <span className="counter-value">{counterValue}</span>
+            <span className="counter-caption">Current counter value</span>
           </div>
-          <p className="summary">Sign in to increment it and make the template yours.</p>
-        </div>
+        </FramePanel>
 
-        <div className="counter-display" aria-live="polite">
-          <span className="counter-value">{counterValue}</span>
-          <span className="counter-caption">Current counter value</span>
-        </div>
-
-        <div className="actions primary-actions">
+        <FrameFooter className="counter-footer">
           <Button asChild size="lg">
             <Link to="/app">Increment counter</Link>
           </Button>
           <Button asChild size="lg" variant="ghost">
             <Link to="/auth/sign-in">Sign in</Link>
           </Button>
-        </div>
-      </section>
+        </FrameFooter>
+      </Frame>
     </main>
   );
 }

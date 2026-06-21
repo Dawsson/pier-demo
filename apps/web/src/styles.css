@@ -187,19 +187,17 @@ a:not([data-slot="button"]) {
   color: var(--foreground);
 }
 
-.counter-panel,
+.counter-frame,
 .auth-panel {
   width: min(100%, 720px);
   margin: 0 auto;
+}
+
+.auth-panel {
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--card);
   padding: 28px;
-}
-
-.counter-panel {
-  display: grid;
-  gap: 24px;
 }
 
 .auth-panel {
@@ -207,11 +205,9 @@ a:not([data-slot="button"]) {
   gap: 18px;
 }
 
-.panel-heading {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.45fr);
-  align-items: end;
-  gap: 24px;
+.counter-title {
+  font-size: 1.35rem;
+  font-weight: 700;
 }
 
 .section-label {
@@ -258,15 +254,12 @@ h1 {
   font-weight: 650;
 }
 
-.actions {
+.counter-footer {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 12px;
-}
-
-.primary-actions {
-  padding-top: 2px;
+  justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 button:not([data-slot="button"]) {
@@ -376,13 +369,8 @@ a:focus-visible {
     top: 18px;
   }
 
-  .counter-panel,
   .auth-panel {
     padding: 22px;
-  }
-
-  .panel-heading {
-    grid-template-columns: 1fr;
   }
 
   .counter-value {

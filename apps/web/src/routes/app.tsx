@@ -4,6 +4,14 @@ import { schema } from "@pier-demo/api-contract/sync-schema";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import {
+  Frame,
+  FrameDescription,
+  FrameFooter,
+  FrameHeader,
+  FramePanel,
+  FrameTitle,
+} from "@/components/ui/frame";
 import { endpointClient, syncClient, syncConfig } from "@/lib/api";
 import { authClient } from "@/lib/auth";
 import { hasServerSessionCookie } from "@/lib/session";
@@ -69,21 +77,26 @@ function AccountCounter() {
         </nav>
       </header>
 
-      <section className="counter-panel" aria-labelledby="counter-title">
-        <div className="panel-heading">
-          <div>
-            <p className="section-label">{me.data?.email ?? "Account"}</p>
-            <h1 id="counter-title">Increment the counter.</h1>
+      <Frame className="counter-frame" aria-labelledby="counter-title">
+        <FrameHeader>
+          <FrameTitle id="counter-title" className="counter-title">
+            Increment the counter.
+          </FrameTitle>
+          <FrameDescription>
+            A tiny authenticated screen you can replace with your product.
+          </FrameDescription>
+        </FrameHeader>
+
+        <FramePanel>
+          <div className="counter-display" aria-live="polite">
+            <span className="section-label">{me.data?.email ?? "Account"}</span>
+            <span className="counter-value">{counterValue}</span>
+            <span className="counter-caption">Current value</span>
           </div>
-          <p className="summary">A tiny authenticated screen you can replace with your product.</p>
-        </div>
+          {increment.error ? <p className="error">{String(increment.error)}</p> : null}
+        </FramePanel>
 
-        <div className="counter-display" aria-live="polite">
-          <span className="counter-value">{counterValue}</span>
-          <span className="counter-caption">Current value</span>
-        </div>
-
-        <div className="actions primary-actions">
+        <FrameFooter className="counter-footer">
           <Button
             disabled={increment.isPending}
             size="lg"
@@ -95,10 +108,8 @@ function AccountCounter() {
           <Button asChild size="lg" variant="ghost">
             <Link to="/">View public page</Link>
           </Button>
-        </div>
-
-        {increment.error ? <p className="error">{String(increment.error)}</p> : null}
-      </section>
+        </FrameFooter>
+      </Frame>
     </main>
   );
 }
