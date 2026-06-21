@@ -10,6 +10,7 @@
   "dependencies": {
     "@base-ui/react": "^1.6.0",
     "@fontsource-variable/geist": "^5.2.9",
+    "@hookform/resolvers": "^5.4.0",
     "@pier-demo/api-contract": "workspace:*",
     "@pier/backend": "0.1.20",
     "@pier/sync": "0.1.23",
@@ -25,9 +26,11 @@
     "radix-ui": "^1.5.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-hook-form": "^7.80.0",
     "shadcn": "^4.10.0",
     "tailwind-merge": "^3.6.0",
-    "vite": "^7.2.7"
+    "vite": "^7.2.7",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.0",

@@ -165,6 +165,14 @@ a:not([data-slot="button"]) {
   width: min(100%, 400px);
 }
 
+.auth-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
 .close-link {
   align-items: center;
   border: 1px solid var(--border);
@@ -362,6 +370,11 @@ a:focus-visible {
 
   .auth-form-region {
     padding: 84px 18px 32px;
+  }
+
+  .auth-card-footer {
+    align-items: stretch;
+    flex-direction: column-reverse;
   }
 
   .close-link {

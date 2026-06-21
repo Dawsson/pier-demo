@@ -1,8 +1,8 @@
 import { SyncProvider } from "@pier/sync";
 import { contract } from "@pier-demo/api-contract";
 import { schema } from "@pier-demo/api-contract/sync-schema";
-import { useQueryClient } from "@tanstack/react-query";
 import { Link, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { useLogout } from "@/auth/hooks/use-logout";
 import { Button } from "@/components/ui/button";
 import {
   Frame,
@@ -48,7 +48,7 @@ function AppRoute() {
 
 function AccountCounter() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  const logout = useLogout();
 
   const me = syncClient.account.me.useQuery();
 
@@ -58,9 +58,11 @@ function AccountCounter() {
   const counterValue = counter.data?.value ?? 0;
 
   const signOut = async () => {
-    await authClient.signOut();
-    await queryClient.invalidateQueries();
-    await navigate({ to: "/" });
+    logout.mutate(undefined, {
+      onSuccess: async () => {
+        await navigate({ to: "/" });
+      },
+    });
   };
 
   return (
@@ -71,8 +73,13 @@ function AccountCounter() {
           Pier Demo
         </Link>
         <nav className="site-nav" aria-label="Primary">
-          <button className="link-button" type="button" onClick={signOut}>
-            Sign out
+          <button
+            className="link-button"
+            disabled={logout.isPending}
+            type="button"
+            onClick={signOut}
+          >
+            {logout.isPending ? "Signing out" : "Sign out"}
           </button>
         </nav>
       </header>
