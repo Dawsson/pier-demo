@@ -15,9 +15,8 @@ apps/internal  Internal Worker RPC service
 
 The counter is global. Signed-in users read it through Pier Sync and increment
 through a Pier Sync mutation with a `5x` multiplier. Postgres stores the live
-counter row that Zero syncs plus the increment history. KV is reserved for
-Better Auth secondary storage, and the API Worker checks the native Cloudflare
-rate-limit binding before every increment.
+counter row that Zero syncs plus the increment history. The API Worker checks
+the native Cloudflare rate-limit binding before every increment.
 
 ## API Surfaces
 
@@ -44,6 +43,10 @@ webhooks.
 The API mounts Better Auth at `/auth/*` through Pier's API Worker wrapper.
 Auth is email/password only. Admin access uses the Better Auth admin plugin;
 there is intentionally no first-admin bootstrap helper in this template.
+
+Auth: Better Auth uses Cloudflare KV secondary storage through Pier Auth, so
+session and verification lookups can use the app's `CACHE` binding instead of
+turning every auth read into a Postgres-only hot path.
 
 ## Pier
 
