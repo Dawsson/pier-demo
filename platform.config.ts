@@ -52,7 +52,7 @@ export default app({
     CACHE: binding.kv(),
     DB: binding.postgres("shared"),
     INTERNAL: binding.worker("internal"),
-    RATE_LIMITER: binding.rateLimit("pier-demo-counter", {
+    RATE_LIMITER: binding.rateLimit("1001", {
       limit: 20,
       mitigationTimeout: 60,
       period: 60,
