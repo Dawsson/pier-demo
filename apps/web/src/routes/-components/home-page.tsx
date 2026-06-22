@@ -2,7 +2,8 @@ import { SyncProvider } from "@pier/sync";
 import { contract } from "@pier-demo/api-contract";
 import { schema } from "@pier-demo/api-contract/sync-schema";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useMemo, type ReactNode } from "react";
+import { useZero } from "@rocicorp/zero/react";
+import { useCallback, useEffect, useMemo, type ReactNode } from "react";
 import { toast } from "sonner";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { syncClient, syncConfig } from "@/lib/api";
@@ -129,31 +130,39 @@ function SyncedCounter({
   readonly render: (counterValue: number, isAdjusting?: boolean) => ReactNode;
 }) {
   const counter = syncClient.counter.current.useQuery();
-  const increment = syncClient.counter.increment.useMutation({
-    onError: (error) => {
-      const message = error instanceof Error ? error.message : String(error);
+  const zero = useZero();
+  const increment = useCallback(
+    (amount: CounterAdjustAmount) => {
+      const startedAt = performance.now();
+      const request = syncClient.mutators.counter.increment({ amount });
+      const result = zero.mutate(request as Parameters<typeof zero.mutate>[0]);
 
-      if (/rate.?limit|too many|429/i.test(message)) {
-        toast.warning("Slow down", {
-          description: "Give it a moment before counting again.",
-          id: "counter-rate-limited",
-        });
-        return;
-      }
+      void result.client.then((clientResult) => {
+        if (clientResult.type === "error") {
+          showCounterMutationError(clientResult.error.message);
+        }
+      });
 
-      toast.error("Counter unavailable", {
-        description: "The synced counter could not update.",
-        id: "counter-sync-error",
+      void result.server.then((serverResult) => {
+        if (serverResult.type === "error") {
+          console.log(
+            "counter.increment server error after",
+            `${Math.round(performance.now() - startedAt)}ms`,
+            serverResult.error.message,
+          );
+          showCounterMutationError(serverResult.error.message);
+        }
       });
     },
-  });
+    [zero],
+  );
 
   useEffect(() => {
     if (pendingAdjustment === null) {
       return;
     }
 
-    increment.mutate({ amount: pendingAdjustment });
+    increment(pendingAdjustment);
     onAdjustmentSubmitted();
   }, [increment, onAdjustmentSubmitted, pendingAdjustment]);
 
@@ -167,4 +176,19 @@ function SyncedCounter({
   }, [counter.isError]);
 
   return render(counter.data?.value ?? initialCounterValue, false);
+}
+
+function showCounterMutationError(message: string) {
+  if (/rate.?limit|too many|429/i.test(message)) {
+    toast.warning("Slow down", {
+      description: "Give it a moment before counting again.",
+      id: "counter-rate-limited",
+    });
+    return;
+  }
+
+  toast.error("Counter unavailable", {
+    description: "The synced counter could not update.",
+    id: "counter-sync-error",
+  });
 }
