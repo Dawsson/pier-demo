@@ -16,13 +16,12 @@ const themeLabel: Record<Theme, string> = {
 };
 
 export function ThemeSwitcher() {
-  const { isSystemDark, setTheme, theme } = useContext(ThemeProviderContext);
-  const resolvedTheme = theme === "system" ? (isSystemDark ? "dark" : "light") : theme;
+  const { setTheme, theme } = useContext(ThemeProviderContext);
   const next = nextTheme[theme];
 
   return (
     <Button
-      aria-label={`Theme: ${themeLabel[resolvedTheme]}. Switch to ${themeLabel[next]}.`}
+      aria-label={`Theme: ${themeLabel[theme]}. Switch to ${themeLabel[next]}.`}
       className="gap-1.5"
       size="sm"
       type="button"

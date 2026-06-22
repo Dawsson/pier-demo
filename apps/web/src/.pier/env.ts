@@ -6,7 +6,7 @@ export type PierEnvironment = "dev" | "preview" | "staging" | "prod";
 
 const config = app({
   apps: {
-    "web": appSlot.tanstackStart("apps/web/src/start.ts", {"bindings":[],"domain":"pier-demo.buildwithharbor.com","vars":["PUBLIC_API_URL","PUBLIC_APP_NAME","PUBLIC_WEB_URL","PUBLIC_ZERO_CACHE_URL"]}),
+    "web": appSlot.tanstackStart("apps/web/src/start.ts", {"bindings":[],"domain":"pier-demo.buildwithharbor.com","vars":["PUBLIC_API_URL","PUBLIC_APP_NAME","PUBLIC_WEB_URL","PUBLIC_ZERO_CACHE_URL","PUBLIC_ZERO_SERVER_SCHEMA"]}),
   },
   bindings: {},
   name: "pier-demo",
@@ -14,12 +14,13 @@ const config = app({
     "PUBLIC_API_URL": variable.url().public(),
     "PUBLIC_APP_NAME": variable.string().public(),
     "PUBLIC_WEB_URL": variable.url().public(),
-    "PUBLIC_ZERO_CACHE_URL": variable.url().public()
+    "PUBLIC_ZERO_CACHE_URL": variable.url().public(),
+    "PUBLIC_ZERO_SERVER_SCHEMA": variable.string().public()
   },
 });
 
-const publicAliases: Record<string, readonly string[]> = {"PUBLIC_API_URL":["API_URL","VITE_API_URL","VITE_PUBLIC_API_URL"],"PUBLIC_APP_NAME":["APP_NAME","VITE_APP_NAME","VITE_PUBLIC_APP_NAME"],"PUBLIC_WEB_URL":["VITE_PUBLIC_WEB_URL","VITE_WEB_URL","WEB_URL"],"PUBLIC_ZERO_CACHE_URL":["VITE_PUBLIC_ZERO_CACHE_URL","VITE_ZERO_CACHE_URL","ZERO_CACHE_URL"]};
-const clientEnvKeys = ["PUBLIC_API_URL","VITE_API_URL","VITE_PUBLIC_API_URL","PUBLIC_APP_NAME","VITE_APP_NAME","VITE_PUBLIC_APP_NAME","PUBLIC_WEB_URL","VITE_PUBLIC_WEB_URL","VITE_WEB_URL","PUBLIC_ZERO_CACHE_URL","VITE_PUBLIC_ZERO_CACHE_URL","VITE_ZERO_CACHE_URL"] as const;
+const publicAliases: Record<string, readonly string[]> = {"PUBLIC_API_URL":["API_URL","VITE_API_URL","VITE_PUBLIC_API_URL"],"PUBLIC_APP_NAME":["APP_NAME","VITE_APP_NAME","VITE_PUBLIC_APP_NAME"],"PUBLIC_WEB_URL":["VITE_PUBLIC_WEB_URL","VITE_WEB_URL","WEB_URL"],"PUBLIC_ZERO_CACHE_URL":["VITE_PUBLIC_ZERO_CACHE_URL","VITE_ZERO_CACHE_URL","ZERO_CACHE_URL"],"PUBLIC_ZERO_SERVER_SCHEMA":["VITE_PUBLIC_ZERO_SERVER_SCHEMA","VITE_ZERO_SERVER_SCHEMA","ZERO_SERVER_SCHEMA"]};
+const clientEnvKeys = ["PUBLIC_API_URL","VITE_API_URL","VITE_PUBLIC_API_URL","PUBLIC_APP_NAME","VITE_APP_NAME","VITE_PUBLIC_APP_NAME","PUBLIC_WEB_URL","VITE_PUBLIC_WEB_URL","VITE_WEB_URL","PUBLIC_ZERO_CACHE_URL","VITE_PUBLIC_ZERO_CACHE_URL","VITE_ZERO_CACHE_URL","PUBLIC_ZERO_SERVER_SCHEMA","VITE_PUBLIC_ZERO_SERVER_SCHEMA","VITE_ZERO_SERVER_SCHEMA"] as const;
 
 export const projectTopology = {"apps":[{"name":"admin","kind":"tanstack-start-app","domain":"admin.pier-demo.buildwithharbor.com"},{"name":"api","kind":"worker-api","domain":"api.pier-demo.buildwithharbor.com"},{"name":"internal","kind":"worker-internal","internal":true},{"name":"web","kind":"tanstack-start-app","domain":"pier-demo.buildwithharbor.com"}],"currentApp":"web","project":"pier-demo"} as const;
 
@@ -28,6 +29,7 @@ export interface ServerEnv {
   readonly PUBLIC_APP_NAME: string;
   readonly PUBLIC_WEB_URL: PierUrl;
   readonly PUBLIC_ZERO_CACHE_URL: PierUrl;
+  readonly PUBLIC_ZERO_SERVER_SCHEMA: string;
 }
 
 export interface ClientEnv {
@@ -43,6 +45,9 @@ export interface ClientEnv {
   readonly PUBLIC_ZERO_CACHE_URL: PierUrl;
   readonly VITE_PUBLIC_ZERO_CACHE_URL: PierUrl;
   readonly VITE_ZERO_CACHE_URL: PierUrl;
+  readonly PUBLIC_ZERO_SERVER_SCHEMA: string;
+  readonly VITE_PUBLIC_ZERO_SERVER_SCHEMA: string;
+  readonly VITE_ZERO_SERVER_SCHEMA: string;
 }
 
 export type Env = ServerEnv;
@@ -56,7 +61,8 @@ export const parseServerEnv = (rawEnv: object): ServerEnv =>
     "PUBLIC_API_URL": (rawEnv as Record<string, unknown>)["PUBLIC_API_URL"] ?? (rawEnv as Record<string, unknown>)["API_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_API_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_PUBLIC_API_URL"],
     "PUBLIC_APP_NAME": (rawEnv as Record<string, unknown>)["PUBLIC_APP_NAME"] ?? (rawEnv as Record<string, unknown>)["APP_NAME"] ?? (rawEnv as Record<string, unknown>)["VITE_APP_NAME"] ?? (rawEnv as Record<string, unknown>)["VITE_PUBLIC_APP_NAME"],
     "PUBLIC_WEB_URL": (rawEnv as Record<string, unknown>)["PUBLIC_WEB_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_PUBLIC_WEB_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_WEB_URL"] ?? (rawEnv as Record<string, unknown>)["WEB_URL"],
-    "PUBLIC_ZERO_CACHE_URL": (rawEnv as Record<string, unknown>)["PUBLIC_ZERO_CACHE_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_PUBLIC_ZERO_CACHE_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_ZERO_CACHE_URL"] ?? (rawEnv as Record<string, unknown>)["ZERO_CACHE_URL"]
+    "PUBLIC_ZERO_CACHE_URL": (rawEnv as Record<string, unknown>)["PUBLIC_ZERO_CACHE_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_PUBLIC_ZERO_CACHE_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_ZERO_CACHE_URL"] ?? (rawEnv as Record<string, unknown>)["ZERO_CACHE_URL"],
+    "PUBLIC_ZERO_SERVER_SCHEMA": (rawEnv as Record<string, unknown>)["PUBLIC_ZERO_SERVER_SCHEMA"] ?? (rawEnv as Record<string, unknown>)["VITE_PUBLIC_ZERO_SERVER_SCHEMA"] ?? (rawEnv as Record<string, unknown>)["VITE_ZERO_SERVER_SCHEMA"] ?? (rawEnv as Record<string, unknown>)["ZERO_SERVER_SCHEMA"]
   },
     { requireBindings: false },
   ) as unknown as ServerEnv;

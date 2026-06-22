@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
+import postgres from "postgres";
 
 type Command = "down" | "logs" | "permissions" | "reset" | "up";
 
@@ -12,6 +13,7 @@ if (!command || !["down", "logs", "permissions", "reset", "up"].includes(command
 
 if (command === "permissions") {
   const baseEnv = zeroEnv();
+  await decommissionZero(baseEnv);
   await run("bun", ["scripts/bootstrap-db.ts"], baseEnv);
   await deployPermissions(baseEnv);
   process.exit(0);
@@ -20,10 +22,11 @@ if (command === "permissions") {
 if (command === "reset") {
   const baseEnv = zeroEnv();
   await run("docker", ["compose", "down", "-v"], dockerEnv(baseEnv));
+  await decommissionZero(baseEnv);
   await run("bun", ["scripts/bootstrap-db.ts"], baseEnv);
-  await run("node", ["node_modules/@rocicorp/zero/out/zero/src/zero-out.js"], baseEnv);
   await deployPermissions(baseEnv);
   await run("docker", ["compose", "up", "-d", "zero-cache"], dockerEnv(baseEnv));
+  await grantZeroMetadataAccess(baseEnv);
   process.exit(0);
 }
 
@@ -36,9 +39,12 @@ const composeArgs =
 
 if (command === "up") {
   const baseEnv = zeroEnv();
+  await run("docker", ["compose", "down"], dockerEnv(baseEnv));
+  await decommissionZero(baseEnv);
   await run("bun", ["scripts/bootstrap-db.ts"], baseEnv);
   await deployPermissions(baseEnv);
   await run("docker", composeArgs, dockerEnv(baseEnv));
+  await grantZeroMetadataAccess(baseEnv);
   process.exit(0);
 }
 
@@ -47,20 +53,29 @@ await run("docker", composeArgs, dockerEnv(zeroEnv()));
 function zeroEnv() {
   const runtimeEnv = readApiRuntimeEnv();
   const provisionEnv = readProvisionEnv();
-  const databaseUrl = process.env.DATABASE_URL ?? runtimeEnv.DATABASE_URL;
-  const zeroDatabaseUrl =
-    process.env.ZERO_DATABASE_URL ?? provisionEnv.ZERO_DATABASE_URL ?? databaseUrl;
+  const appDatabaseUrl = process.env.DATABASE_URL ?? runtimeEnv.DATABASE_URL;
+  const serverSchema =
+    process.env.ZERO_SERVER_SCHEMA ??
+    process.env.PUBLIC_ZERO_SERVER_SCHEMA ??
+    provisionEnv.DATABASE_SCHEMA ??
+    databaseSearchPath(appDatabaseUrl);
+  const zeroDatabaseUrl = withSearchPath(
+    process.env.ZERO_DATABASE_URL ?? provisionEnv.ZERO_DATABASE_URL ?? appDatabaseUrl,
+    serverSchema,
+  );
 
   return {
     ...process.env,
     ...runtimeEnv,
-    DATABASE_URL: databaseUrl,
+    DATABASE_URL: appDatabaseUrl,
     DEV_ZERO_PORT: process.env.DEV_ZERO_PORT ?? "4859",
     ZERO_APP_ID: process.env.ZERO_APP_ID ?? "pier_demo_local",
     ZERO_AUTH_SECRET: process.env.ZERO_AUTH_SECRET ?? runtimeEnv.ZERO_AUTH_SECRET ?? "unused",
     ZERO_CHANGE_DB: process.env.ZERO_CHANGE_DB ?? zeroDatabaseUrl,
     ZERO_CVR_DB: process.env.ZERO_CVR_DB ?? zeroDatabaseUrl,
+    ZERO_SERVER_SCHEMA: serverSchema,
     ZERO_UPSTREAM_DB: process.env.ZERO_UPSTREAM_DB ?? zeroDatabaseUrl,
+    ...(serverSchema ? { PUBLIC_ZERO_SERVER_SCHEMA: serverSchema } : {}),
   };
 }
 
@@ -130,6 +145,29 @@ function readProvisionEnv() {
   );
 }
 
+function databaseSearchPath(databaseUrl: string | undefined) {
+  if (!databaseUrl) {
+    return undefined;
+  }
+
+  try {
+    const options = new URL(databaseUrl).searchParams.get("options");
+    return options?.match(/(?:^|\s)-csearch_path=([^\s,]+)/)?.[1];
+  } catch {
+    return undefined;
+  }
+}
+
+function withSearchPath(databaseUrl: string, schemaName: string | undefined) {
+  if (!schemaName) {
+    return databaseUrl;
+  }
+
+  const url = new URL(databaseUrl);
+  url.searchParams.set("options", `-csearch_path=${schemaName}`);
+  return url.toString();
+}
+
 async function deployPermissions(env: NodeJS.ProcessEnv) {
   await run(
     "node",
@@ -144,6 +182,70 @@ async function deployPermissions(env: NodeJS.ProcessEnv) {
     ],
     env,
   );
+}
+
+async function decommissionZero(env: NodeJS.ProcessEnv) {
+  await run("node", ["node_modules/@rocicorp/zero/out/zero/src/zero-out.js"], env);
+}
+
+async function grantZeroMetadataAccess(env: NodeJS.ProcessEnv) {
+  const adminUrl = env.ZERO_DATABASE_URL ?? env.ZERO_UPSTREAM_DB;
+  const appUrl = env.DATABASE_URL;
+  const appId = env.ZERO_APP_ID ?? "pier_demo_local";
+
+  if (!adminUrl || !appUrl) {
+    return;
+  }
+
+  const appRole = new URL(appUrl).username.split(".")[0];
+  const schemas = [appId, `${appId}_0`, `${appId}_0/cdc`, `${appId}_0/cvr`];
+  const sql = postgres(adminUrl, { max: 1, onnotice: () => undefined });
+
+  try {
+    await waitForZeroMetadataSchemas(sql, schemas);
+
+    for (const schema of schemas) {
+      await sql.unsafe(
+        `grant usage on schema ${quoteIdentifier(schema)} to ${quoteIdentifier(appRole)}`,
+      );
+      await sql.unsafe(
+        `grant select, insert, update, delete on all tables in schema ${quoteIdentifier(schema)} to ${quoteIdentifier(appRole)}`,
+      );
+      await sql.unsafe(
+        `grant usage, select, update on all sequences in schema ${quoteIdentifier(schema)} to ${quoteIdentifier(appRole)}`,
+      );
+    }
+  } finally {
+    await sql.end();
+  }
+}
+
+async function waitForZeroMetadataSchemas(
+  sql: ReturnType<typeof postgres>,
+  schemas: readonly string[],
+) {
+  const deadline = Date.now() + 60_000;
+
+  while (Date.now() < deadline) {
+    const rows = await sql<{ schemaName: string }[]>`
+      select schema_name as "schemaName"
+      from information_schema.schemata
+      where schema_name in ${sql(schemas)}
+    `;
+    const found = new Set(rows.map((row) => row.schemaName));
+
+    if (schemas.every((schema) => found.has(schema))) {
+      return;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  }
+
+  throw new Error(`Timed out waiting for Zero metadata schemas: ${schemas.join(", ")}`);
+}
+
+function quoteIdentifier(identifier: string) {
+  return `"${identifier.replaceAll('"', '""')}"`;
 }
 
 async function run(cmd: string, args: readonly string[], env: NodeJS.ProcessEnv) {
