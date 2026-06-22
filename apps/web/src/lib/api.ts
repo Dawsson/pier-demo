@@ -20,19 +20,7 @@ const clients = createApiClients(contract, {
   syncUrl: syncUrl(),
 });
 
-type BrowserSyncConfig = Omit<typeof clients.syncConfig, "mutateURL" | "queryURL"> & {
-  readonly mutateURL: string | undefined;
-  readonly queryURL: string | undefined;
-};
-
 export const { endpointClient, rpcClient } = clients;
 export const syncClient = withSyncOptions(clients.syncClient, clients.syncClient);
 export const syncMutators = clients.syncClient.mutators;
-export const syncConfig: BrowserSyncConfig =
-  typeof window !== "undefined" && import.meta.env.DEV
-    ? ({
-        ...clients.syncConfig,
-        mutateURL: undefined,
-        queryURL: undefined,
-      } satisfies BrowserSyncConfig)
-    : clients.syncConfig;
+export const syncConfig = clients.syncConfig;
