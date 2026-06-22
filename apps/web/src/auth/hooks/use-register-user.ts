@@ -1,12 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
 import type { SignUpValues } from "@/auth/schemas";
 import { authClient } from "@/lib/auth";
 
 export function useRegisterUser() {
-  const queryClient = useQueryClient();
-  const router = useRouter();
-
   return useMutation({
     mutationFn: async (values: SignUpValues) => {
       const fallbackName = values.email.split("@")[0]?.trim() || "New user";
@@ -22,8 +18,7 @@ export function useRegisterUser() {
       return result.data;
     },
     onSuccess: () => {
-      void router.navigate({ to: "/" }).then(() => router.invalidate());
-      void queryClient.invalidateQueries();
+      window.location.replace("/");
     },
   });
 }
