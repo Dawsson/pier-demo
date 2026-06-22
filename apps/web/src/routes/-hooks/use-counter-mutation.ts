@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { syncClient } from "@/lib/api";
-import { errorMessage, now } from "../-helpers";
-import type { CounterAdjustAmount, PendingAdjustment } from "../-types";
+import { errorMessage, now } from "@/routes/-helpers";
+import type { CounterAdjustAmount, PendingAdjustment } from "@/routes/-types";
 
 const counterRateLimit = 20;
 const counterRateLimitWindowMs = 60_000;

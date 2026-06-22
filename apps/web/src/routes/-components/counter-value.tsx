@@ -18,13 +18,13 @@ export function CounterValue({ value }: { readonly value: number }) {
     <span
       aria-label={String(value)}
       aria-live="polite"
-      className="flex min-w-[2ch] justify-center overflow-hidden px-1 font-semibold text-8xl leading-none tabular-nums sm:text-[8rem] md:text-[9rem]"
+      className="flex min-w-[2ch] justify-center px-2 py-2 font-semibold text-8xl leading-none tabular-nums sm:text-[7.5rem] md:text-[8.25rem]"
     >
       {characters.map((character, index) => {
         return (
           <span
             aria-hidden
-            className="relative inline-grid h-[1em] w-[0.58em] place-items-center overflow-hidden"
+            className="relative inline-grid h-[1.08em] w-[0.58em] place-items-center overflow-hidden"
             key={index}
           >
             <span className="invisible leading-none">{character}</span>

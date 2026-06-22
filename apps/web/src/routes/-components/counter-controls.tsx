@@ -1,23 +1,26 @@
 import { Button } from "@/components/ui/button";
-import { useHoverIntentPrewarm } from "../-hooks/use-hover-intent-prewarm";
-import type { CounterAdjustAmount } from "../-types";
+import { useHoverIntentPrewarm } from "@/routes/-hooks/use-hover-intent-prewarm";
+import type { CounterAdjustAmount } from "@/routes/-types";
+import type { ReactNode } from "react";
 
 export function CounterControls({
+  children,
   isAdjusting,
   onAdjust,
   onPrewarm,
 }: {
+  readonly children: ReactNode;
   readonly isAdjusting: boolean;
-  readonly onAdjust?: (amount: CounterAdjustAmount) => void;
-  readonly onPrewarm?: () => void;
+  readonly onAdjust: ((amount: CounterAdjustAmount) => void) | undefined;
+  readonly onPrewarm: (() => void) | undefined;
 }) {
   const prewarmIntent = useHoverIntentPrewarm(onPrewarm);
 
   return (
-    <>
+    <div className="grid w-full grid-cols-[3.25rem_minmax(9rem,auto)_3.25rem] items-center justify-center gap-8 sm:grid-cols-[4.5rem_minmax(14rem,auto)_4.5rem] sm:gap-12 md:gap-16">
       <Button
         aria-label="Decrease counter"
-        className="size-13 rounded-full p-0 text-3xl sm:size-16 sm:text-4xl"
+        className="size-13 rounded-full border-border/60 p-0 text-3xl shadow-none before:rounded-full hover:border-foreground/20 hover:bg-accent/70 sm:size-18 sm:text-4xl dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/7"
         disabled={isAdjusting || !onAdjust}
         size="icon-xl"
         type="button"
@@ -34,9 +37,11 @@ export function CounterControls({
         </span>
       </Button>
 
+      {children}
+
       <Button
         aria-label="Increase counter"
-        className="size-13 rounded-full p-0 text-3xl sm:size-16 sm:text-4xl"
+        className="size-13 rounded-full border-border/60 p-0 text-3xl shadow-none before:rounded-full hover:border-foreground/20 hover:bg-accent/70 sm:size-18 sm:text-4xl dark:border-white/10 dark:hover:border-white/20 dark:hover:bg-white/7"
         disabled={isAdjusting || !onAdjust}
         size="icon-xl"
         type="button"
@@ -52,6 +57,6 @@ export function CounterControls({
           +
         </span>
       </Button>
-    </>
+    </div>
   );
 }

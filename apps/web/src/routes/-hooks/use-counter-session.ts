@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { prepareSyncSession, type PreparedSyncSession } from "@/lib/sync-session";
-import { errorMessage, now } from "../-helpers";
-import type { StartupTiming } from "../-types";
+import { errorMessage, now } from "@/routes/-helpers";
+import type { StartupTiming } from "@/routes/-types";
 
 const showStartupTiming = import.meta.env.DEV;
 
