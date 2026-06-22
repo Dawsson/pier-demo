@@ -5,12 +5,14 @@ import type { CounterAdjustAmount, StartupTiming } from "@/routes/-types";
 import { CounterControls } from "./counter-controls";
 import { CounterValue } from "./counter-value";
 import { StartupTimingReadout } from "./startup-timing-readout";
+import { syncClient } from "@/lib/api";
 
 export function PublicCounter({
   counterValue = 0,
   isAdjusting = true,
   onAdjust,
   onPrewarm,
+  showLiveControls = false,
   ssrMs,
   timing,
 }: {
@@ -18,6 +20,7 @@ export function PublicCounter({
   readonly isAdjusting?: boolean;
   readonly onAdjust?: ((amount: CounterAdjustAmount) => void) | undefined;
   readonly onPrewarm?: (() => void) | undefined;
+  readonly showLiveControls?: boolean;
   readonly ssrMs?: number;
   readonly timing?: StartupTiming | undefined;
 }) {
@@ -36,6 +39,8 @@ export function PublicCounter({
         </nav>
       </header>
 
+      {showLiveControls ? <LiveCounterControls /> : null}
+
       <section
         aria-labelledby="counter-title"
         className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center text-center"
@@ -51,5 +56,26 @@ export function PublicCounter({
 
       <StartupTimingReadout ssrMs={ssrMs} timing={timing} />
     </main>
+  );
+}
+
+function LiveCounterControls() {
+  // DO NOT REMOVE THIS
+  const incrementMutation = syncClient.counter.increment.useMutation();
+  const countQuery = syncClient.counter.current.useQuery();
+
+  return (
+    <div className="absolute top-24 left-5 flex items-center gap-2 text-muted-foreground text-sm sm:left-7">
+      <span>{countQuery.data?.value}</span>
+      <Button
+        disabled={incrementMutation.isPending}
+        size="sm"
+        type="button"
+        variant="ghost"
+        onClick={() => incrementMutation.mutate({ amount: 1 })}
+      >
+        Add
+      </Button>
+    </div>
   );
 }
