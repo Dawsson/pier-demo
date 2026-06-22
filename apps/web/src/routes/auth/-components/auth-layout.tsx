@@ -5,7 +5,7 @@ export function AuthLayout() {
   return (
     <main className="relative grid min-h-screen overflow-hidden bg-background text-foreground lg:grid-cols-[minmax(0,1fr)_minmax(400px,40vw)]">
       <AuthPatternPanel />
-      <section className="relative z-1 flex min-h-auto min-w-0 items-center justify-center bg-background px-4 pt-14 pb-8 lg:min-h-screen lg:px-7 lg:py-18">
+      <section className="relative z-1 flex min-h-screen min-w-0 items-center justify-center bg-background px-4 pt-14 pb-8 lg:px-7 lg:py-18">
         <Link
           aria-label="Close auth"
           className="absolute top-5 right-5 inline-flex size-10 items-center justify-center rounded-lg border-0 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:top-6 lg:right-6"
@@ -22,7 +22,7 @@ export function AuthLayout() {
 function AuthPatternPanel() {
   return (
     <section
-      className="relative min-h-[168px] overflow-hidden border-border border-b bg-neutral-100 text-neutral-900 lg:min-h-screen lg:border-r lg:border-b-0 dark:bg-neutral-950 dark:text-white"
+      className="relative hidden min-h-[168px] overflow-hidden border-border border-b bg-neutral-100 text-neutral-900 lg:block lg:min-h-screen lg:border-r lg:border-b-0 dark:bg-neutral-950 dark:text-white"
       aria-hidden
     >
       <CubePattern />
