@@ -6,6 +6,8 @@ import {
   counterOutputSchema,
   emptyInputSchema,
   healthOutputSchema,
+  syncSessionInputSchema,
+  syncSessionOutputSchema,
 } from "./schemas";
 
 export const contractModules = {
@@ -17,6 +19,13 @@ export const contractModules = {
   },
   publicCounter: {
     current: c.query().input(emptyInputSchema).output(counterOutputSchema),
+  },
+  syncSession: {
+    prepare: c
+      .endpoint()
+      .input(syncSessionInputSchema)
+      .output(syncSessionOutputSchema)
+      .route({ method: "POST", path: "/sync/session" }),
   },
   system: {
     status: c

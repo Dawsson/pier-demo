@@ -2,13 +2,14 @@ import { SyncProvider } from "@pier/sync";
 import { contract } from "@pier-demo/api-contract";
 import { schema } from "@pier-demo/api-contract/sync-schema";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
-import { endpointClient, syncClient, syncConfig } from "@/lib/api";
-import { authClient } from "@/lib/auth";
+import { syncClient, syncConfig } from "@/lib/api";
 import { getPublicCounterServerFn, type PublicCounterInitialData } from "@/lib/counter-data";
+import { prepareSyncSession, type PreparedSyncSession } from "@/lib/sync-session";
 
 const counterRateLimit = 20;
 const counterRateLimitWindowMs = 60_000;
@@ -43,7 +44,9 @@ function HomeRoute() {
 }
 
 function SessionBackedHome({ initialData }: { readonly initialData: PublicCounterInitialData }) {
-  const session = authClient.useSession();
+  const prepareStarted = useRef(false);
+  const [preparedSession, setPreparedSession] = useState<PreparedSyncSession | null>(null);
+  const [preparePending, setPreparePending] = useState(true);
   const [pendingAdjustment, setPendingAdjustment] = useState<PendingAdjustment | null>(null);
   const [timing, setTiming] = useState<StartupTiming>(() => ({
     startedAt: now(),
@@ -61,14 +64,25 @@ function SessionBackedHome({ initialData }: { readonly initialData: PublicCounte
   };
 
   useEffect(() => {
-    if (session.isPending || timing.sessionReadyAt !== undefined) {
+    if (prepareStarted.current) {
       return;
     }
 
-    updateTiming({ sessionReadyAt: now() });
-  }, [session.isPending, timing.sessionReadyAt]);
+    prepareStarted.current = true;
+    void (async () => {
+      try {
+        const prepared = await prepareSyncSession({ createAnonymous: false });
+        updateTiming({ sessionReadyAt: now() });
+        setPreparedSession(prepared);
+      } catch (error) {
+        showAnonymousAuthErrorToast(error);
+      } finally {
+        setPreparePending(false);
+      }
+    })();
+  }, []);
 
-  if (session.isPending) {
+  if (preparePending) {
     return (
       <HomeShell
         counterValue={initialData.counter.value}
@@ -79,7 +93,7 @@ function SessionBackedHome({ initialData }: { readonly initialData: PublicCounte
     );
   }
 
-  if (!session.data?.user) {
+  if (!preparedSession) {
     return (
       <LazyGuestHome
         initialData={initialData}
@@ -95,8 +109,8 @@ function SessionBackedHome({ initialData }: { readonly initialData: PublicCounte
       onCounterReady={(counterReadyAt) => updateTiming({ counterReadyAt })}
       onPendingAdjustmentSubmitted={() => setPendingAdjustment(null)}
       pendingAdjustment={pendingAdjustment}
+      preparedSession={preparedSession}
       timing={timing}
-      user={session.data.user}
     />
   );
 }
@@ -111,7 +125,7 @@ function LazyGuestHome({
   readonly updateTimingOverride?: (nextTiming: Partial<StartupTiming>) => void;
 }) {
   const anonymousSignInStarted = useRef(false);
-  const [user, setUser] = useState<unknown>(null);
+  const [preparedSession, setPreparedSession] = useState<PreparedSyncSession | null>(null);
   const [pendingAdjustment, setPendingAdjustment] = useState<PendingAdjustment | null>(null);
   const [guestAuthPending, setGuestAuthPending] = useState(false);
   const [localTiming, setLocalTiming] = useState<StartupTiming>(() => ({
@@ -138,7 +152,7 @@ function LazyGuestHome({
   const requestAdjustment = (amount: -1 | 1) => {
     setPendingAdjustment({ amount, id: crypto.randomUUID() });
 
-    if (user || anonymousSignInStarted.current) {
+    if (preparedSession || anonymousSignInStarted.current) {
       return;
     }
 
@@ -148,31 +162,12 @@ function LazyGuestHome({
 
     void (async () => {
       try {
-        const existingSession = await authClient.getSession();
-        if (existingSession.data?.user) {
-          updateTiming({ sessionReadyAt: now() });
-          setUser(existingSession.data.user);
-          return;
+        const prepared = await prepareSyncSession({ createAnonymous: true });
+        if (!prepared) {
+          throw new Error("Anonymous session was not created.");
         }
-
-        const anonymousSession = await authClient.signIn.anonymous();
-        if (anonymousSession.error) {
-          setPendingAdjustment(null);
-          updateTiming({ anonymousAuthFailedAt: now() });
-          showAnonymousAuthErrorToast(anonymousSession.error);
-          return;
-        }
-
-        const nextUser = anonymousSession.data?.user ?? (await authClient.getSession()).data?.user;
-        if (!nextUser) {
-          setPendingAdjustment(null);
-          updateTiming({ anonymousAuthFailedAt: now() });
-          showAnonymousAuthErrorToast(new Error("Anonymous session was not created."));
-          return;
-        }
-
         updateTiming({ sessionReadyAt: now() });
-        setUser(nextUser);
+        setPreparedSession(prepared);
       } catch (error) {
         setPendingAdjustment(null);
         updateTiming({ anonymousAuthFailedAt: now() });
@@ -185,7 +180,7 @@ function LazyGuestHome({
     })();
   };
 
-  if (!user) {
+  if (!preparedSession) {
     return (
       <HomeShell
         counterValue={initialData.counter.value}
@@ -203,8 +198,8 @@ function LazyGuestHome({
       onCounterReady={(counterReadyAt) => updateTiming({ counterReadyAt })}
       onPendingAdjustmentSubmitted={() => setPendingAdjustment(null)}
       pendingAdjustment={pendingAdjustment}
+      preparedSession={preparedSession}
       timing={timing}
-      user={user}
     />
   );
 }
@@ -214,24 +209,33 @@ function SyncedHome({
   onCounterReady,
   onPendingAdjustmentSubmitted,
   pendingAdjustment,
+  preparedSession,
   timing,
-  user,
 }: {
   readonly initialData: PublicCounterInitialData;
   readonly onCounterReady: (counterReadyAt: number) => void;
   readonly onPendingAdjustmentSubmitted: () => void;
   readonly pendingAdjustment: PendingAdjustment | null;
+  readonly preparedSession: PreparedSyncSession;
   readonly timing: StartupTiming;
-  readonly user: unknown;
 }) {
+  const userId = contract.clientContext.getUserID(preparedSession.user as never);
+  const context = useMemo(
+    () => contract.clientContext.create(preparedSession.user as never),
+    [preparedSession],
+  );
+
   return (
     <SyncProvider
-      authEndpoint={endpointClient.sync.auth}
-      client={syncClient}
-      clientContext={contract.clientContext as never}
-      config={syncConfig}
+      auth={preparedSession.auth.token}
+      cacheURL={syncConfig.cacheURL}
+      context={context as never}
+      mutateURL={syncConfig.mutateURL}
+      mutators={syncClient.mutators}
+      queryURL={syncConfig.queryURL}
       schema={schema}
-      user={user as never}
+      storageKey={syncConfig.storageKey}
+      userID={userId}
     >
       <HomeCounter
         initialCounterValue={initialData.counter.value}
@@ -377,7 +381,7 @@ function HomeShell({
           Public counter
         </h1>
 
-        <div className="grid w-full grid-cols-[3.25rem_minmax(8rem,1fr)_3.25rem] items-center gap-5 sm:grid-cols-[4rem_minmax(12rem,1fr)_4rem] sm:gap-8">
+        <div className="grid w-full grid-cols-[3.25rem_minmax(8rem,auto)_3.25rem] items-center justify-center gap-2 sm:grid-cols-[4rem_minmax(12rem,auto)_4rem] sm:gap-3">
           <Button
             aria-label="Decrease counter"
             className="size-13 rounded-full border border-border bg-transparent p-0 text-3xl text-muted-foreground shadow-none hover:border-foreground hover:bg-foreground hover:text-background sm:size-16 sm:text-4xl"
@@ -392,13 +396,7 @@ function HomeShell({
             </span>
           </Button>
 
-          <span
-            key={counterValue}
-            aria-live="polite"
-            className="min-w-0 animate-in fade-in slide-in-from-bottom-1 font-semibold text-8xl leading-none tabular-nums duration-150 sm:text-[8rem] md:text-[9rem]"
-          >
-            {counterValue}
-          </span>
+          <CounterValue value={counterValue} />
 
           <Button
             aria-label="Increase counter"
@@ -419,6 +417,53 @@ function HomeShell({
         ) : null}
       </section>
     </main>
+  );
+}
+
+function CounterValue({ value }: { readonly value: number }) {
+  const previousValue = useRef(value);
+  const direction = value >= previousValue.current ? "up" : "down";
+  const characters = String(value).split("");
+  const reduceMotion = useReducedMotion();
+
+  useEffect(() => {
+    previousValue.current = value;
+  }, [value]);
+
+  const distance = direction === "up" ? "0.72em" : "-0.72em";
+  const exitDistance = direction === "up" ? "-0.72em" : "0.72em";
+
+  return (
+    <span
+      aria-label={String(value)}
+      aria-live="polite"
+      className="flex min-w-[2ch] justify-center overflow-hidden px-1 font-semibold text-8xl leading-none tabular-nums sm:text-[8rem] md:text-[9rem]"
+    >
+      {characters.map((character, index) => (
+        <span
+          aria-hidden
+          className="relative inline-grid h-[1em] min-w-[0.58em] place-items-center overflow-hidden"
+          key={`${index}-${character}`}
+        >
+          <AnimatePresence initial={false} mode="popLayout">
+            <motion.span
+              animate={{ opacity: 1, y: 0 }}
+              className="inline-block leading-none"
+              exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: exitDistance }}
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: distance }}
+              key={`${value}-${index}-${character}`}
+              transition={{
+                bounce: 0.22,
+                duration: 0.28,
+                type: "spring",
+              }}
+            >
+              {character}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      ))}
+    </span>
   );
 }
 

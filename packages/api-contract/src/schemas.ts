@@ -8,6 +8,26 @@ export const counterMutationInputSchema = z
   })
   .optional();
 
+export const syncSessionInputSchema = z.object({
+  createAnonymous: z.boolean().default(false),
+});
+
+export const syncSessionOutputSchema = z.object({
+  auth: z.object({
+    expiresAt: z.number(),
+    token: z.string(),
+    userId: z.string(),
+  }),
+  user: z
+    .object({
+      id: z.string(),
+      email: z.string().optional(),
+      isAnonymous: z.boolean().optional(),
+      name: z.string().optional(),
+    })
+    .passthrough(),
+});
+
 export const counterOutputSchema = z.object({
   authenticated: z.boolean(),
   step: z.number(),
