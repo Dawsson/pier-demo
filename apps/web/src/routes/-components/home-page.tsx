@@ -2,23 +2,23 @@ import { SyncProvider } from "@pier/sync";
 import { contract } from "@pier-demo/api-contract";
 import { schema } from "@pier-demo/api-contract/sync-schema";
 import { Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useEffect, useMemo, type ReactNode } from "react";
 import { toast } from "sonner";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { syncClient, syncConfig } from "@/lib/api";
+import { useCounterStore, type CounterAdjustAmount } from "@/lib/counter-store";
 import type { PublicCounterInitialData } from "@/lib/counter-data";
-import { prepareSyncSession, type PreparedSyncSession } from "@/lib/sync-session";
 import { Button } from "@repo/ui/button";
 import { CounterControls } from "./counter-controls";
 import { CounterValue } from "./counter-value";
 
-type CounterAdjustAmount = -1 | 1;
-
 export function HomePage({ initialData }: { readonly initialData: PublicCounterInitialData }) {
-  const [pendingAdjustment, setPendingAdjustment] = useState<CounterAdjustAmount | null>(null);
-  const [preparePending, setPreparePending] = useState(initialData.hasSessionCookie);
-  const [preparedSession, setPreparedSession] = useState<PreparedSyncSession | null>(null);
-  const preparePromiseRef = useRef<Promise<PreparedSyncSession | null> | null>(null);
+  const clearPendingAdjustment = useCounterStore((state) => state.clearPendingAdjustment);
+  const pendingAdjustment = useCounterStore((state) => state.pendingAdjustment);
+  const preparePending = useCounterStore((state) => state.preparePending);
+  const prepareSession = useCounterStore((state) => state.prepareSession);
+  const preparedSession = useCounterStore((state) => state.preparedSession);
+  const queueAdjustment = useCounterStore((state) => state.queueAdjustment);
   const userId = preparedSession
     ? contract.clientContext.getUserID(preparedSession.user as never)
     : null;
@@ -28,59 +28,29 @@ export function HomePage({ initialData }: { readonly initialData: PublicCounterI
     [preparedSession],
   );
 
-  const prepareSession = (createAnonymous: boolean) => {
-    if (preparedSession) {
-      return Promise.resolve(preparedSession);
-    }
-
-    if (preparePromiseRef.current) {
-      return preparePromiseRef.current;
-    }
-
-    setPreparePending(true);
-
-    const promise = prepareSyncSession({ createAnonymous })
-      .then((session) => {
-        if (session) {
-          setPreparedSession(session);
-        }
-
-        return session;
-      })
-      .catch((error) => {
-        setPendingAdjustment(null);
-        toast.warning(createAnonymous ? "Anonymous auth failed" : "Session unavailable", {
+  useEffect(() => {
+    if (initialData.hasSessionCookie) {
+      void prepareSession(false).catch((error: unknown) => {
+        toast.warning("Session unavailable", {
           description: error instanceof Error ? error.message : "Reload the page to try again.",
           id: "counter-session-error",
         });
-
-        return null;
-      })
-      .finally(() => {
-        preparePromiseRef.current = null;
-        setPreparePending(false);
       });
-
-    preparePromiseRef.current = promise;
-    return promise;
-  };
-
-  useEffect(() => {
-    if (initialData.hasSessionCookie) {
-      void prepareSession(false);
     }
-    // Only hydrate an existing session once on page mount.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [initialData.hasSessionCookie, prepareSession]);
 
   const requestAdjustment = (amount: CounterAdjustAmount) => {
-    if (!preparedSession) {
-      setPendingAdjustment(amount);
-      void prepareSession(true);
-      return;
-    }
+    queueAdjustment(amount);
 
-    setPendingAdjustment(amount);
+    if (!preparedSession) {
+      void prepareSession(true).catch((error: unknown) => {
+        clearPendingAdjustment();
+        toast.warning("Anonymous auth failed", {
+          description: error instanceof Error ? error.message : "Reload the page to try again.",
+          id: "counter-session-error",
+        });
+      });
+    }
   };
 
   const page = (counterValue: number, isAdjusting = false) => (
@@ -111,7 +81,7 @@ export function HomePage({ initialData }: { readonly initialData: PublicCounterI
           onAdjust={requestAdjustment}
           onPrewarm={() => {
             if (!preparePending && !preparedSession) {
-              void prepareSession(true);
+              void prepareSession(true).catch(() => undefined);
             }
           }}
         >
@@ -139,7 +109,7 @@ export function HomePage({ initialData }: { readonly initialData: PublicCounterI
     >
       <SyncedCounter
         initialCounterValue={initialData.counter.value}
-        onAdjustmentSubmitted={() => setPendingAdjustment(null)}
+        onAdjustmentSubmitted={clearPendingAdjustment}
         pendingAdjustment={pendingAdjustment}
         render={page}
       />
