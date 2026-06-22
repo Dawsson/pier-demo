@@ -5,6 +5,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
+import { toastManager } from "@/components/ui/toast";
 import { endpointClient, syncClient, syncConfig } from "@/lib/api";
 import { authClient } from "@/lib/auth";
 
@@ -47,7 +48,12 @@ function HomeRoute() {
 
 function HomeCounter() {
   const counter = syncClient.counter.current.useQuery();
-  const increment = syncClient.counter.increment.useMutation();
+  const queryErrorToastShown = useRef(false);
+  const increment = syncClient.counter.increment.useMutation({
+    onError: (error) => {
+      showCounterErrorToast(error);
+    },
+  });
 
   const counterValue = counter.data?.value ?? 0;
   const isAdjusting = increment.isPending;
@@ -55,24 +61,24 @@ function HomeCounter() {
     increment.mutate({ amount });
   };
 
-  return (
-    <HomeShell
-      counterValue={counterValue}
-      error={increment.error}
-      isAdjusting={isAdjusting}
-      onAdjust={adjust}
-    />
-  );
+  useEffect(() => {
+    if (!counter.isError || queryErrorToastShown.current) {
+      return;
+    }
+
+    queryErrorToastShown.current = true;
+    showCounterErrorToast(counter.error);
+  }, [counter.error, counter.isError]);
+
+  return <HomeShell counterValue={counterValue} isAdjusting={isAdjusting} onAdjust={adjust} />;
 }
 
 function HomeShell({
   counterValue = 0,
-  error,
   isAdjusting = true,
   onAdjust,
 }: {
   readonly counterValue?: number;
-  readonly error?: unknown;
   readonly isAdjusting?: boolean;
   readonly onAdjust?: (amount: -1 | 1) => void;
 }) {
@@ -136,11 +142,36 @@ function HomeShell({
             </span>
           </Button>
         </div>
-
-        <p className="min-h-5 text-muted-foreground text-xs">
-          {error ? "Could not update the counter." : null}
-        </p>
       </section>
     </main>
   );
+}
+
+function showCounterErrorToast(error: unknown) {
+  const message = errorMessage(error);
+  const isRateLimited = /rate.?limit|too many|429/i.test(message);
+
+  toastManager.add({
+    description: isRateLimited
+      ? "Give it a moment before counting again."
+      : "The synced counter could not update.",
+    id: isRateLimited ? "counter-rate-limited" : "counter-sync-error",
+    title: isRateLimited ? "Slow down" : "Counter unavailable",
+    type: isRateLimited ? "warning" : "error",
+  });
+}
+
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (typeof error === "object" && error !== null && "message" in error) {
+    const message = (error as { readonly message?: unknown }).message;
+    if (typeof message === "string") {
+      return message;
+    }
+  }
+
+  return String(error);
 }
