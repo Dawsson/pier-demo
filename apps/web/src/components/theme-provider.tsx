@@ -34,12 +34,24 @@ export const ThemeProviderContext = createContext<ThemeProviderState>(initialSta
 
 const useThemeEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
+function isTheme(value: string | null | undefined): value is Theme {
+  return value === "light" || value === "dark" || value === "system";
+}
+
 function getStoredTheme(storageKey: string, defaultTheme: Theme) {
   if (typeof window === "undefined") {
     return defaultTheme;
   }
 
-  return (window.localStorage.getItem(storageKey) as Theme | null) ?? defaultTheme;
+  const scriptedTheme = window.document.documentElement.dataset.theme;
+
+  if (isTheme(scriptedTheme)) {
+    return scriptedTheme;
+  }
+
+  const storedTheme = window.localStorage.getItem(storageKey);
+
+  return isTheme(storedTheme) ? storedTheme : defaultTheme;
 }
 
 function getSystemDark() {
@@ -74,6 +86,8 @@ export function ThemeProvider({
 
     root.classList.remove("light", "dark");
     root.classList.add(resolvedTheme);
+    root.dataset.theme = theme;
+    root.dataset.resolvedTheme = resolvedTheme;
     root.style.colorScheme = resolvedTheme;
   }, [isSystemDark, theme]);
 

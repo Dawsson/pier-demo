@@ -35,6 +35,8 @@ const themeScript = `
 
   root.classList.remove("light", "dark");
   root.classList.add(resolvedTheme);
+  root.dataset.theme = theme;
+  root.dataset.resolvedTheme = resolvedTheme;
   root.style.colorScheme = resolvedTheme;
 })();
 `;

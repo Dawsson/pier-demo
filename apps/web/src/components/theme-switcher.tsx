@@ -30,7 +30,7 @@ export function ThemeSwitcher() {
       onClick={() => setTheme(next)}
     >
       <Monitor aria-hidden />
-      <span className="hidden sm:inline">Theme</span>
+      <span className="hidden sm:inline after:content-['Light'] dark:after:content-['Dark']" />
     </Button>
   );
 }
