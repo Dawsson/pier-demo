@@ -1,0 +1,51 @@
+id: no-inline-unknown-object-assertion
+language: TypeScript
+severity: error
+message: Do not assert inline object shapes with unknown properties.
+note: Use a named type guard, a Zod schema, or a typed API contract at the untyped boundary.
+files:
+  - "apps/**/*.ts"
+  - "packages/**/*.ts"
+ignores:
+  - "apps/*/src/.pier/**"
+  - "apps/*/src/routeTree.gen.ts"
+rule:
+  any:
+    - pattern: "$VALUE as { readonly $PROPERTY?: unknown }"
+    - pattern: "$VALUE as { readonly $PROPERTY: unknown }"
+    - pattern: "$VALUE as { readonly $PROPERTY?: unknown; $$$REST }"
+    - pattern: "$VALUE as { readonly $PROPERTY: unknown; $$$REST }"
+    - pattern: "$VALUE as { $$$BEFORE; readonly $PROPERTY?: unknown; $$$AFTER }"
+    - pattern: "$VALUE as { $$$BEFORE; readonly $PROPERTY: unknown; $$$AFTER }"
+    - pattern: "$VALUE as { $PROPERTY?: unknown }"
+    - pattern: "$VALUE as { $PROPERTY: unknown }"
+    - pattern: "$VALUE as { $PROPERTY?: unknown; $$$REST }"
+    - pattern: "$VALUE as { $PROPERTY: unknown; $$$REST }"
+    - pattern: "$VALUE as { $$$BEFORE; $PROPERTY?: unknown; $$$AFTER }"
+    - pattern: "$VALUE as { $$$BEFORE; $PROPERTY: unknown; $$$AFTER }"
+---
+id: no-inline-unknown-object-assertion-tsx
+language: TSX
+severity: error
+message: Do not assert inline object shapes with unknown properties.
+note: Use a named type guard, a Zod schema, or a typed API contract at the untyped boundary.
+files:
+  - "apps/**/*.tsx"
+  - "packages/**/*.tsx"
+ignores:
+  - "apps/*/src/.pier/**"
+  - "apps/*/src/routeTree.gen.ts"
+rule:
+  any:
+    - pattern: "$VALUE as { readonly $PROPERTY?: unknown }"
+    - pattern: "$VALUE as { readonly $PROPERTY: unknown }"
+    - pattern: "$VALUE as { readonly $PROPERTY?: unknown; $$$REST }"
+    - pattern: "$VALUE as { readonly $PROPERTY: unknown; $$$REST }"
+    - pattern: "$VALUE as { $$$BEFORE; readonly $PROPERTY?: unknown; $$$AFTER }"
+    - pattern: "$VALUE as { $$$BEFORE; readonly $PROPERTY: unknown; $$$AFTER }"
+    - pattern: "$VALUE as { $PROPERTY?: unknown }"
+    - pattern: "$VALUE as { $PROPERTY: unknown }"
+    - pattern: "$VALUE as { $PROPERTY?: unknown; $$$REST }"
+    - pattern: "$VALUE as { $PROPERTY: unknown; $$$REST }"
+    - pattern: "$VALUE as { $$$BEFORE; $PROPERTY?: unknown; $$$AFTER }"
+    - pattern: "$VALUE as { $$$BEFORE; $PROPERTY: unknown; $$$AFTER }"

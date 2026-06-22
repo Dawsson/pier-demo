@@ -1,10 +1,17 @@
 import { syncRouter } from "@pier-demo/api-contract";
 import { sql } from "drizzle-orm";
+import { z } from "zod";
 import type { AppDb } from "#/db";
 import { counterIncrement, counterState } from "#/db/schema";
 import { enforceCounterRateLimit } from "#/modules/counter/rate-limit";
 import { counterStep } from "#/modules/counter/service";
 import type { DemoSyncContext } from "./context";
+
+const anonymousUserSchema = z
+  .object({
+    isAnonymous: z.literal(true),
+  })
+  .passthrough();
 
 export const syncMutators = syncRouter.implement({
   counter: {
@@ -67,8 +74,4 @@ const counterIdentity = (request: Request, userId: string | undefined) => {
   }`;
 };
 
-const isAnonymousUser = (user: unknown) =>
-  typeof user === "object" &&
-  user !== null &&
-  "isAnonymous" in user &&
-  (user as { readonly isAnonymous?: unknown }).isAnonymous === true;
+const isAnonymousUser = (user: unknown) => anonymousUserSchema.safeParse(user).success;

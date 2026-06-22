@@ -3,12 +3,19 @@ import { initSync } from "@pier/sync/init";
 import { createApiSyncContract } from "@pier/sync/operation-contract";
 import { createProcedureFactory } from "@pier/sync/procedure";
 import type { EndpointOperation } from "@pier/sync/rpc";
+import { z } from "zod";
 
 import { contractModules } from "./backend";
 import { counterMutationInputSchema, emptyInputSchema } from "./schemas";
 import { schema, zql } from "./sync-schema";
 
 type DemoSyncClientAccess = Record<string, never>;
+
+const anonymousUserSchema = z
+  .object({
+    isAnonymous: z.literal(true),
+  })
+  .passthrough();
 
 const t = initSync<typeof schema>().context<SyncContext>().create();
 const endpointProcedure = createProcedureFactory<SyncContext>().procedure;
@@ -74,11 +81,7 @@ const syncClientContract = syncRouter.implement({
 const optimisticCounterStep = (user: SyncContext["user"]) =>
   user && !isAnonymousUser(user) ? 5 : 1;
 
-const isAnonymousUser = (user: unknown) =>
-  typeof user === "object" &&
-  user !== null &&
-  "isAnonymous" in user &&
-  (user as { readonly isAnonymous?: unknown }).isAnonymous === true;
+const isAnonymousUser = (user: unknown) => anonymousUserSchema.safeParse(user).success;
 
 const syncContract = {
   clientMutators: syncClientContract.clientMutators,

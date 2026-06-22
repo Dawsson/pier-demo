@@ -1,5 +1,6 @@
 import { PierApiError } from "@pier/backend";
 import type { User } from "better-auth";
+import type { UserWithRole } from "better-auth/plugins/admin";
 import type { ApiContext } from "#/api";
 
 export const currentSessionUser = async (ctx: ApiContext): Promise<User | null> => {
@@ -19,6 +20,8 @@ export const requireSessionUser = async (ctx: ApiContext): Promise<User> => {
 };
 
 export const roleForUser = (user: User) => {
-  const role = (user as { readonly role?: unknown }).role;
+  const role = userWithRole(user).role;
   return typeof role === "string" ? role : null;
 };
+
+const userWithRole = (user: User): UserWithRole => user as UserWithRole;

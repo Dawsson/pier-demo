@@ -1,0 +1,9 @@
+id: no-inline-unknown-object-assertion
+valid:
+  - "const parsed = schema.parse(value);"
+  - "const user = value as User;"
+  - "const request = context as { readonly request?: Request };"
+  - 'if (typeof value === "object" && value !== null) return value;'
+invalid:
+  - "const message = (body as { readonly message?: unknown }).message;"
+  - 'const appError = error as { readonly details?: unknown; readonly message: string; readonly type: "app" };'

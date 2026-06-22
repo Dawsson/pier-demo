@@ -2,6 +2,7 @@ import { formatSyncError, syncErrorFromMutator } from "@pier/sync/errors";
 import type { QueryState } from "@pier/sync/react";
 import { useZero } from "@rocicorp/zero/react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { z } from "zod";
 
 type QueryData<TState> = TState extends QueryState<infer TData> ? TData : never;
 type InitialDataOptions<TOptions, TInitial> = Omit<NonNullable<TOptions>, "input"> & {
@@ -92,6 +93,14 @@ type SyncClientRoot = {
 };
 
 const syncClientProxyCache = new WeakMap<object, unknown>();
+
+const mutatorAppErrorSchema = z
+  .object({
+    details: z.unknown().optional(),
+    message: z.string(),
+    type: z.literal("app"),
+  })
+  .passthrough();
 
 export function withSyncOptions<TValue extends object>(
   value: TValue,
@@ -247,17 +256,9 @@ function useSyncMutation<TArgs>(
 }
 
 function normalizeMutationError(error: unknown): Error {
-  if (
-    typeof error === "object" &&
-    error !== null &&
-    "type" in error &&
-    error.type === "app" &&
-    "message" in error &&
-    typeof error.message === "string"
-  ) {
-    return syncErrorFromMutator(
-      error as { readonly details?: unknown; readonly message: string; readonly type: "app" },
-    );
+  const appError = mutatorAppErrorSchema.safeParse(error);
+  if (appError.success) {
+    return syncErrorFromMutator(appError.data);
   }
 
   if (error instanceof Error) {

@@ -1,0 +1,14 @@
+id: no-inline-unknown-object-assertion
+snapshots:
+  'const appError = error as { readonly details?: unknown; readonly message: string; readonly type: "app" };':
+    labels:
+      - source: 'error as { readonly details?: unknown; readonly message: string; readonly type: "app" }'
+        style: primary
+        start: 17
+        end: 104
+  "const message = (body as { readonly message?: unknown }).message;":
+    labels:
+      - source: "body as { readonly message?: unknown }"
+        style: primary
+        start: 17
+        end: 55
