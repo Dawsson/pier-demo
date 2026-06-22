@@ -15,7 +15,7 @@ export const getPublicCounterServerFn = createServerFn({ method: "GET" }).handle
   const counter = await rpcClient.publicCounter.current.call({});
   const ssrMs = Math.round(performance.now() - startedAt);
 
-  if (process.env.NODE_ENV !== "production" || ssrMs >= 100) {
+  if (import.meta.env.DEV || ssrMs >= 100) {
     console.log(
       JSON.stringify({
         event: "public_counter_ssr_timing",

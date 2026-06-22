@@ -125,8 +125,8 @@ function AccountCounter() {
           >
             {increment.isPending ? "Adding" : "Add 5"}
           </Button>
-          <Button asChild size="lg" variant="ghost">
-            <Link to="/">View public page</Link>
+          <Button render={<Link to="/" />} size="lg" variant="ghost">
+            View public page
           </Button>
         </FrameFooter>
       </Frame>

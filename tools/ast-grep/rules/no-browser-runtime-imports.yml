@@ -1,0 +1,33 @@
+id: no-browser-api-runtime-import
+language: TypeScript
+severity: error
+message: Browser apps must not import API or internal runtime modules.
+note: Browser apps should use typed clients and shared contracts instead of importing Worker runtime code.
+files:
+  - "apps/web/src/**/*.ts"
+  - "apps/admin/src/**/*.ts"
+ignores:
+  - "apps/*/src/.pier/**"
+  - "apps/*/src/routeTree.gen.ts"
+rule:
+  kind: import_statement
+  has:
+    kind: string
+    regex: '["''](?:@pier-demo/(?:api|internal)(?:/.*)?|.*apps/(?:api|internal)/src/.*|.*(?:api|internal)/src/.*)["'']'
+---
+id: no-browser-api-runtime-import-tsx
+language: TSX
+severity: error
+message: Browser apps must not import API or internal runtime modules.
+note: Browser apps should use typed clients and shared contracts instead of importing Worker runtime code.
+files:
+  - "apps/web/src/**/*.tsx"
+  - "apps/admin/src/**/*.tsx"
+ignores:
+  - "apps/*/src/.pier/**"
+  - "apps/*/src/routeTree.gen.ts"
+rule:
+  kind: import_statement
+  has:
+    kind: string
+    regex: '["''](?:@pier-demo/(?:api|internal)(?:/.*)?|.*apps/(?:api|internal)/src/.*|.*(?:api|internal)/src/.*)["'']'

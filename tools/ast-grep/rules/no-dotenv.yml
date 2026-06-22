@@ -1,0 +1,47 @@
+id: no-dotenv-import
+language: TypeScript
+severity: error
+message: Do not load dotenv in this Pier demo.
+note: Required runtime values should come from Pier cloud env and generated .pier env helpers.
+files:
+  - "**/*.ts"
+  - "**/*.tsx"
+  - "**/*.js"
+  - "**/*.jsx"
+  - "**/*.mjs"
+  - "**/*.cjs"
+ignores:
+  - "node_modules/**"
+  - "apps/*/src/.pier/**"
+  - "apps/*/src/routeTree.gen.ts"
+rule:
+  any:
+    - pattern: import "dotenv/config"
+    - pattern: import "dotenv"
+    - pattern: import $DEFAULT from "dotenv"
+    - pattern: import * as $NS from "dotenv"
+    - pattern: import { $$$IMPORTS } from "dotenv"
+    - pattern: require("dotenv")
+    - pattern: require("dotenv/config")
+---
+id: no-dotenv-import-tsx
+language: TSX
+severity: error
+message: Do not load dotenv in this Pier demo.
+note: Required runtime values should come from Pier cloud env and generated .pier env helpers.
+files:
+  - "**/*.tsx"
+  - "**/*.jsx"
+ignores:
+  - "node_modules/**"
+  - "apps/*/src/.pier/**"
+  - "apps/*/src/routeTree.gen.ts"
+rule:
+  any:
+    - pattern: import "dotenv/config"
+    - pattern: import "dotenv"
+    - pattern: import $DEFAULT from "dotenv"
+    - pattern: import * as $NS from "dotenv"
+    - pattern: import { $$$IMPORTS } from "dotenv"
+    - pattern: require("dotenv")
+    - pattern: require("dotenv/config")

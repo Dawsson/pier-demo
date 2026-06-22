@@ -1,0 +1,7 @@
+id: no-process-env-in-app-source
+valid:
+  - const apiUrl = serverEnv.PUBLIC_API_URL;
+  - const isDev = import.meta.env.DEV;
+invalid:
+  - const apiUrl = process.env.PUBLIC_API_URL;
+  - const apiUrl = process.env["PUBLIC_API_URL"];

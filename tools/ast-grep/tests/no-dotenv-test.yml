@@ -1,0 +1,8 @@
+id: no-dotenv-import
+valid:
+  - import { clientEnv } from "@/.pier/env";
+  - const env = await import("./env");
+invalid:
+  - import "dotenv/config";
+  - import dotenv from "dotenv";
+  - require("dotenv").config();

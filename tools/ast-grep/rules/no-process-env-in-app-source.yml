@@ -1,0 +1,29 @@
+id: no-process-env-in-app-source
+language: TypeScript
+severity: error
+message: Do not read process.env from app source.
+note: Use generated .pier env helpers in app code. Tooling scripts and Vite configs may read process.env.
+files:
+  - "apps/*/src/**/*.ts"
+ignores:
+  - "apps/*/src/.pier/**"
+  - "apps/*/src/routeTree.gen.ts"
+rule:
+  any:
+    - pattern: process.env.$VAR
+    - pattern: process.env[$VAR]
+---
+id: no-process-env-in-app-source-tsx
+language: TSX
+severity: error
+message: Do not read process.env from app source.
+note: Use generated .pier env helpers in app code. Tooling scripts and Vite configs may read process.env.
+files:
+  - "apps/*/src/**/*.tsx"
+ignores:
+  - "apps/*/src/.pier/**"
+  - "apps/*/src/routeTree.gen.ts"
+rule:
+  any:
+    - pattern: process.env.$VAR
+    - pattern: process.env[$VAR]

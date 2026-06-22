@@ -54,7 +54,7 @@ function RootComponent() {
       <ThemeProvider>
         <QueryClientProvider client={context.queryClient}>
           <Outlet />
-          <Toaster closeButton duration={1600} position="bottom-center" richColors={false} />
+          <Toaster closeButton duration={1600} position="bottom-right" richColors={false} />
         </QueryClientProvider>
       </ThemeProvider>
     </RootDocument>

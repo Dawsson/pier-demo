@@ -1,0 +1,8 @@
+id: no-browser-api-runtime-import
+valid:
+  - import { contract } from "@pier-demo/api-contract";
+  - import { Button } from "@/components/ui/button";
+invalid:
+  - import { createDb } from "../../../api/src/db";
+  - import { api } from "@pier-demo/api";
+  - import { internal } from "@pier-demo/internal";
