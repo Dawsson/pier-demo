@@ -16,7 +16,7 @@ import {
 import { Input } from "@repo/ui/input";
 import { cn } from "@repo/ui/utils";
 import { OAuthButtons } from "@/routes/auth/-components/oauth-buttons";
-import { AuthFormFrame } from "@/routes/auth/-components/auth-form-frame";
+import { AuthFormCard } from "@/routes/auth/-components/auth-form-card";
 
 export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
   return (
     <div className={cn("flex w-full flex-col gap-4", className)} {...props}>
       <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
-        <AuthFormFrame
+        <AuthFormCard
           title="Create account"
           description="Create an account to continue."
           footer={
@@ -138,7 +138,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
           >
             {registerUser.isPending ? "Creating account" : "Continue"}
           </Button>
-        </AuthFormFrame>
+        </AuthFormCard>
       </form>
     </div>
   );

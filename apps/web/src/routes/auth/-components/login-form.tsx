@@ -16,7 +16,7 @@ import {
 import { Input } from "@repo/ui/input";
 import { cn } from "@repo/ui/utils";
 import { OAuthButtons } from "@/routes/auth/-components/oauth-buttons";
-import { AuthFormFrame } from "@/routes/auth/-components/auth-form-frame";
+import { AuthFormCard } from "@/routes/auth/-components/auth-form-card";
 
 export function LoginForm({ className, ...props }: ComponentProps<"div">) {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
   return (
     <div className={cn("flex w-full flex-col gap-4", className)} {...props}>
       <form noValidate onSubmit={form.handleSubmit(onSubmit)}>
-        <AuthFormFrame
+        <AuthFormCard
           title="Welcome back"
           description="Sign in to continue."
           footer={
@@ -118,7 +118,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
           >
             {login.isPending ? "Signing in" : "Continue"}
           </Button>
-        </AuthFormFrame>
+        </AuthFormCard>
       </form>
     </div>
   );
