@@ -24,6 +24,7 @@ export interface CounterIncrement {
 }
 
 export type IncrementCounterInput = {
+  amount?: -1 | 1;
   authenticated: boolean;
   identity: string;
   userId?: string;
@@ -48,7 +49,7 @@ export const readCounter = async (db: AppDb, input: { authenticated: boolean }) 
 };
 
 export const incrementCounter = async (db: AppDb, input: IncrementCounterInput) => {
-  const amount = counterStep(input.authenticated);
+  const amount = input.amount ?? counterStep(input.authenticated);
   const now = new Date().toISOString();
 
   const next = await db.transaction(async (tx) => {

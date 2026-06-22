@@ -2,6 +2,10 @@ import { z } from "zod";
 
 export const emptyInputSchema = z.object({}).optional();
 
+export const counterAdjustInputSchema = z.object({
+  amount: z.union([z.literal(-1), z.literal(1)]),
+});
+
 export const counterOutputSchema = z.object({
   authenticated: z.boolean(),
   step: z.number(),
