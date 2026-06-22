@@ -1,6 +1,5 @@
 import { Link, Navigate, getRouteApi } from "@tanstack/react-router";
-import { useZero } from "@rocicorp/zero/react";
-import { useCallback, useEffect, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { toast } from "sonner";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { syncClient } from "@/lib/api";
@@ -73,48 +72,25 @@ function SyncedCounter({
       updatedAt: initialCounter.updatedAt,
       value: initialCounter.value,
     },
-  });
-  const zero = useZero();
-  const increment = useCallback(
-    (amount: CounterAdjustAmount) => {
-      const startedAt = performance.now();
-      const request = syncClient.mutators.counter.increment({ amount });
-      const result = zero.mutate(request as Parameters<typeof zero.mutate>[0]);
-
-      void result.client.then((clientResult) => {
-        if (clientResult.type === "error") {
-          showCounterMutationError(clientResult.error.message);
-        }
-      });
-
-      void result.server.then((serverResult) => {
-        if (serverResult.type === "error") {
-          console.log(
-            "counter.increment server error after",
-            `${Math.round(performance.now() - startedAt)}ms`,
-            serverResult.error.message,
-          );
-          showCounterMutationError(serverResult.error.message);
-        }
-      });
-    },
-    [zero],
-  );
-
-  useEffect(() => {
-    if (counter.isError) {
+    onError: () => {
       toast.error("Counter unavailable", {
         description: "The synced counter could not load.",
         id: "counter-sync-error",
       });
-    }
-  }, [counter.isError]);
+    },
+  });
+  const increment = syncClient.counter.increment.useMutation({
+    onError: showCounterMutationError,
+    onServerError: showCounterMutationError,
+  });
 
-  return render(counter.data.value, false, increment);
+  return render(counter.data.value, increment.isPending, (amount) => {
+    increment.mutate({ amount });
+  });
 }
 
-function showCounterMutationError(message: string) {
-  if (/rate.?limit|too many|429/i.test(message)) {
+function showCounterMutationError(error: Error) {
+  if (/rate.?limit|too many|429/i.test(error.message)) {
     toast.warning("Slow down", {
       description: "Give it a moment before counting again.",
       id: "counter-rate-limited",
