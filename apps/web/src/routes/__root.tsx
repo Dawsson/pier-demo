@@ -4,7 +4,7 @@ import { schema } from "@pier-demo/api-contract/sync-schema";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import geistLatinFontUrl from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url";
-import { useContext, useEffect, useMemo, type ReactNode } from "react";
+import { useContext, useMemo, type ReactNode } from "react";
 import {
   DEFAULT_THEME,
   THEME_STORAGE_KEY,
@@ -13,7 +13,6 @@ import {
 } from "@/components/theme-provider";
 import { Toaster } from "@repo/ui/sonner";
 import { syncConfig, syncMutators } from "@/lib/api";
-import { useCounterStore } from "@/lib/counter-store";
 import { getSyncSessionServerFn } from "@/lib/sync-session";
 import type { RouterContext } from "@/router-context";
 import "@/styles.css";
@@ -80,16 +79,11 @@ function RootComponent() {
 
 function RootSyncProvider({ children }: Readonly<{ children: ReactNode }>) {
   const syncSession = Route.useLoaderData();
-  const setSyncSession = useCounterStore((state) => state.setSyncSession);
   const userId = syncSession ? contract.clientContext.getUserID(syncSession.user as never) : null;
   const context = useMemo(
     () => (syncSession ? contract.clientContext.create(syncSession.user as never) : null),
     [syncSession],
   );
-
-  useEffect(() => {
-    setSyncSession(syncSession);
-  }, [setSyncSession, syncSession]);
 
   if (!syncSession || !userId || !context) {
     return children;

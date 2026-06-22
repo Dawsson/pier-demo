@@ -3,10 +3,9 @@ import type { ReactNode } from "react";
 import { toast } from "sonner";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { syncClient } from "@/lib/api";
-import type { CounterAdjustAmount } from "@/lib/counter-store";
 import type { PublicCounterInitialData } from "@/lib/counter-data";
 import { Button } from "@repo/ui/button";
-import { CounterControls } from "./counter-controls";
+import { CounterControls, type CounterAdjustAmount } from "./counter-controls";
 import { CounterValue } from "./counter-value";
 
 const rootRoute = getRouteApi("__root__");

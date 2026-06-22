@@ -2,7 +2,7 @@ import { Button } from "@repo/ui/button";
 import { useHoverIntentPrewarm } from "@/lib/use-hover-intent-prewarm";
 import type { ReactNode } from "react";
 
-type CounterAdjustAmount = -1 | 1;
+export type CounterAdjustAmount = -1 | 1;
 
 export function CounterControls({
   children,
