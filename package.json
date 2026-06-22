@@ -30,9 +30,7 @@
     "test": "bun test",
     "zero:down": "bun scripts/zero.ts down",
     "zero:logs": "bun scripts/zero.ts logs",
-    "zero:permissions": "bun scripts/zero.ts permissions",
     "zero:reset": "bun scripts/zero.ts reset",
-    "zero:bootstrap": "bun scripts/bootstrap-db.ts",
     "zero:up": "bun scripts/zero.ts up"
   },
   "dependencies": {

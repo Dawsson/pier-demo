@@ -1,29 +1,24 @@
 import { spawn } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
+import { sql } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/postgres-js";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
 
-type Command = "down" | "logs" | "permissions" | "reset" | "up";
+type Command = "down" | "logs" | "reset" | "up";
 
 const command = process.argv[2] as Command | undefined;
 
-if (!command || !["down", "logs", "permissions", "reset", "up"].includes(command)) {
-  console.error("Usage: bun scripts/zero.ts <up|down|logs|permissions|reset>");
+if (!command || !["down", "logs", "reset", "up"].includes(command)) {
+  console.error("Usage: bun scripts/zero.ts <up|down|logs|reset>");
   process.exit(1);
-}
-
-if (command === "permissions") {
-  const baseEnv = zeroEnv();
-  await decommissionZero(baseEnv);
-  await run("bun", ["scripts/bootstrap-db.ts"], baseEnv);
-  await deployPermissions(baseEnv);
-  process.exit(0);
 }
 
 if (command === "reset") {
   const baseEnv = zeroEnv();
   await run("docker", ["compose", "down", "-v"], dockerEnv(baseEnv));
   await decommissionZero(baseEnv);
-  await run("bun", ["scripts/bootstrap-db.ts"], baseEnv);
+  await prepareDatabase(baseEnv);
   await deployPermissions(baseEnv);
   await run("docker", ["compose", "up", "-d", "zero-cache"], dockerEnv(baseEnv));
   await grantZeroMetadataAccess(baseEnv);
@@ -41,7 +36,7 @@ if (command === "up") {
   const baseEnv = zeroEnv();
   await run("docker", ["compose", "down"], dockerEnv(baseEnv));
   await decommissionZero(baseEnv);
-  await run("bun", ["scripts/bootstrap-db.ts"], baseEnv);
+  await prepareDatabase(baseEnv);
   await deployPermissions(baseEnv);
   await run("docker", composeArgs, dockerEnv(baseEnv));
   await grantZeroMetadataAccess(baseEnv);
@@ -182,6 +177,45 @@ async function deployPermissions(env: NodeJS.ProcessEnv) {
     ],
     env,
   );
+}
+
+async function prepareDatabase(env: NodeJS.ProcessEnv) {
+  if (!env.DATABASE_URL) {
+    throw new Error("DATABASE_URL is required. Run `dev restart api` before starting Zero.");
+  }
+
+  const client = postgres(env.DATABASE_URL, { max: 1, onnotice: () => undefined });
+  const db = drizzle(client);
+
+  try {
+    const [{ schemaName }] = await client<{ schemaName: string }[]>`
+      select current_schema() as "schemaName"
+    `;
+
+    await migrate(db, {
+      migrationsFolder: "apps/api/drizzle",
+      migrationsSchema: schemaName,
+    });
+    await db.execute(sql`
+      insert into "counter_state" ("id", "value", "updated_at")
+      values ('global', 0, now()::text)
+      on conflict ("id") do nothing
+    `);
+    await db.execute(sql`
+      do $$
+      begin
+        if not exists (
+          select 1 from pg_publication where pubname = 'pier_demo_sync'
+        ) then
+          execute 'create publication pier_demo_sync for table "counter_state", "user"';
+        end if;
+      end
+      $$
+    `);
+    await db.execute(sql`alter publication pier_demo_sync set table "counter_state", "user"`);
+  } finally {
+    await client.end();
+  }
 }
 
 async function decommissionZero(env: NodeJS.ProcessEnv) {
