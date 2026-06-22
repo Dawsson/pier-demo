@@ -1,7 +1,7 @@
 import { SyncProvider } from "@pier/sync";
 import { contract } from "@pier-demo/api-contract";
 import { schema } from "@pier-demo/api-contract/sync-schema";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { syncClient, syncConfig } from "@/lib/api";
 import type { PublicCounterInitialData } from "@/lib/counter-data";
 import type { PreparedSyncSession } from "@/lib/sync-session";
@@ -16,6 +16,18 @@ export function HomePage({ initialData }: { readonly initialData: PublicCounterI
     hasSessionCookie: initialData.hasSessionCookie,
     onInteractiveAuthError: () => setPendingAdjustment(null),
   });
+  const { counterReadyAt: existingCounterReadyAt } = session.timing;
+  const { updateTiming } = session;
+  const reportCounterReady = useCallback(
+    (counterReadyAt: number) => {
+      if (existingCounterReadyAt !== undefined) {
+        return;
+      }
+
+      updateTiming({ counterReadyAt });
+    },
+    [existingCounterReadyAt, updateTiming],
+  );
 
   const requestAdjustment = (amount: CounterAdjustAmount) => {
     setPendingAdjustment({ amount, id: crypto.randomUUID() });
@@ -45,7 +57,7 @@ export function HomePage({ initialData }: { readonly initialData: PublicCounterI
   return (
     <SyncedCounterRoot
       initialData={initialData}
-      onCounterReady={(counterReadyAt) => session.updateTiming({ counterReadyAt })}
+      onCounterReady={reportCounterReady}
       onPendingAdjustmentSubmitted={() => setPendingAdjustment(null)}
       pendingAdjustment={pendingAdjustment}
       preparedSession={session.preparedSession}
