@@ -4,8 +4,6 @@
   "slug": "pierdemo",
   "services": ["web", "admin", "api", "zero"],
   "session": {
-    "name": "pierdemo",
-    "selectWindow": 0,
     "windows": [
       {
         "name": "main",
@@ -14,27 +12,23 @@
           {
             "name": "api",
             "command": "bun run dev:api",
-            "position": "main",
-            "services": ["api"]
+            "position": "main"
           },
           {
             "name": "web",
             "command": "bun run dev:web",
             "position": "right",
-            "services": ["web"],
             "waitForServices": ["api", "zero"]
           },
           {
             "name": "admin",
             "command": "bun run dev:admin",
-            "position": "bottom",
-            "services": ["admin"]
+            "position": "bottom"
           },
           {
             "name": "zero",
             "command": "bun run zero:up && bun run zero:logs",
             "position": "bottom",
-            "services": ["zero"],
             "waitForServices": ["api"]
           }
         ]
