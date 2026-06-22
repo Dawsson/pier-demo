@@ -23,8 +23,7 @@ Cloudflare account mutations, and platform-admin telemetry belong in Pier.
 ## Local Dev And Logs
 
 - Start the full local session with `bun run dev`, or run individual services
-  with `bun run dev:daemon`, `bun run dev:internal`, `bun run dev:api`,
-  `bun run dev:web`, and `bun run dev:admin`.
+  with `bun run dev:api`, `bun run dev:web`, and `bun run dev:admin`.
 - Use Pier cloud env as the runtime source of truth. Do not add `.env` setup
   instructions or local dotenv fallbacks for required app values.
 - Worker services use Pier's Miniflare-backed local runtime and rebuild into

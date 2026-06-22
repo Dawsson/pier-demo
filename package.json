@@ -14,7 +14,6 @@
     "dev": "dev up --cwd .",
     "dev:api": "pier dev api",
     "dev:admin": "pier dev admin",
-    "dev:daemon": "pier daemon start",
     "dev:web": "pier dev web",
     "doctor": "pier doctor",
     "env:types": "pier env types",

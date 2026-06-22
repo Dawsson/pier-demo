@@ -22,30 +22,43 @@ export const appRoles = roles({
 
 const projectOrganizationId = process.env.PIER_ORGANIZATION_ID;
 
+const urls = {
+  admin: "https://admin.pier-demo.buildwithharbor.com",
+  api: "https://api.pier-demo.buildwithharbor.com",
+  web: "https://pier-demo.buildwithharbor.com",
+  zeroCache: "https://sync.buildwithharbor.com/pier-demo",
+} as const;
+
+const vars = {
+  admin: ["PUBLIC_ADMIN_URL", "PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_WEB_URL"],
+  api: [
+    "ADMIN_URL",
+    "API_URL",
+    "BETTER_AUTH_SECRET",
+    "PUBLIC_ADMIN_URL",
+    "PUBLIC_API_URL",
+    "PUBLIC_APP_NAME",
+    "PUBLIC_WEB_URL",
+    "WEB_URL",
+  ],
+  web: ["PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_WEB_URL", "PUBLIC_ZERO_CACHE_URL"],
+} as const;
+
 export default app({
   apps: {
     admin: appSlot.tanstackStart("apps/admin/src/start.ts", {
-      domain: "admin.pier-demo.buildwithharbor.com",
-      vars: ["PUBLIC_ADMIN_URL", "PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_WEB_URL"],
+      domain: new URL(urls.admin).hostname,
+      vars: vars.admin,
     }),
     api: appSlot.apiWorker("apps/api/src/index.ts", {
-      domain: "api.pier-demo.buildwithharbor.com",
+      domain: new URL(urls.api).hostname,
       bindings: ["CACHE", "DB", "INTERNAL", "RATE_LIMITER"],
-      vars: [
-        "ADMIN_URL",
-        "API_URL",
-        "BETTER_AUTH_SECRET",
-        "PUBLIC_ADMIN_URL",
-        "PUBLIC_API_URL",
-        "PUBLIC_APP_NAME",
-        "PUBLIC_WEB_URL",
-        "WEB_URL",
-      ],
+      vars: vars.api,
     }),
     internal: appSlot.internalWorker("apps/internal/src/index.ts", { bindings: ["CACHE"] }),
     web: appSlot.tanstackStart("apps/web/src/start.ts", {
-      domain: "pier-demo.buildwithharbor.com",
-      vars: ["PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_WEB_URL", "PUBLIC_ZERO_CACHE_URL"],
+      domain: new URL(urls.web).hostname,
+      vars: vars.web,
     }),
   },
   bindings: {
@@ -89,20 +102,14 @@ export default app({
   permissions: permissionCatalog,
   ...(projectOrganizationId ? { project: { organizationId: projectOrganizationId } } : {}),
   vars: {
-    ADMIN_URL: variable.url().default("https://admin.pier-demo.buildwithharbor.com"),
-    API_URL: variable.url().default("https://api.pier-demo.buildwithharbor.com"),
+    ADMIN_URL: variable.url().default(urls.admin),
+    API_URL: variable.url().default(urls.api),
     BETTER_AUTH_SECRET: variable.string().sensitive().random(32),
-    PUBLIC_ADMIN_URL: variable
-      .url()
-      .default("https://admin.pier-demo.buildwithharbor.com")
-      .public(),
-    PUBLIC_API_URL: variable.url().default("https://api.pier-demo.buildwithharbor.com").public(),
+    PUBLIC_ADMIN_URL: variable.url().default(urls.admin).public(),
+    PUBLIC_API_URL: variable.url().default(urls.api).public(),
     PUBLIC_APP_NAME: variable.string().default("Pier Demo"),
-    PUBLIC_WEB_URL: variable.url().default("https://pier-demo.buildwithharbor.com").public(),
-    PUBLIC_ZERO_CACHE_URL: variable
-      .url()
-      .default("https://sync.buildwithharbor.com/pier-demo")
-      .public(),
-    WEB_URL: variable.url().default("https://pier-demo.buildwithharbor.com"),
+    PUBLIC_WEB_URL: variable.url().default(urls.web).public(),
+    PUBLIC_ZERO_CACHE_URL: variable.url().default(urls.zeroCache).public(),
+    WEB_URL: variable.url().default(urls.web),
   },
 });

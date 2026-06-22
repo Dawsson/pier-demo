@@ -113,8 +113,6 @@ Individual services are available when you need a focused process:
 bun run dev:web
 bun run dev:admin
 bun run dev:api
-bun run dev:internal
-bun run dev:daemon
 ```
 
 Local logs:
