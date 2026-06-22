@@ -9,10 +9,23 @@ const apiUrl = () =>
     : ((import.meta.env.DEV_API_URL as string | undefined) ?? clientEnv.PUBLIC_API_URL);
 
 const syncUrl = () =>
-  typeof window === "undefined" ? serverEnv.PUBLIC_ZERO_CACHE_URL : clientEnv.PUBLIC_ZERO_CACHE_URL;
+  typeof window === "undefined"
+    ? serverEnv.PUBLIC_ZERO_CACHE_URL
+    : ((import.meta.env.DEV_ZERO_URL as string | undefined) ?? clientEnv.PUBLIC_ZERO_CACHE_URL);
 
-export const { endpointClient, rpcClient, syncClient, syncConfig } = createApiClients(contract, {
+const clients = createApiClients(contract, {
   apiUrl: apiUrl(),
   storageKey: "pier-demo-sync-v1",
   syncUrl: syncUrl(),
 });
+
+export const { endpointClient, rpcClient, syncClient } = clients;
+
+export const syncConfig =
+  typeof window !== "undefined" && import.meta.env.DEV
+    ? ({
+        ...clients.syncConfig,
+        mutateURL: undefined,
+        queryURL: undefined,
+      } as unknown as typeof clients.syncConfig)
+    : clients.syncConfig;
