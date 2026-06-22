@@ -26,6 +26,11 @@ Cloudflare account mutations, and platform-admin telemetry belong in Pier.
   with `bun run dev:api`, `bun run dev:web`, and `bun run dev:admin`.
 - Use Pier cloud env as the runtime source of truth. Do not add `.env` setup
   instructions or local dotenv fallbacks for required app values.
+- Local development uses the Pier cloud dev Postgres database plus local
+  `zero-cache`; do not introduce a separate local Postgres path unless the
+  project intentionally changes that strategy.
+- Keep database setup on real Drizzle migrations in `apps/api/drizzle`. Do not
+  add manual schema bootstrap or ad hoc table-creation fallbacks.
 - Worker services use Pier's Miniflare-backed local runtime and rebuild into
   `.pier/build/dev/<app>` on source changes. Do not add product-owned
   Wrangler config.
@@ -55,6 +60,17 @@ bun run plan
 bun run env:types
 pier logs --state local --project pier-demo
 pier logs dump --state local --project pier-demo --markdown
+```
+
+For Zero/runtime checks, prefer routed proof:
+
+```sh
+dev status --cwd /Users/dawson/projects/waypoint-guest-app
+curl -fsS https://zero.pierdemo.dev.dawson.gg/keepalive
+curl -sS -X POST https://api.pierdemo.dev.dawson.gg/rpc/publicCounter/current \
+  -H 'content-type: application/json' --data '{}'
+dev logs api --cwd /Users/dawson/projects/waypoint-guest-app --tail 80
+dev logs zero --cwd /Users/dawson/projects/waypoint-guest-app --tail 80
 ```
 
 ## Guardrails
