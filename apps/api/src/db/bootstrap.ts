@@ -15,6 +15,7 @@ const applySchema = async (db: AppDb) => {
       "name" text not null,
       "email" text not null unique,
       "email_verified" boolean not null,
+      "is_anonymous" boolean default false,
       "image" text,
       "role" text,
       "banned" boolean default false,
@@ -23,6 +24,10 @@ const applySchema = async (db: AppDb) => {
       "created_at" timestamp with time zone not null,
       "updated_at" timestamp with time zone not null
     )
+  `);
+  await db.execute(sql`
+    alter table "user"
+    add column if not exists "is_anonymous" boolean default false
   `);
   await db.execute(sql`
     create table if not exists "session" (

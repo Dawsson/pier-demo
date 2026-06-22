@@ -5,9 +5,10 @@ import type { DemoSyncContext } from "./context";
 
 export const syncMutators = syncRouter.implement({
   counter: {
-    increment: async ({ ctx }) => {
+    increment: async ({ ctx, input }) => {
       const appContext = ctx as DemoSyncContext;
       const identity = counterIdentity(appContext.request, appContext.user?.id);
+      const authenticated = Boolean(appContext.user) && !isAnonymousUser(appContext.user);
 
       await enforceCounterRateLimit(appContext.env, {
         identity,
@@ -15,8 +16,9 @@ export const syncMutators = syncRouter.implement({
       });
 
       await incrementCounter(appContext.db, {
-        authenticated: Boolean(appContext.user),
+        authenticated,
         identity,
+        ...(input?.amount !== undefined ? { amount: input.amount } : {}),
         ...(appContext.user?.id ? { userId: appContext.user.id } : {}),
       });
     },
@@ -35,3 +37,9 @@ const counterIdentity = (request: Request, userId: string | undefined) => {
     "local"
   }`;
 };
+
+const isAnonymousUser = (user: unknown) =>
+  typeof user === "object" &&
+  user !== null &&
+  "isAnonymous" in user &&
+  (user as { readonly isAnonymous?: unknown }).isAnonymous === true;

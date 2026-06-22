@@ -1,4 +1,5 @@
 import { createKvSecondaryStorage, createPierAuth } from "@pier/auth";
+import { anonymous } from "better-auth/plugins/anonymous";
 import { admin } from "better-auth/plugins";
 import { projectTopology, type Env } from "#/.pier/env";
 import type { AppDb } from "#/db";
@@ -13,6 +14,10 @@ export const createAuth = (env: Env, db: AppDb) =>
       },
 
       plugins: [
+        anonymous({
+          emailDomainName: "anonymous.pier-demo.local",
+          generateName: () => "Anonymous guest",
+        }),
         admin({
           adminRoles: ["admin"],
           defaultRole: "user",

@@ -2,6 +2,7 @@ import { SyncProvider } from "@pier/sync";
 import { contract } from "@pier-demo/api-contract";
 import { schema } from "@pier-demo/api-contract/sync-schema";
 import { Link, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { useLogout } from "@/auth/hooks/use-logout";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,8 +28,20 @@ export const Route = createFileRoute("/app")({
 
 function AppRoute() {
   const session = authClient.useSession();
+  const navigate = useNavigate();
 
-  if (!session.data?.user) {
+  const isAnonymous =
+    typeof session.data?.user === "object" &&
+    session.data.user !== null &&
+    "isAnonymous" in session.data.user &&
+    session.data.user.isAnonymous === true;
+
+  useEffect(() => {
+    if (!isAnonymous) return;
+    void navigate({ replace: true, to: "/auth/sign-in" });
+  }, [isAnonymous, navigate]);
+
+  if (!session.data?.user || isAnonymous) {
     return null;
   }
 

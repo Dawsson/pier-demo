@@ -1,0 +1,66 @@
+services:
+  upstream-db:
+    image: postgres:18
+    container_name: pier-demo-upstream-db
+    command: postgres -c wal_level=logical
+    ports:
+      - "${DEV_POSTGRES_PORT:-55432}:5432"
+    environment:
+      POSTGRES_DB: zero
+      POSTGRES_PASSWORD: pass
+    healthcheck:
+      test: pg_isready -U postgres -d zero
+      interval: 5s
+      start_period: 10s
+    volumes:
+      - pier-demo-upstream-db:/var/lib/postgresql
+
+  zero-cache:
+    image: rocicorp/zero:1.6.2
+    container_name: pier-demo-zero-cache
+    entrypoint: node
+    command:
+      - --max-old-space-size=96
+      - --max-semi-space-size=2
+      - /usr/local/bin/zero-cache
+    ports:
+      - "${DEV_ZERO_PORT:-4859}:4848"
+    depends_on:
+      upstream-db:
+        condition: service_healthy
+    stop_grace_period: 10m
+    environment:
+      ZERO_APP_ID: ${ZERO_APP_ID:-pier_demo_local}
+      ZERO_APP_PUBLICATIONS: pier_demo_sync
+      ZERO_UPSTREAM_DB: ${ZERO_UPSTREAM_DB:-postgres://postgres:pass@upstream-db:5432/zero}
+      ZERO_CVR_DB: ${ZERO_CVR_DB:-postgres://postgres:pass@upstream-db:5432/zero}
+      ZERO_CHANGE_DB: ${ZERO_CHANGE_DB:-postgres://postgres:pass@upstream-db:5432/zero}
+      ZERO_REPLICA_FILE: /data/replica.db
+      ZERO_ADMIN_PASSWORD: password
+      ZERO_AUTH_SECRET: ${ZERO_AUTH_SECRET:?ZERO_AUTH_SECRET is required}
+      ZERO_QUERY_URL: http://host.docker.internal:${DEV_API_PORT:-8787}/zero/query,https://api.pier-demo.buildwithharbor.com/zero/query
+      ZERO_MUTATE_URL: http://host.docker.internal:${DEV_API_PORT:-8787}/zero/mutate,https://api.pier-demo.buildwithharbor.com/zero/mutate
+      ZERO_QUERY_ALLOWED_CLIENT_HEADERS: authorization
+      ZERO_MUTATE_ALLOWED_CLIENT_HEADERS: authorization
+      ZERO_QUERY_FORWARD_COOKIES: "true"
+      ZERO_MUTATE_FORWARD_COOKIES: "true"
+      ZERO_ENABLE_CRUD_MUTATIONS: "false"
+      ZERO_NUM_SYNC_WORKERS: "1"
+      ZERO_CVR_MAX_CONNS: "1"
+      ZERO_UPSTREAM_MAX_CONNS: "1"
+      ZERO_CHANGE_MAX_CONNS: "1"
+      ZERO_INITIAL_SYNC_TABLE_COPY_WORKERS: "1"
+      ZERO_ENABLE_TELEMETRY: "false"
+      DO_NOT_TRACK: "1"
+      MALLOC_ARENA_MAX: "1"
+      UV_THREADPOOL_SIZE: "1"
+    healthcheck:
+      test: curl -f http://localhost:4848/keepalive
+      interval: 5s
+      start_period: 2m
+    volumes:
+      - pier-demo-zero-cache:/data
+
+volumes:
+  pier-demo-upstream-db:
+  pier-demo-zero-cache:

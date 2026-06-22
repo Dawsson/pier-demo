@@ -1,4 +1,14 @@
-import { boolean, createBuilder, createSchema, number, string, table } from "@rocicorp/zero";
+import {
+  ANYONE_CAN,
+  boolean,
+  createBuilder,
+  createSchema,
+  definePermissions,
+  number,
+  string,
+  table,
+  type PermissionRule,
+} from "@rocicorp/zero";
 
 export const counterStateTable = table("counter_state")
   .columns({
@@ -14,6 +24,7 @@ export const userTable = table("user")
     name: string(),
     email: string(),
     emailVerified: boolean().from("email_verified"),
+    isAnonymous: boolean().from("is_anonymous").optional(),
     image: string().optional(),
     role: string().optional(),
   })
@@ -24,3 +35,26 @@ export const schema = createSchema({
 });
 
 export const zql = createBuilder(schema);
+
+type SyncAuthData = {
+  readonly sub: string;
+};
+
+export const permissions = definePermissions<SyncAuthData, typeof schema>(schema, () => ({
+  counter_state: {
+    row: {
+      select: ANYONE_CAN,
+    },
+  },
+  user: {
+    row: {
+      select: [
+        ((authData, { cmp }) => cmp("id", "=", authData.sub)) as PermissionRule<
+          SyncAuthData,
+          typeof schema,
+          "user"
+        >,
+      ],
+    },
+  },
+}));

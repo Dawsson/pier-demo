@@ -2,7 +2,18 @@
   "$schema": "https://dev.dawson.gg/schemas/dev.v1.json",
   "name": "pier-demo",
   "slug": "pierdemo",
-  "services": ["web", "admin", "api"],
+  "services": ["web", "admin", "api", "zero"],
+  "serviceAliases": {
+    "zero": {
+      "url": ["PUBLIC_ZERO_CACHE_URL", "VITE_ZERO_CACHE_URL", "ZERO_CACHE_URL"]
+    }
+  },
+  "servicePorts": {
+    "zero": 4859
+  },
+  "serviceTargets": {
+    "zero": "http://127.0.0.1:4859"
+  },
   "session": {
     "name": "pierdemo",
     "selectWindow": 0,
@@ -14,20 +25,60 @@
           {
             "name": "api",
             "command": "bun run dev:api",
+            "env": {
+              "ADMIN_URL": "https://admin.pierdemo.dev.dawson.gg",
+              "API_URL": "https://api.pierdemo.dev.dawson.gg",
+              "DATABASE_URL": "postgresql://postgres:pass@127.0.0.1:55432/zero",
+              "PUBLIC_ADMIN_URL": "https://admin.pierdemo.dev.dawson.gg",
+              "PUBLIC_API_URL": "https://api.pierdemo.dev.dawson.gg",
+              "PUBLIC_WEB_URL": "https://pierdemo.dev.dawson.gg",
+              "WEB_URL": "https://pierdemo.dev.dawson.gg"
+            },
             "position": "main",
             "services": ["api"]
           },
           {
             "name": "web",
             "command": "bun run dev:web",
+            "env": {
+              "PUBLIC_API_URL": "https://api.pierdemo.dev.dawson.gg",
+              "PUBLIC_WEB_URL": "https://pierdemo.dev.dawson.gg",
+              "PUBLIC_ZERO_CACHE_URL": "https://zero.pierdemo.dev.dawson.gg",
+              "VITE_API_URL": "https://api.pierdemo.dev.dawson.gg",
+              "VITE_PUBLIC_API_URL": "https://api.pierdemo.dev.dawson.gg",
+              "VITE_PUBLIC_WEB_URL": "https://pierdemo.dev.dawson.gg",
+              "VITE_WEB_URL": "https://pierdemo.dev.dawson.gg",
+              "VITE_ZERO_CACHE_URL": "https://zero.pierdemo.dev.dawson.gg",
+              "WEB_URL": "https://pierdemo.dev.dawson.gg",
+              "ZERO_CACHE_URL": "https://zero.pierdemo.dev.dawson.gg"
+            },
             "position": "right",
-            "services": ["web"]
+            "services": ["web"],
+            "waitForServices": ["api", "zero"]
           },
           {
             "name": "admin",
             "command": "bun run dev:admin",
+            "env": {
+              "PUBLIC_ADMIN_URL": "https://admin.pierdemo.dev.dawson.gg",
+              "PUBLIC_API_URL": "https://api.pierdemo.dev.dawson.gg",
+              "PUBLIC_WEB_URL": "https://pierdemo.dev.dawson.gg",
+              "VITE_ADMIN_URL": "https://admin.pierdemo.dev.dawson.gg",
+              "VITE_API_URL": "https://api.pierdemo.dev.dawson.gg",
+              "VITE_PUBLIC_ADMIN_URL": "https://admin.pierdemo.dev.dawson.gg",
+              "VITE_PUBLIC_API_URL": "https://api.pierdemo.dev.dawson.gg",
+              "VITE_PUBLIC_WEB_URL": "https://pierdemo.dev.dawson.gg",
+              "VITE_WEB_URL": "https://pierdemo.dev.dawson.gg"
+            },
             "position": "bottom",
             "services": ["admin"]
+          },
+          {
+            "name": "zero",
+            "command": "bun run zero:up && bun run zero:logs",
+            "position": "bottom",
+            "services": ["zero"],
+            "waitForServices": ["api"]
           }
         ]
       },

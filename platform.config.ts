@@ -45,7 +45,7 @@ export default app({
     internal: appSlot.internalWorker("apps/internal/src/index.ts", { bindings: ["CACHE"] }),
     web: appSlot.tanstackStart("apps/web/src/start.ts", {
       domain: "pier-demo.buildwithharbor.com",
-      vars: ["PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_WEB_URL"],
+      vars: ["PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_WEB_URL", "PUBLIC_ZERO_CACHE_URL"],
     }),
   },
   bindings: {
@@ -99,6 +99,10 @@ export default app({
     PUBLIC_API_URL: variable.url().default("https://api.pier-demo.buildwithharbor.com").public(),
     PUBLIC_APP_NAME: variable.string().default("Pier Demo"),
     PUBLIC_WEB_URL: variable.url().default("https://pier-demo.buildwithharbor.com").public(),
+    PUBLIC_ZERO_CACHE_URL: variable
+      .url()
+      .default("https://sync.buildwithharbor.com/pier-demo")
+      .public(),
     WEB_URL: variable.url().default("https://pier-demo.buildwithharbor.com"),
   },
 });

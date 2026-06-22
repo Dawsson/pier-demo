@@ -1,38 +1,83 @@
+import { SyncProvider } from "@pier/sync";
+import { contract } from "@pier-demo/api-contract";
+import { schema } from "@pier-demo/api-contract/sync-schema";
 import { Link, createFileRoute } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
-import { rpcClient } from "@/lib/api";
+import { endpointClient, syncClient, syncConfig } from "@/lib/api";
+import { authClient } from "@/lib/auth";
 
 export const Route = createFileRoute("/")({
   component: HomeRoute,
 });
 
 function HomeRoute() {
-  const counter = rpcClient.publicCounter.current.useQuery({
-    retry: false,
-  });
-  const adjustCounter = rpcClient.publicCounter.adjust.useMutation({
-    onSuccess: async () => {
-      await counter.refetch();
-    },
-  });
-  const counterValue = adjustCounter.data?.value ?? counter.data?.value ?? 0;
-  const isAdjusting = adjustCounter.isPending;
+  const session = authClient.useSession();
+  const anonymousSignInStarted = useRef(false);
+
+  useEffect(() => {
+    if (session.isPending || session.data?.user || anonymousSignInStarted.current) {
+      return;
+    }
+
+    anonymousSignInStarted.current = true;
+    void authClient.signIn.anonymous().finally(() => {
+      anonymousSignInStarted.current = false;
+    });
+  }, [session.data?.user, session.isPending]);
+
+  if (!session.data?.user) {
+    return <HomeShell />;
+  }
+
+  return (
+    <SyncProvider
+      authEndpoint={endpointClient.sync.auth}
+      client={syncClient}
+      clientContext={contract.clientContext as never}
+      config={syncConfig}
+      schema={schema}
+      user={session.data.user as never}
+    >
+      <HomeCounter />
+    </SyncProvider>
+  );
+}
+
+function HomeCounter() {
+  const counter = syncClient.counter.current.useQuery();
+  const increment = syncClient.counter.increment.useMutation();
+
+  const counterValue = counter.data?.value ?? 0;
+  const isAdjusting = increment.isPending;
   const adjust = (amount: -1 | 1) => {
-    adjustCounter.mutate({ amount });
+    increment.mutate({ amount });
   };
 
   return (
-    <main className="relative flex min-h-screen flex-col overflow-hidden bg-[linear-gradient(180deg,var(--background)_0%,color-mix(in_srgb,var(--muted),var(--background)_52%)_100%)] px-5 py-7 text-foreground sm:px-7">
-      <div
-        className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] bg-[size:44px_44px] opacity-35 dark:opacity-20"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-background to-transparent"
-        aria-hidden
-      />
+    <HomeShell
+      counterValue={counterValue}
+      error={increment.error}
+      isAdjusting={isAdjusting}
+      onAdjust={adjust}
+    />
+  );
+}
 
+function HomeShell({
+  counterValue = 0,
+  error,
+  isAdjusting = true,
+  onAdjust,
+}: {
+  readonly counterValue?: number;
+  readonly error?: unknown;
+  readonly isAdjusting?: boolean;
+  readonly onAdjust?: (amount: -1 | 1) => void;
+}) {
+  return (
+    <main className="flex min-h-screen flex-col bg-background px-5 py-7 text-foreground sm:px-7">
       <header className="site-header">
         <Link className="brand" to="/">
           <span className="brand-mark" aria-hidden />
@@ -48,23 +93,21 @@ function HomeRoute() {
 
       <section
         aria-labelledby="counter-title"
-        className="relative mx-auto flex w-full max-w-4xl flex-1 flex-col items-center justify-center gap-7 text-center"
+        className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center text-center"
       >
-        <div className="grid gap-2">
-          <p className="font-medium text-muted-foreground text-xs uppercase">Public counter</p>
-          <h1 id="counter-title" className="font-semibold text-xl tracking-normal sm:text-2xl">
-            Click it up or down.
-          </h1>
-        </div>
+        <h1 id="counter-title" className="sr-only">
+          Public counter
+        </h1>
 
-        <div className="grid w-full grid-cols-[4rem_minmax(8rem,1fr)_4rem] items-center gap-3 sm:grid-cols-[5rem_minmax(12rem,1fr)_5rem] sm:gap-8">
+        <div className="grid w-full grid-cols-[3.25rem_minmax(8rem,1fr)_3.25rem] items-center gap-5 sm:grid-cols-[4rem_minmax(12rem,1fr)_4rem] sm:gap-8">
           <Button
             aria-label="Decrease counter"
-            className="h-24 w-full rounded-none border-border bg-background/80 px-0 text-4xl text-muted-foreground shadow-none backdrop-blur-sm hover:bg-foreground hover:text-background sm:h-32 sm:text-5xl dark:bg-background/70"
-            disabled={isAdjusting}
+            className="size-13 rounded-full border border-border bg-transparent p-0 text-3xl text-muted-foreground shadow-none hover:border-foreground hover:bg-foreground hover:text-background sm:size-16 sm:text-4xl"
+            disabled={isAdjusting || !onAdjust}
+            size="icon"
             type="button"
-            variant="secondary"
-            onClick={() => adjust(-1)}
+            variant="ghost"
+            onClick={() => onAdjust?.(-1)}
           >
             <span aria-hidden className="-translate-y-0.5">
               −
@@ -74,17 +117,19 @@ function HomeRoute() {
           <span
             key={counterValue}
             aria-live="polite"
-            className="min-w-0 animate-in fade-in slide-in-from-bottom-2 font-black text-8xl leading-[0.82] tabular-nums duration-200 sm:text-[10rem] md:text-[12rem] lg:text-[13rem]"
+            className="min-w-0 animate-in fade-in slide-in-from-bottom-1 font-semibold text-8xl leading-none tabular-nums duration-150 sm:text-[8rem] md:text-[9rem]"
           >
             {counterValue}
           </span>
 
           <Button
             aria-label="Increase counter"
-            className="h-24 w-full rounded-none bg-foreground px-0 text-4xl text-background shadow-none hover:bg-foreground/88 sm:h-32 sm:text-5xl"
-            disabled={isAdjusting}
+            className="size-13 rounded-full border border-border bg-transparent p-0 text-3xl text-muted-foreground shadow-none hover:border-foreground hover:bg-foreground hover:text-background sm:size-16 sm:text-4xl"
+            disabled={isAdjusting || !onAdjust}
+            size="icon"
             type="button"
-            onClick={() => adjust(1)}
+            variant="ghost"
+            onClick={() => onAdjust?.(1)}
           >
             <span aria-hidden className="-translate-y-0.5">
               +
@@ -93,7 +138,7 @@ function HomeRoute() {
         </div>
 
         <p className="min-h-5 text-muted-foreground text-xs">
-          {adjustCounter.error ? "Could not update the counter." : null}
+          {error ? "Could not update the counter." : null}
         </p>
       </section>
     </main>

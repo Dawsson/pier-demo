@@ -5,7 +5,7 @@ import { createProcedureFactory } from "@pier/sync/procedure";
 import type { EndpointOperation } from "@pier/sync/rpc";
 
 import { contractModules } from "./backend";
-import { emptyInputSchema } from "./schemas";
+import { counterMutationInputSchema, emptyInputSchema } from "./schemas";
 import { schema, zql } from "./sync-schema";
 
 type DemoSyncClientAccess = Record<string, never>;
@@ -43,9 +43,9 @@ const syncRouter = t.router({
       })
       .sync.query(() => zql.counter_state.where("id", "=", "global").one()),
     increment: t.procedure
-      .input(emptyInputSchema)
+      .input(counterMutationInputSchema)
       .meta({
-        description: "Increment the signed-in demo counter through Pier Sync.",
+        description: "Adjust the demo counter through Pier Sync.",
         tags: ["counter"],
       })
       .sync.mutation(),
@@ -87,6 +87,7 @@ export type ApiContract = typeof contract;
 export {
   adminSummaryOutputSchema,
   agentContextOutputSchema,
+  counterMutationInputSchema,
   counterOutputSchema,
   emptyInputSchema,
   healthOutputSchema,
