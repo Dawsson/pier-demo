@@ -14,47 +14,24 @@ import { CounterControls } from "./counter-controls";
 import { CounterValue } from "./counter-value";
 
 export function HomePage({ initialData }: { readonly initialData: PublicCounterInitialData }) {
-  const clearPendingAdjustment = useCounterStore((state) => state.clearPendingAdjustment);
-  const pendingAdjustment = useCounterStore((state) => state.pendingAdjustment);
-  const preparePending = useCounterStore((state) => state.preparePending);
-  const prepareSession = useCounterStore((state) => state.prepareSession);
-  const preparedSession = useCounterStore((state) => state.preparedSession);
-  const queueAdjustment = useCounterStore((state) => state.queueAdjustment);
-  const userId = preparedSession
-    ? contract.clientContext.getUserID(preparedSession.user as never)
-    : null;
+  const setPreparedSession = useCounterStore((state) => state.setPreparedSession);
+  const preparedSession =
+    useCounterStore((state) => state.preparedSession) ?? initialData.syncSession;
+  const userId = contract.clientContext.getUserID(preparedSession.user as never);
   const context = useMemo(
-    () =>
-      preparedSession ? contract.clientContext.create(preparedSession.user as never) : undefined,
+    () => contract.clientContext.create(preparedSession.user as never),
     [preparedSession],
   );
 
   useEffect(() => {
-    if (initialData.hasSessionCookie) {
-      void prepareSession(false).catch((error: unknown) => {
-        toast.warning("Session unavailable", {
-          description: error instanceof Error ? error.message : "Reload the page to try again.",
-          id: "counter-session-error",
-        });
-      });
-    }
-  }, [initialData.hasSessionCookie, prepareSession]);
+    setPreparedSession(initialData.syncSession);
+  }, [initialData.syncSession, setPreparedSession]);
 
-  const requestAdjustment = (amount: CounterAdjustAmount) => {
-    queueAdjustment(amount);
-
-    if (!preparedSession) {
-      void prepareSession(true).catch((error: unknown) => {
-        clearPendingAdjustment();
-        toast.warning("Anonymous auth failed", {
-          description: error instanceof Error ? error.message : "Reload the page to try again.",
-          id: "counter-session-error",
-        });
-      });
-    }
-  };
-
-  const page = (counterValue: number, isAdjusting = false) => (
+  const page = (
+    counterValue: number,
+    isAdjusting = false,
+    onAdjust: (amount: CounterAdjustAmount) => void,
+  ) => (
     <main className="relative flex min-h-screen flex-col bg-background px-5 py-7 text-foreground sm:px-7">
       <header className="site-header">
         <Link className="brand" to="/">
@@ -77,23 +54,15 @@ export function HomePage({ initialData }: { readonly initialData: PublicCounterI
           Public counter
         </h1>
 
-        <CounterControls
-          isAdjusting={isAdjusting}
-          onAdjust={requestAdjustment}
-          onPrewarm={() => {
-            if (!preparePending && !preparedSession) {
-              void prepareSession(true).catch(() => undefined);
-            }
-          }}
-        >
+        <CounterControls isAdjusting={isAdjusting} onAdjust={onAdjust}>
           <CounterValue value={counterValue} />
         </CounterControls>
       </section>
     </main>
   );
 
-  if (!preparedSession || !context || !userId) {
-    return page(initialData.counter.value);
+  if (!userId) {
+    throw new Error("Sync session is missing a user ID.");
   }
 
   return (
@@ -108,26 +77,21 @@ export function HomePage({ initialData }: { readonly initialData: PublicCounterI
       storageKey={syncConfig.storageKey}
       userID={userId}
     >
-      <SyncedCounter
-        initialCounterValue={initialData.counter.value}
-        onAdjustmentSubmitted={clearPendingAdjustment}
-        pendingAdjustment={pendingAdjustment}
-        render={page}
-      />
+      <SyncedCounter initialCounterValue={initialData.counter.value} render={page} />
     </SyncProvider>
   );
 }
 
 function SyncedCounter({
   initialCounterValue,
-  onAdjustmentSubmitted,
-  pendingAdjustment,
   render,
 }: {
   readonly initialCounterValue: number;
-  readonly onAdjustmentSubmitted: () => void;
-  readonly pendingAdjustment: CounterAdjustAmount | null;
-  readonly render: (counterValue: number, isAdjusting?: boolean) => ReactNode;
+  readonly render: (
+    counterValue: number,
+    isAdjusting: boolean,
+    onAdjust: (amount: CounterAdjustAmount) => void,
+  ) => ReactNode;
 }) {
   const counter = syncClient.counter.current.useQuery();
   const zero = useZero();
@@ -158,15 +122,6 @@ function SyncedCounter({
   );
 
   useEffect(() => {
-    if (pendingAdjustment === null) {
-      return;
-    }
-
-    increment(pendingAdjustment);
-    onAdjustmentSubmitted();
-  }, [increment, onAdjustmentSubmitted, pendingAdjustment]);
-
-  useEffect(() => {
     if (counter.isError) {
       toast.error("Counter unavailable", {
         description: "The synced counter could not load.",
@@ -175,7 +130,7 @@ function SyncedCounter({
     }
   }, [counter.isError]);
 
-  return render(counter.data?.value ?? initialCounterValue, false);
+  return render(counter.data?.value ?? initialCounterValue, false, increment);
 }
 
 function showCounterMutationError(message: string) {

@@ -13,7 +13,7 @@ export function CounterControls({
   readonly children: ReactNode;
   readonly isAdjusting: boolean;
   readonly onAdjust: ((amount: CounterAdjustAmount) => void) | undefined;
-  readonly onPrewarm: (() => void) | undefined;
+  readonly onPrewarm?: (() => void) | undefined;
 }) {
   const prewarmIntent = useHoverIntentPrewarm(onPrewarm);
 

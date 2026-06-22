@@ -1,5 +1,3 @@
-import { endpointClient } from "@/lib/api";
-
 export type PreparedSyncSession = {
   readonly auth: {
     readonly expiresAt: number;
@@ -7,36 +5,26 @@ export type PreparedSyncSession = {
     readonly userId: string;
   };
   readonly user: {
+    readonly email?: string;
     readonly id: string;
-    readonly [key: string]: unknown;
+    readonly isAnonymous?: boolean;
+    readonly name?: string;
   };
 };
 
-export async function prepareSyncSession(input: {
-  readonly createAnonymous: boolean;
-}): Promise<PreparedSyncSession | null> {
-  const response = await fetch(endpointClient.syncSession.prepare.href(input), {
-    body: JSON.stringify(input),
-    credentials: "include",
-    headers: {
-      "content-type": "application/json",
-    },
-    method: "POST",
-  });
+export function readSetCookieHeaders(headers: Headers) {
+  const getSetCookie = (headers as Headers & { getSetCookie?: () => string[] }).getSetCookie;
+  const cookies = typeof getSetCookie === "function" ? getSetCookie.call(headers) : [];
 
-  if (response.status === 401 && !input.createAnonymous) {
-    return null;
+  if (cookies.length > 0) {
+    return cookies;
   }
 
-  if (!response.ok) {
-    const body = await response.json().catch(() => null);
-    throw new Error(errorMessage(body) ?? "Could not prepare sync session.");
-  }
-
-  return (await response.json()) as PreparedSyncSession;
+  const cookie = headers.get("set-cookie");
+  return cookie ? [cookie] : [];
 }
 
-function errorMessage(body: unknown) {
+export function errorMessage(body: unknown) {
   if (typeof body !== "object" || body === null) {
     return;
   }
