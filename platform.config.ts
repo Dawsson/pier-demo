@@ -20,45 +20,34 @@ export const appRoles = roles({
   },
 });
 
-const projectOrganizationId = process.env.PIER_ORGANIZATION_ID;
-
-const urls = {
-  admin: "https://admin.pier-demo.buildwithharbor.com",
-  api: "https://api.pier-demo.buildwithharbor.com",
-  web: "https://pier-demo.buildwithharbor.com",
-  zeroCache: "https://sync.buildwithharbor.com/pier-demo",
-} as const;
-
-const vars = {
-  admin: ["PUBLIC_ADMIN_URL", "PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_WEB_URL"],
-  api: [
-    "ADMIN_URL",
-    "API_URL",
-    "BETTER_AUTH_SECRET",
-    "PUBLIC_ADMIN_URL",
-    "PUBLIC_API_URL",
-    "PUBLIC_APP_NAME",
-    "PUBLIC_WEB_URL",
-    "WEB_URL",
-  ],
-  web: ["PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_WEB_URL", "PUBLIC_ZERO_CACHE_URL"],
-} as const;
-
 export default app({
+  name: "pier-demo",
+  project: {
+    slug: "pier-demo",
+  },
   apps: {
     admin: appSlot.tanstackStart("apps/admin/src/start.ts", {
-      domain: new URL(urls.admin).hostname,
-      vars: vars.admin,
+      domain: "admin.pier-demo.buildwithharbor.com",
+      vars: ["PUBLIC_ADMIN_URL", "PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_WEB_URL"],
     }),
     api: appSlot.apiWorker("apps/api/src/index.ts", {
-      domain: new URL(urls.api).hostname,
+      domain: "api.pier-demo.buildwithharbor.com",
       bindings: ["CACHE", "DB", "INTERNAL", "RATE_LIMITER"],
-      vars: vars.api,
+      vars: [
+        "ADMIN_URL",
+        "API_URL",
+        "BETTER_AUTH_SECRET",
+        "PUBLIC_ADMIN_URL",
+        "PUBLIC_API_URL",
+        "PUBLIC_APP_NAME",
+        "PUBLIC_WEB_URL",
+        "WEB_URL",
+      ],
     }),
     internal: appSlot.internalWorker("apps/internal/src/index.ts", { bindings: ["CACHE"] }),
     web: appSlot.tanstackStart("apps/web/src/start.ts", {
-      domain: new URL(urls.web).hostname,
-      vars: vars.web,
+      domain: "pier-demo.buildwithharbor.com",
+      vars: ["PUBLIC_API_URL", "PUBLIC_APP_NAME", "PUBLIC_WEB_URL", "PUBLIC_ZERO_CACHE_URL"],
     }),
   },
   bindings: {
@@ -70,7 +59,18 @@ export default app({
       period: 60,
     }),
   },
-  deploy: deploy.localAndGithubActions(),
+  vars: {
+    ADMIN_URL: variable.url(),
+    API_URL: variable.url(),
+    BETTER_AUTH_SECRET: variable.string().sensitive().random(32),
+    PUBLIC_ADMIN_URL: variable.url().public(),
+    PUBLIC_API_URL: variable.url().public(),
+    PUBLIC_APP_NAME: variable.string().public(),
+    PUBLIC_WEB_URL: variable.url().public(),
+    PUBLIC_ZERO_CACHE_URL: variable.url().public(),
+    WEB_URL: variable.url(),
+  },
+  permissions: permissionCatalog,
   logging: logging({
     events: {
       "ai_gateway.example.requested": z.object({
@@ -98,18 +98,5 @@ export default app({
       }),
     },
   }),
-  name: "pier-demo",
-  permissions: permissionCatalog,
-  ...(projectOrganizationId ? { project: { organizationId: projectOrganizationId } } : {}),
-  vars: {
-    ADMIN_URL: variable.url().default(urls.admin),
-    API_URL: variable.url().default(urls.api),
-    BETTER_AUTH_SECRET: variable.string().sensitive().random(32),
-    PUBLIC_ADMIN_URL: variable.url().default(urls.admin).public(),
-    PUBLIC_API_URL: variable.url().default(urls.api).public(),
-    PUBLIC_APP_NAME: variable.string().default("Pier Demo"),
-    PUBLIC_WEB_URL: variable.url().default(urls.web).public(),
-    PUBLIC_ZERO_CACHE_URL: variable.url().default(urls.zeroCache).public(),
-    WEB_URL: variable.url().default(urls.web),
-  },
+  deploy: deploy.localAndGithubActions(),
 });

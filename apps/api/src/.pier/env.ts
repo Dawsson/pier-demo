@@ -16,19 +16,19 @@ const config = app({
   },
   name: "pier-demo",
   vars: {
-    "ADMIN_URL": variable.url().default("https://admin.pier-demo.buildwithharbor.com"),
-    "API_URL": variable.url().default("https://api.pier-demo.buildwithharbor.com"),
+    "ADMIN_URL": variable.url(),
+    "API_URL": variable.url(),
     "BETTER_AUTH_SECRET": variable.string().random(32).sensitive(),
-    "PUBLIC_ADMIN_URL": variable.url().default("https://admin.pier-demo.buildwithharbor.com").public(),
-    "PUBLIC_API_URL": variable.url().default("https://api.pier-demo.buildwithharbor.com").public(),
-    "PUBLIC_APP_NAME": variable.string().default("Pier Demo"),
-    "PUBLIC_WEB_URL": variable.url().default("https://pier-demo.buildwithharbor.com").public(),
-    "WEB_URL": variable.url().default("https://pier-demo.buildwithharbor.com")
+    "PUBLIC_ADMIN_URL": variable.url().public(),
+    "PUBLIC_API_URL": variable.url().public(),
+    "PUBLIC_APP_NAME": variable.string().public(),
+    "PUBLIC_WEB_URL": variable.url().public(),
+    "WEB_URL": variable.url()
   },
 });
 
-const publicAliases: Record<string, readonly string[]> = {"PUBLIC_ADMIN_URL":["ADMIN_URL","VITE_ADMIN_URL","VITE_PUBLIC_ADMIN_URL"],"PUBLIC_API_URL":["API_URL","VITE_API_URL","VITE_PUBLIC_API_URL"],"PUBLIC_WEB_URL":["VITE_PUBLIC_WEB_URL","VITE_WEB_URL","WEB_URL"]};
-const clientEnvKeys = ["PUBLIC_ADMIN_URL","VITE_ADMIN_URL","VITE_PUBLIC_ADMIN_URL","PUBLIC_API_URL","VITE_API_URL","VITE_PUBLIC_API_URL","PUBLIC_WEB_URL","VITE_PUBLIC_WEB_URL","VITE_WEB_URL"] as const;
+const publicAliases: Record<string, readonly string[]> = {"PUBLIC_ADMIN_URL":["ADMIN_URL","VITE_ADMIN_URL","VITE_PUBLIC_ADMIN_URL"],"PUBLIC_API_URL":["API_URL","VITE_API_URL","VITE_PUBLIC_API_URL"],"PUBLIC_APP_NAME":["APP_NAME","VITE_APP_NAME","VITE_PUBLIC_APP_NAME"],"PUBLIC_WEB_URL":["VITE_PUBLIC_WEB_URL","VITE_WEB_URL","WEB_URL"]};
+const clientEnvKeys = ["PUBLIC_ADMIN_URL","VITE_ADMIN_URL","VITE_PUBLIC_ADMIN_URL","PUBLIC_API_URL","VITE_API_URL","VITE_PUBLIC_API_URL","PUBLIC_APP_NAME","VITE_APP_NAME","VITE_PUBLIC_APP_NAME","PUBLIC_WEB_URL","VITE_PUBLIC_WEB_URL","VITE_WEB_URL"] as const;
 
 export const projectTopology = {"apps":[{"name":"admin","kind":"tanstack-start-app","domain":"admin.pier-demo.buildwithharbor.com"},{"name":"api","kind":"worker-api","domain":"api.pier-demo.buildwithharbor.com"},{"name":"internal","kind":"worker-internal","internal":true},{"name":"web","kind":"tanstack-start-app","domain":"pier-demo.buildwithharbor.com"}],"currentApp":"api","project":"pier-demo"} as const;
 
@@ -54,6 +54,9 @@ export interface ClientEnv {
   readonly PUBLIC_API_URL: PierUrl;
   readonly VITE_API_URL: PierUrl;
   readonly VITE_PUBLIC_API_URL: PierUrl;
+  readonly PUBLIC_APP_NAME: string;
+  readonly VITE_APP_NAME: string;
+  readonly VITE_PUBLIC_APP_NAME: string;
   readonly PUBLIC_WEB_URL: PierUrl;
   readonly VITE_PUBLIC_WEB_URL: PierUrl;
   readonly VITE_WEB_URL: PierUrl;
@@ -69,6 +72,7 @@ export const parseServerEnv = (rawEnv: object): ServerEnv =>
     ...(rawEnv as Record<string, unknown>),
     "PUBLIC_ADMIN_URL": (rawEnv as Record<string, unknown>)["PUBLIC_ADMIN_URL"] ?? (rawEnv as Record<string, unknown>)["ADMIN_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_ADMIN_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_PUBLIC_ADMIN_URL"],
     "PUBLIC_API_URL": (rawEnv as Record<string, unknown>)["PUBLIC_API_URL"] ?? (rawEnv as Record<string, unknown>)["API_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_API_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_PUBLIC_API_URL"],
+    "PUBLIC_APP_NAME": (rawEnv as Record<string, unknown>)["PUBLIC_APP_NAME"] ?? (rawEnv as Record<string, unknown>)["APP_NAME"] ?? (rawEnv as Record<string, unknown>)["VITE_APP_NAME"] ?? (rawEnv as Record<string, unknown>)["VITE_PUBLIC_APP_NAME"],
     "PUBLIC_WEB_URL": (rawEnv as Record<string, unknown>)["PUBLIC_WEB_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_PUBLIC_WEB_URL"] ?? (rawEnv as Record<string, unknown>)["VITE_WEB_URL"] ?? (rawEnv as Record<string, unknown>)["WEB_URL"],
     "DB": (rawEnv as Record<string, unknown>)["DB"] ?? ((rawEnv as Record<string, unknown>).DATABASE_URL ? { connectionString: (rawEnv as Record<string, unknown>).DATABASE_URL } : undefined)
   },
