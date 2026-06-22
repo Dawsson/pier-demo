@@ -40,10 +40,12 @@ export const agentContext = {
   ],
   commands: {
     checkTypes: "bun run check-types",
+    databaseMigrate: "DATABASE_URL=<production url> bun run db:migrate",
     dev: "bun run dev",
     inspect: "pier inspect --json",
     logs: "pier logs --project pier-demo",
     plan: "pier plan",
+    smokeProduction: "SMOKE_ZERO_URL=https://zero.example.com bun run smoke:prod",
   },
   project: {
     name: "pier-demo",

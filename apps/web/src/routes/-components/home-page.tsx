@@ -138,7 +138,6 @@ function SyncedCounter({
       counterValue={counter.counterValue}
       isAdjusting={false}
       onAdjust={(amount) => counter.increment.mutate({ amount })}
-      showLiveControls
       ssrMs={ssrMs}
       timing={{ ...timing, syncMountedAt: counter.syncMountedAt }}
     />

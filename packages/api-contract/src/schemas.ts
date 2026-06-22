@@ -60,10 +60,12 @@ export const agentContextOutputSchema = z.object({
   ),
   commands: z.object({
     checkTypes: z.string(),
+    databaseMigrate: z.string(),
     dev: z.string(),
     inspect: z.string(),
     logs: z.string(),
     plan: z.string(),
+    smokeProduction: z.string(),
   }),
   project: z.object({
     name: z.literal("pier-demo"),

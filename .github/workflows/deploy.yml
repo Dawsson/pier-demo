@@ -18,6 +18,7 @@ jobs:
     env:
       PIER_API_KEY: ${{ secrets.PIER_API_KEY }}
       PIER_ORGANIZATION_ID: ${{ vars.PIER_ORGANIZATION_ID }}
+      PIER_ZERO_CACHE_URL: ${{ vars.PIER_ZERO_CACHE_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,5 +37,15 @@ jobs:
       - name: Run checks
         run: bun run check
 
+      - name: Run database migrations
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: bun run db:migrate
+
       - name: Deploy
         run: bun run deploy
+
+      - name: Smoke production
+        env:
+          SMOKE_ZERO_URL: ${{ vars.PIER_ZERO_CACHE_URL }}
+        run: bun run smoke:prod

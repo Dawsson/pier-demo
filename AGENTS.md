@@ -12,6 +12,9 @@ Use this repo to demonstrate how a product consumes Pier:
 - Hono API Worker in `apps/api`.
 - internal Worker service in `apps/internal`.
 - Postgres counter state plus a Pier-managed `RATE_LIMITER` binding owned by the API Worker.
+- production Zero runs as a separate `zero-cache` deployment; this repo wires
+  the API/web contract and required env, but does not pretend Zero is deployed
+  by the app slots.
 - app intent, bindings, env vars, roles, permissions, and event catalogs in
   `platform.config.ts`.
 - typed app/agent guidance through `agent.context`.
@@ -32,6 +35,9 @@ Cloudflare account mutations, and platform-admin telemetry belong in Pier.
   project intentionally changes that strategy.
 - Keep database setup on real Drizzle migrations in `apps/api/drizzle`. Do not
   add manual schema bootstrap or ad hoc table-creation fallbacks.
+- Production migrations run with
+  `DATABASE_URL=<production url> bun run db:migrate` before deploy. App runtime
+  values still come from Pier cloud env.
 - Worker services use Pier's Miniflare-backed local runtime and rebuild into
   `.pier/build/dev/<app>` on source changes. Do not add product-owned
   Wrangler config.
@@ -51,12 +57,14 @@ Use Bun.
 bun run check-types
 bun run test
 bun run check
+bun run smoke:prod
 ```
 
 Useful platform checks:
 
 ```sh
 bun run env:types
+DATABASE_URL=<production url> bun run db:migrate
 pier inspect --json
 pier plan
 pier logs --state local --project pier-demo
@@ -80,6 +88,11 @@ dev logs zero --cwd /Users/dawson/projects/waypoint-guest-app --tail 80
 - Prefer Pier cloud env for required runtime values. Use `platform.config.ts`
   plus `pier env types`; do not add product-owned dotenv loading or local
   dotenv fallbacks.
+- Use Pier cloud env whenever Pier can provide the value. The direct
+  `DATABASE_URL` migration input is a narrow exception because migrations run
+  outside the Worker binding runtime.
+- Keep production deploys passing `PIER_ZERO_CACHE_URL`; it feeds
+  `PUBLIC_ZERO_CACHE_URL` for the browser app.
 - Keep app code declarative; prefer `platform.config.ts` over bespoke
   Cloudflare glue.
 - Do not import API runtime modules into the browser bundle.

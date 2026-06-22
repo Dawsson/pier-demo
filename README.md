@@ -56,6 +56,8 @@ The app declares its topology in `platform.config.ts`:
 - `api` owns Postgres, KV, the internal service binding, and the native
   `RATE_LIMITER` binding.
 - `internal` is an internal Worker service.
+- `zero-cache` is a separate runtime. Deploy it before production web traffic
+  and pass its public URL as `PIER_ZERO_CACHE_URL`.
 
 Generated `.pier` modules are the source of truth for runtime env and API
 context. Regenerate them after config changes:
@@ -65,9 +67,11 @@ bun run env:types
 ```
 
 Required values such as `BETTER_AUTH_SECRET` live in Pier cloud env. The
-shared Postgres binding is provisioned and injected by Pier during deploy. Do
-not use local dotenv files for normal development or deploys; the Pier CLI
-resolves cloud env from `platform.config.ts` and the Pier project context.
+Postgres binding is provisioned and injected by Pier during deploy. Do not use
+local dotenv files for normal development or deploys; the Pier CLI resolves
+cloud env from `platform.config.ts` and the Pier project context.
+
+Production deployment details live in [docs/production.md](docs/production.md).
 
 ## First Run
 
@@ -80,7 +84,9 @@ pier project create
 pier package install
 pier env types
 bun run check
-pier deploy all --env prod
+DATABASE_URL=<production database url> bun run db:migrate
+PIER_ZERO_CACHE_URL=https://zero.example.com bun run deploy
+SMOKE_ZERO_URL=https://zero.example.com bun run smoke:prod
 ```
 
 Create one CI key for GitHub Actions:
@@ -94,10 +100,12 @@ pier auth service-key create-preset github-project-ci \
 ```
 
 Store the returned key as one GitHub secret named `PIER_API_KEY`, and store the
-non-secret organization ID as one GitHub Actions variable named
-`PIER_ORGANIZATION_ID`. The workflows install the Pier CLI and private Pier
-packages from the Pier registry, generate env types, run checks, and deploy
-with cloud env.
+production migration connection string as a GitHub secret named `DATABASE_URL`.
+Store the non-secret organization ID as one GitHub Actions variable named
+`PIER_ORGANIZATION_ID`, and store the production Zero URL as one GitHub Actions
+variable named `PIER_ZERO_CACHE_URL`. The workflows install the Pier CLI and
+private Pier packages from the Pier registry, generate env types, run checks,
+run migrations, deploy with Pier cloud env, and smoke production.
 
 ## Development
 
@@ -129,6 +137,7 @@ pier logs dump --state local --project pier-demo --markdown
 ```sh
 bun run check-types
 bun run test
+bun run smoke:prod
 pier inspect --json
 pier plan
 ```
