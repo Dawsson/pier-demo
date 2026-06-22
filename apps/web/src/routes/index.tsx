@@ -1,4 +1,5 @@
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import {
   Frame,
@@ -39,6 +40,7 @@ function HomeRoute() {
           Pier Demo
         </Link>
         <nav className="site-nav" aria-label="Primary">
+          <ThemeSwitcher />
           <Button asChild size="sm" variant="ghost">
             <Link to="/auth/sign-in">Sign in</Link>
           </Button>
