@@ -1,4 +1,6 @@
 import { toast } from "sonner";
+import type { ComponentType } from "react";
+import { authUiConfig, type AuthProviderId } from "@/auth/auth-ui-config";
 import { Button } from "@repo/ui/button";
 
 const showProviderToast = (provider: string) => {
@@ -9,29 +11,38 @@ const showProviderToast = (provider: string) => {
 };
 
 export function OAuthButtons() {
+  const providers = authUiConfig.providers.filter((provider) => provider.enabled);
+
+  if (!providers.length) {
+    return null;
+  }
+
   return (
     <div className="grid min-w-0 gap-2.5">
-      <Button
-        className="h-[42px] min-w-0 justify-center"
-        type="button"
-        variant="outline"
-        onClick={() => showProviderToast("GitHub")}
-      >
-        <GitHubLogo className="size-4" />
-        Continue with GitHub
-      </Button>
-      <Button
-        className="h-[42px] min-w-0 justify-center"
-        type="button"
-        variant="outline"
-        onClick={() => showProviderToast("Microsoft")}
-      >
-        <MicrosoftLogo className="size-4" />
-        Continue with Microsoft
-      </Button>
+      {providers.map((provider) => {
+        const Logo = providerLogos[provider.id];
+
+        return (
+          <Button
+            className={authUiConfig.styles.oauthButton}
+            key={provider.id}
+            type="button"
+            variant="outline"
+            onClick={() => showProviderToast(provider.label)}
+          >
+            <Logo className="size-4" />
+            Continue with {provider.label}
+          </Button>
+        );
+      })}
     </div>
   );
 }
+
+const providerLogos: Record<AuthProviderId, ComponentType<{ className?: string }>> = {
+  github: GitHubLogo,
+  microsoft: MicrosoftLogo,
+};
 
 function GitHubLogo({ className }: { className?: string }) {
   return (

@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 import { useForm } from "react-hook-form";
+import { authUiConfig } from "@/auth/auth-ui-config";
 import { loginSchema, type LoginValues } from "@/auth/schemas";
 import { useLogin } from "@/auth/hooks/use-login";
 import { Button } from "@repo/ui/button";
@@ -71,7 +72,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
               <FieldContent>
                 <Input
                   id="email"
-                  className="h-[42px] rounded-[10px] bg-background px-3 text-[0.9375rem]"
+                  className={authUiConfig.styles.input}
                   autoComplete="email"
                   type="email"
                   aria-invalid={!!form.formState.errors.email}
@@ -91,7 +92,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
               <FieldContent>
                 <Input
                   id="password"
-                  className="h-[42px] rounded-[10px] bg-background px-3 text-[0.9375rem]"
+                  className={authUiConfig.styles.input}
                   autoComplete="current-password"
                   type="password"
                   aria-invalid={!!form.formState.errors.password}
@@ -112,7 +113,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
           </FieldGroup>
 
           <Button
-            className="h-[42px] rounded-[10px] font-semibold text-[0.9375rem]"
+            className={authUiConfig.styles.submitButton}
             disabled={login.isPending}
             type="submit"
           >

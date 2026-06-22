@@ -9,7 +9,11 @@ export function useRegisterUser() {
 
   return useMutation({
     mutationFn: async (values: SignUpValues) => {
-      const result = await authClient.signUp.email(values);
+      const fallbackName = values.email.split("@")[0]?.trim() || "New user";
+      const result = await authClient.signUp.email({
+        ...values,
+        name: values.name?.trim() || fallbackName,
+      });
 
       if (result.error) {
         throw new Error(result.error.message ?? "Account creation failed.");

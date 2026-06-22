@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 import { useForm } from "react-hook-form";
+import { authUiConfig } from "@/auth/auth-ui-config";
 import { signUpSchema, type SignUpValues } from "@/auth/schemas";
 import { useRegisterUser } from "@/auth/hooks/use-register-user";
 import { Button } from "@repo/ui/button";
@@ -24,7 +25,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
   const form = useForm<SignUpValues>({
     defaultValues: {
       email: "",
-      name: "",
+      name: authUiConfig.signUp.fields.name.enabled ? "" : undefined,
       password: "",
     },
     mode: "onSubmit",
@@ -65,24 +66,26 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
           </div>
 
           <FieldGroup className="gap-[15px]">
-            <Field invalid={!!form.formState.errors.name}>
-              <FieldLabel className="font-normal text-foreground text-sm" htmlFor="name">
-                Name
-              </FieldLabel>
-              <FieldContent>
-                <Input
-                  id="name"
-                  className="h-[42px] rounded-[10px] bg-background px-3 text-[0.9375rem]"
-                  autoComplete="name"
-                  aria-invalid={!!form.formState.errors.name}
-                  {...form.register("name")}
-                />
-                <FieldError
-                  className="pt-1 font-medium text-red-300"
-                  errors={[form.formState.errors.name]}
-                />
-              </FieldContent>
-            </Field>
+            {authUiConfig.signUp.fields.name.enabled ? (
+              <Field invalid={!!form.formState.errors.name}>
+                <FieldLabel className="font-normal text-foreground text-sm" htmlFor="name">
+                  {authUiConfig.signUp.fields.name.label}
+                </FieldLabel>
+                <FieldContent>
+                  <Input
+                    id="name"
+                    className={authUiConfig.styles.input}
+                    autoComplete={authUiConfig.signUp.fields.name.autoComplete}
+                    aria-invalid={!!form.formState.errors.name}
+                    {...form.register("name")}
+                  />
+                  <FieldError
+                    className="pt-1 font-medium text-red-300"
+                    errors={[form.formState.errors.name]}
+                  />
+                </FieldContent>
+              </Field>
+            ) : null}
 
             <Field invalid={!!form.formState.errors.email}>
               <FieldLabel className="font-normal text-foreground text-sm" htmlFor="email">
@@ -91,7 +94,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
               <FieldContent>
                 <Input
                   id="email"
-                  className="h-[42px] rounded-[10px] bg-background px-3 text-[0.9375rem]"
+                  className={authUiConfig.styles.input}
                   autoComplete="email"
                   type="email"
                   aria-invalid={!!form.formState.errors.email}
@@ -111,7 +114,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
               <FieldContent>
                 <Input
                   id="password"
-                  className="h-[42px] rounded-[10px] bg-background px-3 text-[0.9375rem]"
+                  className={authUiConfig.styles.input}
                   autoComplete="new-password"
                   type="password"
                   aria-invalid={!!form.formState.errors.password}
@@ -132,7 +135,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
           </FieldGroup>
 
           <Button
-            className="h-[42px] rounded-[10px] font-semibold text-[0.9375rem]"
+            className={authUiConfig.styles.submitButton}
             disabled={registerUser.isPending}
             type="submit"
           >
