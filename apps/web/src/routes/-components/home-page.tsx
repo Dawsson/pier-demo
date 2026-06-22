@@ -20,29 +20,22 @@ export function HomePage({ initialData }: { readonly initialData: PublicCounterI
   const requestAdjustment = (amount: CounterAdjustAmount) => {
     setPendingAdjustment({ amount, id: crypto.randomUUID() });
 
-    if (!session.preparedSession) {
+    if (!session.preparedSession && !session.preparePending) {
       void session.prepareGuestSession({ interactive: true });
     }
   };
-
-  if (session.preparePending) {
-    return (
-      <PublicCounter
-        counterValue={initialData.counter.value}
-        isAdjusting
-        timing={session.timing}
-        ssrMs={initialData.ssrMs}
-      />
-    );
-  }
 
   if (!session.preparedSession) {
     return (
       <PublicCounter
         counterValue={initialData.counter.value}
-        isAdjusting={session.guestAuthPending}
+        isAdjusting={false}
         onAdjust={requestAdjustment}
-        onPrewarm={() => session.prepareGuestSession({ interactive: false })}
+        onPrewarm={() => {
+          if (!session.preparePending) {
+            void session.prepareGuestSession({ interactive: false });
+          }
+        }}
         timing={session.timing}
         ssrMs={initialData.ssrMs}
       />
