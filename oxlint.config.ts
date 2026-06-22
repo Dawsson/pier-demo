@@ -1,0 +1,20 @@
+import { defineConfig } from "oxlint";
+
+export default defineConfig({
+  plugins: ["import", "typescript", "unicorn", "oxc", "react", "jsx-a11y"],
+  ignorePatterns: [
+    "apps/*/src/.pier/**",
+    "packages/ui/src/components/ui/**",
+    "apps/admin/src/routeTree.gen.ts",
+    "apps/web/src/routeTree.gen.ts",
+  ],
+  categories: {
+    correctness: "error",
+  },
+  rules: {
+    "import/no-relative-parent-imports": "warn",
+  },
+  env: {
+    builtin: true,
+  },
+});
