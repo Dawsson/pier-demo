@@ -14,18 +14,18 @@
         "panes": [
           {
             "name": "api",
-            "command": "pier run --project pier-demo --env dev --api https://api.buildwithharbor.com -- sh -lc 'export API_URL=\"$DEV_API_URL\" PUBLIC_API_URL=\"$DEV_API_URL\" WEB_URL=\"$DEV_WEB_URL\" PUBLIC_WEB_URL=\"$DEV_WEB_URL\" ADMIN_URL=\"$DEV_ADMIN_URL\" PUBLIC_ADMIN_URL=\"$DEV_ADMIN_URL\"; pier dev api'",
+            "command": "bun node_modules/.bin/pier run --project pier-demo --env dev --api https://api.buildwithharbor.com -- sh -lc 'export API_URL=\"$DEV_API_URL\" PUBLIC_API_URL=\"$DEV_API_URL\" WEB_URL=\"$DEV_WEB_URL\" PUBLIC_WEB_URL=\"$DEV_WEB_URL\" ADMIN_URL=\"$DEV_ADMIN_URL\" PUBLIC_ADMIN_URL=\"$DEV_ADMIN_URL\"; bun node_modules/.bin/pier dev api'",
             "position": "main"
           },
           {
             "name": "web",
-            "command": "pier run --project pier-demo --env dev --api https://api.buildwithharbor.com -- sh -lc 'export PUBLIC_API_URL=\"$DEV_API_URL\" PUBLIC_WEB_URL=\"$DEV_WEB_URL\" PUBLIC_ZERO_CACHE_URL=\"$DEV_ZERO_URL\"; pier dev web'",
+            "command": "bun node_modules/.bin/pier run --project pier-demo --env dev --api https://api.buildwithharbor.com -- sh -lc 'export PUBLIC_API_URL=\"$DEV_API_URL\" PUBLIC_WEB_URL=\"$DEV_WEB_URL\" PUBLIC_ZERO_CACHE_URL=\"$DEV_ZERO_URL\"; bun node_modules/.bin/pier dev web'",
             "position": "right",
             "waitForServices": ["api", "zero"]
           },
           {
             "name": "admin",
-            "command": "pier run --project pier-demo --env dev --api https://api.buildwithharbor.com -- sh -lc 'export PUBLIC_API_URL=\"$DEV_API_URL\" PUBLIC_ADMIN_URL=\"$DEV_ADMIN_URL\" PUBLIC_WEB_URL=\"$DEV_WEB_URL\"; pier dev admin'",
+            "command": "bun node_modules/.bin/pier run --project pier-demo --env dev --api https://api.buildwithharbor.com -- sh -lc 'export PUBLIC_API_URL=\"$DEV_API_URL\" PUBLIC_ADMIN_URL=\"$DEV_ADMIN_URL\" PUBLIC_WEB_URL=\"$DEV_WEB_URL\"; bun node_modules/.bin/pier dev admin'",
             "position": "bottom"
           },
           {
