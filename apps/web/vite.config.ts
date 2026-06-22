@@ -16,9 +16,5 @@ export default defineConfig({
   server: {
     allowedHosts: ["pierdemo.dev.dawson.gg"],
     port: Number(process.env.DEV_WEB_PORT ?? 5173),
-    watch: {
-      interval: 100,
-      usePolling: true,
-    },
   },
 });

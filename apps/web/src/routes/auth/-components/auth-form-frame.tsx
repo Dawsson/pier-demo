@@ -17,7 +17,7 @@ type AuthFormFrameProps = {
 
 export function AuthFormFrame({ children, description, footer, title }: AuthFormFrameProps) {
   return (
-    <Frame className="w-full">
+    <Frame className="w-full bg-background">
       <FrameHeader className="items-center text-center">
         <FrameTitle className="font-bold text-2xl leading-tight">{title}</FrameTitle>
         <FrameDescription className="text-[0.9375rem] leading-relaxed">
