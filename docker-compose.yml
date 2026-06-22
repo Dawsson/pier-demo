@@ -19,8 +19,8 @@ services:
     container_name: pier-demo-zero-cache
     entrypoint: node
     command:
-      - --max-old-space-size=96
-      - --max-semi-space-size=2
+      - --max-old-space-size=512
+      - --max-semi-space-size=8
       - /usr/local/bin/zero-cache
     ports:
       - "${DEV_ZERO_PORT:-4859}:4848"
@@ -44,15 +44,15 @@ services:
       ZERO_QUERY_FORWARD_COOKIES: "true"
       ZERO_MUTATE_FORWARD_COOKIES: "true"
       ZERO_ENABLE_CRUD_MUTATIONS: "false"
-      ZERO_NUM_SYNC_WORKERS: "1"
-      ZERO_CVR_MAX_CONNS: "1"
-      ZERO_UPSTREAM_MAX_CONNS: "1"
-      ZERO_CHANGE_MAX_CONNS: "1"
-      ZERO_INITIAL_SYNC_TABLE_COPY_WORKERS: "1"
+      ZERO_NUM_SYNC_WORKERS: "2"
+      ZERO_CVR_MAX_CONNS: "4"
+      ZERO_UPSTREAM_MAX_CONNS: "4"
+      ZERO_CHANGE_MAX_CONNS: "4"
+      ZERO_INITIAL_SYNC_TABLE_COPY_WORKERS: "2"
       ZERO_ENABLE_TELEMETRY: "false"
       DO_NOT_TRACK: "1"
       MALLOC_ARENA_MAX: "1"
-      UV_THREADPOOL_SIZE: "1"
+      UV_THREADPOOL_SIZE: "4"
     healthcheck:
       test: curl -f http://localhost:4848/keepalive
       interval: 5s
