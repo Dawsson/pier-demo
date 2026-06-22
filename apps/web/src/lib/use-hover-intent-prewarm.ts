@@ -1,5 +1,6 @@
 import { useCallback, useRef } from "react";
-import { now } from "@/routes/-helpers";
+
+const now = () => (typeof performance === "undefined" ? 0 : performance.now());
 
 export function useHoverIntentPrewarm(onPrewarm: (() => void) | undefined) {
   const fired = useRef(false);
