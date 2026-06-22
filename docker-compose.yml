@@ -38,8 +38,8 @@ services:
       ZERO_REPLICA_FILE: /data/replica.db
       ZERO_ADMIN_PASSWORD: password
       ZERO_AUTH_SECRET: ${ZERO_AUTH_SECRET:?ZERO_AUTH_SECRET is required}
-      ZERO_QUERY_URL: http://host.docker.internal:${DEV_API_PORT:-8787}/zero/query,https://api.pier-demo.buildwithharbor.com/zero/query
-      ZERO_MUTATE_URL: http://host.docker.internal:${DEV_API_PORT:-8787}/zero/mutate,https://api.pier-demo.buildwithharbor.com/zero/mutate
+      ZERO_QUERY_URL: http://host.docker.internal:${DEV_API_PORT:-8787}/zero/query,https://api.pierdemo.dev.dawson.gg/zero/query,https://api.pier-demo.buildwithharbor.com/zero/query
+      ZERO_MUTATE_URL: http://host.docker.internal:${DEV_API_PORT:-8787}/zero/mutate,https://api.pierdemo.dev.dawson.gg/zero/mutate,https://api.pier-demo.buildwithharbor.com/zero/mutate
       ZERO_QUERY_ALLOWED_CLIENT_HEADERS: authorization
       ZERO_MUTATE_ALLOWED_CLIENT_HEADERS: authorization
       ZERO_QUERY_FORWARD_COOKIES: "true"
