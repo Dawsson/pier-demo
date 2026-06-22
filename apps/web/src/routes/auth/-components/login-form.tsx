@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 import { useForm } from "react-hook-form";
+import { authOAuthProviders } from "@/auth/auth-ui-config";
 import { loginSchema, type LoginValues } from "@/auth/schemas";
 import { useLogin } from "@/auth/hooks/use-login";
 import { Button } from "@repo/ui/button";
@@ -20,6 +21,7 @@ import { AuthFormCard } from "@/routes/auth/-components/auth-form-card";
 
 const inputClassName = "!h-[42px] rounded-[10px] bg-background px-3 text-[0.9375rem] leading-none";
 const submitButtonClassName = "!h-[42px] rounded-[10px] font-semibold text-[0.9375rem]";
+const hasOAuthProviders = authOAuthProviders.length > 0;
 
 export function LoginForm({ className, ...props }: ComponentProps<"div">) {
   const navigate = useNavigate();
@@ -62,9 +64,11 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
           }
         >
           <OAuthButtons />
-          <div className="flex items-center gap-3 text-[0.8125rem] text-muted-foreground leading-none before:h-px before:flex-1 before:bg-border before:content-[''] after:h-px after:flex-1 after:bg-border after:content-['']">
-            <span>Email</span>
-          </div>
+          {hasOAuthProviders ? (
+            <div className="flex items-center gap-3 text-[0.8125rem] text-muted-foreground leading-none before:h-px before:flex-1 before:bg-border before:content-[''] after:h-px after:flex-1 after:bg-border after:content-['']">
+              <span>Email</span>
+            </div>
+          ) : null}
 
           <FieldGroup className="gap-[15px]">
             <Field invalid={!!form.formState.errors.email}>

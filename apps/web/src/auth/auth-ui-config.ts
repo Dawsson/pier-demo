@@ -1,5 +1,5 @@
 export const authUiConfig = {
-  providers: [
+  oauthProviders: [
     {
       id: "github",
       label: "GitHub",
@@ -14,4 +14,6 @@ export const authUiConfig = {
   },
 } as const;
 
-export type AuthProviderId = (typeof authUiConfig.providers)[number]["id"];
+export const authOAuthProviders = authUiConfig.oauthProviders;
+
+export type AuthProviderId = (typeof authUiConfig.oauthProviders)[number]["id"];

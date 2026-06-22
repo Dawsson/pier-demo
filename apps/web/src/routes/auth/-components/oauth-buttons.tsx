@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 import type { ComponentType } from "react";
-import { authUiConfig, type AuthProviderId } from "@/auth/auth-ui-config";
+import { authOAuthProviders, type AuthProviderId } from "@/auth/auth-ui-config";
 import { Button } from "@repo/ui/button";
 
 const oauthButtonClassName = "!h-11 min-w-0 justify-center rounded-[10px] text-[0.9375rem]";
@@ -13,7 +13,7 @@ const showProviderToast = (provider: string) => {
 };
 
 export function OAuthButtons() {
-  const providers = authUiConfig.providers;
+  const providers = authOAuthProviders;
 
   if (!providers.length) {
     return null;
