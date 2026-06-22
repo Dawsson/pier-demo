@@ -1,3 +1,7 @@
+import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
+import { endpointClient } from "@/lib/api";
+
 export type PreparedSyncSession = {
   readonly auth: {
     readonly expiresAt: number;
@@ -12,17 +16,27 @@ export type PreparedSyncSession = {
   };
 };
 
-export function readSetCookieHeaders(headers: Headers) {
-  const getSetCookie = (headers as Headers & { getSetCookie?: () => string[] }).getSetCookie;
-  const cookies = typeof getSetCookie === "function" ? getSetCookie.call(headers) : [];
+export const getSyncSessionServerFn = createServerFn({ method: "GET" }).handler(async () => {
+  const response = await fetch(endpointClient.syncSession.current.href({}), {
+    body: JSON.stringify({}),
+    headers: {
+      "content-type": "application/json",
+      cookie: getRequest().headers.get("cookie") ?? "",
+    },
+    method: "POST",
+  });
 
-  if (cookies.length > 0) {
-    return cookies;
+  if (response.status === 401) {
+    return null;
   }
 
-  const cookie = headers.get("set-cookie");
-  return cookie ? [cookie] : [];
-}
+  if (!response.ok) {
+    const body = await response.json().catch(() => null);
+    throw new Error(errorMessage(body) ?? "Could not read sync session.");
+  }
+
+  return (await response.json()) as PreparedSyncSession;
+});
 
 export function errorMessage(body: unknown) {
   if (typeof body !== "object" || body === null) {

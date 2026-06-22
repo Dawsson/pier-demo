@@ -1,5 +1,4 @@
 import { createAuthClient } from "better-auth/react";
-import { anonymousClient } from "better-auth/client/plugins";
 import { clientEnv, serverEnv } from "@/.pier/env";
 
 const apiUrl = () =>
@@ -10,5 +9,4 @@ export const authClient = createAuthClient({
   fetchOptions: {
     credentials: "include",
   },
-  plugins: [anonymousClient()],
 });

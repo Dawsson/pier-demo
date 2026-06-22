@@ -1,99 +1,79 @@
-import { SyncProvider } from "@pier/sync";
-import { contract } from "@pier-demo/api-contract";
-import { schema } from "@pier-demo/api-contract/sync-schema";
-import { Link } from "@tanstack/react-router";
+import { Link, Navigate, getRouteApi } from "@tanstack/react-router";
 import { useZero } from "@rocicorp/zero/react";
-import { useCallback, useEffect, useMemo, type ReactNode } from "react";
+import { useCallback, useEffect, type ReactNode } from "react";
 import { toast } from "sonner";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { syncClient, syncConfig } from "@/lib/api";
-import { useCounterStore, type CounterAdjustAmount } from "@/lib/counter-store";
+import { syncClient } from "@/lib/api";
+import type { CounterAdjustAmount } from "@/lib/counter-store";
 import type { PublicCounterInitialData } from "@/lib/counter-data";
 import { Button } from "@repo/ui/button";
 import { CounterControls } from "./counter-controls";
 import { CounterValue } from "./counter-value";
 
+const rootRoute = getRouteApi("__root__");
+
 export function HomePage({ initialData }: { readonly initialData: PublicCounterInitialData }) {
-  const setPreparedSession = useCounterStore((state) => state.setPreparedSession);
-  const preparedSession =
-    useCounterStore((state) => state.preparedSession) ?? initialData.syncSession;
-  const userId = contract.clientContext.getUserID(preparedSession.user as never);
-  const context = useMemo(
-    () => contract.clientContext.create(preparedSession.user as never),
-    [preparedSession],
-  );
+  const syncSession = rootRoute.useLoaderData();
 
-  useEffect(() => {
-    setPreparedSession(initialData.syncSession);
-  }, [initialData.syncSession, setPreparedSession]);
-
-  const page = (
-    counterValue: number,
-    isAdjusting = false,
-    onAdjust: (amount: CounterAdjustAmount) => void,
-  ) => (
-    <main className="relative flex min-h-screen flex-col bg-background px-5 py-7 text-foreground sm:px-7">
-      <header className="site-header">
-        <Link className="brand" to="/">
-          <span className="brand-mark" aria-hidden />
-          Pier Demo
-        </Link>
-        <nav className="site-nav" aria-label="Primary">
-          <ThemeSwitcher />
-          <Button render={<Link to="/auth/sign-in" />} size="sm" variant="ghost">
-            Sign in
-          </Button>
-        </nav>
-      </header>
-
-      <section
-        aria-labelledby="counter-title"
-        className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center text-center"
-      >
-        <h1 id="counter-title" className="sr-only">
-          Public counter
-        </h1>
-
-        <CounterControls isAdjusting={isAdjusting} onAdjust={onAdjust}>
-          <CounterValue value={counterValue} />
-        </CounterControls>
-      </section>
-    </main>
-  );
-
-  if (!userId) {
-    throw new Error("Sync session is missing a user ID.");
+  if (!syncSession) {
+    return <Navigate replace to="/auth/sign-in" />;
   }
 
-  return (
-    <SyncProvider
-      auth={preparedSession.auth.token}
-      cacheURL={syncConfig.cacheURL}
-      context={context as never}
-      mutateURL={syncConfig.mutateURL}
-      mutators={syncClient.mutators}
-      queryURL={syncConfig.queryURL}
-      schema={schema}
-      storageKey={syncConfig.storageKey}
-      userID={userId}
-    >
-      <SyncedCounter initialCounterValue={initialData.counter.value} render={page} />
-    </SyncProvider>
-  );
+  return <SyncedCounter initialCounter={initialData.counter} render={CounterPage} />;
 }
 
+const CounterPage = (
+  counterValue: number,
+  isAdjusting = false,
+  onAdjust: (amount: CounterAdjustAmount) => void,
+) => (
+  <main className="relative flex min-h-screen flex-col bg-background px-5 py-7 text-foreground sm:px-7">
+    <header className="site-header">
+      <Link className="brand" to="/">
+        <span className="brand-mark" aria-hidden />
+        Pier Demo
+      </Link>
+      <nav className="site-nav" aria-label="Primary">
+        <ThemeSwitcher />
+        <Button render={<Link to="/auth/sign-in" />} size="sm" variant="ghost">
+          Sign in
+        </Button>
+      </nav>
+    </header>
+
+    <section
+      aria-labelledby="counter-title"
+      className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center text-center"
+    >
+      <h1 id="counter-title" className="sr-only">
+        Public counter
+      </h1>
+
+      <CounterControls isAdjusting={isAdjusting} onAdjust={onAdjust}>
+        <CounterValue value={counterValue} />
+      </CounterControls>
+    </section>
+  </main>
+);
+
 function SyncedCounter({
-  initialCounterValue,
+  initialCounter,
   render,
 }: {
-  readonly initialCounterValue: number;
+  readonly initialCounter: PublicCounterInitialData["counter"];
   readonly render: (
     counterValue: number,
     isAdjusting: boolean,
     onAdjust: (amount: CounterAdjustAmount) => void,
   ) => ReactNode;
 }) {
-  const counter = syncClient.counter.current.useQuery();
+  const counter = syncClient.counter.current.useQuery({
+    initialData: {
+      id: "global",
+      updatedAt: initialCounter.updatedAt,
+      value: initialCounter.value,
+    },
+  });
   const zero = useZero();
   const increment = useCallback(
     (amount: CounterAdjustAmount) => {
@@ -130,7 +110,7 @@ function SyncedCounter({
     }
   }, [counter.isError]);
 
-  return render(counter.data?.value ?? initialCounterValue, false, increment);
+  return render(counter.data.value, false, increment);
 }
 
 function showCounterMutationError(message: string) {

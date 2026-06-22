@@ -113,7 +113,6 @@ export {
   counterOutputSchema,
   emptyInputSchema,
   healthOutputSchema,
-  syncSessionInputSchema,
   syncSessionOutputSchema,
 } from "./schemas";
 export { syncRouter };

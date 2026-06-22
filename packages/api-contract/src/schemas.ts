@@ -8,10 +8,6 @@ export const counterMutationInputSchema = z
   })
   .optional();
 
-export const syncSessionInputSchema = z.object({
-  createAnonymous: z.boolean().default(false),
-});
-
 export const syncSessionOutputSchema = z.object({
   auth: z.object({
     expiresAt: z.number(),

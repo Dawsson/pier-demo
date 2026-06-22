@@ -1,42 +1,13 @@
 import { createSyncAuthTokenResult } from "@pier/sync";
 import { os } from "#/api";
 
-type AuthUser = {
-  readonly id: string;
-  readonly [key: string]: unknown;
-};
-
 export const syncSessionRoutes = {
-  prepare: os.syncSession.prepare.endpoint({
+  current: os.syncSession.current.endpoint({
     auth: "public",
-    run: async ({ ctx, input }) => {
+    run: async ({ ctx }) => {
       const request = ctx.request;
-      const headers = new Headers();
       const session = await ctx.auth.api.getSession({ headers: request.headers }).catch(() => null);
-      let user: AuthUser | null = session?.user ?? null;
-
-      if (!user && input.createAnonymous) {
-        const anonymousResponse = await ctx.auth.handler(
-          new Request(new URL("/auth/sign-in/anonymous", ctx.env.API_URL.href), {
-            headers: request.headers,
-            method: "POST",
-          }),
-        );
-
-        copySetCookieHeaders(anonymousResponse.headers, headers);
-
-        if (!anonymousResponse.ok) {
-          return new Response(await anonymousResponse.text(), {
-            headers,
-            status: anonymousResponse.status,
-          });
-        }
-
-        const anonymousBody = (await anonymousResponse.json().catch(() => null)) as {
-          readonly user?: unknown;
-        } | null;
-        user = isAuthUser(anonymousBody?.user) ? anonymousBody.user : null;
-      }
+      const user = session?.user ?? null;
 
       if (!user) {
         return Response.json(
@@ -55,41 +26,10 @@ export const syncSessionRoutes = {
         secret: ctx.env.BETTER_AUTH_SECRET,
       });
 
-      headers.set("content-type", "application/json");
-
-      return Response.json(
-        {
-          auth,
-          user,
-        },
-        { headers },
-      );
+      return Response.json({
+        auth,
+        user,
+      });
     },
   }),
 };
-
-function isAuthUser(value: unknown): value is AuthUser {
-  return (
-    typeof value === "object" &&
-    value !== null &&
-    "id" in value &&
-    typeof (value as { readonly id?: unknown }).id === "string"
-  );
-}
-
-function copySetCookieHeaders(source: Headers, target: Headers) {
-  const getSetCookie = (source as Headers & { getSetCookie?: () => string[] }).getSetCookie;
-  const cookies = typeof getSetCookie === "function" ? getSetCookie.call(source) : [];
-
-  if (cookies.length > 0) {
-    for (const cookie of cookies) {
-      target.append("set-cookie", cookie);
-    }
-    return;
-  }
-
-  const cookie = source.get("set-cookie");
-  if (cookie) {
-    target.append("set-cookie", cookie);
-  }
-}

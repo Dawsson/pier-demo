@@ -6,7 +6,6 @@ import {
   counterOutputSchema,
   emptyInputSchema,
   healthOutputSchema,
-  syncSessionInputSchema,
   syncSessionOutputSchema,
 } from "./schemas";
 
@@ -21,9 +20,9 @@ export const contractModules = {
     current: c.query().input(emptyInputSchema).output(counterOutputSchema),
   },
   syncSession: {
-    prepare: c
+    current: c
       .endpoint()
-      .input(syncSessionInputSchema)
+      .input(emptyInputSchema)
       .output(syncSessionOutputSchema)
       .route({ method: "POST", path: "/sync/session" }),
   },
