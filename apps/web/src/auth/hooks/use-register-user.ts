@@ -22,9 +22,8 @@ export function useRegisterUser() {
       return result.data;
     },
     onSuccess: () => {
-      void router.navigate({ to: "/" });
+      void router.navigate({ to: "/" }).then(() => router.invalidate());
       void queryClient.invalidateQueries();
-      void router.invalidate();
     },
   });
 }
