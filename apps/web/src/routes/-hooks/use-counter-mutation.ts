@@ -1,8 +1,8 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { syncClient } from "@/lib/api";
 import { errorMessage, now } from "@/routes/-helpers";
-import type { CounterAdjustAmount, PendingAdjustment } from "@/routes/-types";
+import type { PendingAdjustment } from "@/routes/-types";
 
 export function useCounterMutation({
   initialCounterValue,
@@ -22,27 +22,15 @@ export function useCounterMutation({
     onError: showCounterErrorToast,
   });
 
-  const counterValue = counter.data?.value ?? initialCounterValue;
-  const adjust = useCallback(
-    (amount: CounterAdjustAmount) => {
-      increment.mutate({ amount });
-    },
-    [increment],
-  );
-
   useEffect(() => {
-    if (
-      !pendingAdjustment ||
-      submittedPendingAdjustmentId.current === pendingAdjustment.id ||
-      increment.isPending
-    ) {
+    if (!pendingAdjustment || submittedPendingAdjustmentId.current === pendingAdjustment.id) {
       return;
     }
 
     submittedPendingAdjustmentId.current = pendingAdjustment.id;
-    adjust(pendingAdjustment.amount);
+    increment.mutate({ amount: pendingAdjustment.amount });
     onPendingAdjustmentSubmitted();
-  }, [adjust, increment.isPending, pendingAdjustment, onPendingAdjustmentSubmitted]);
+  }, [increment, pendingAdjustment, onPendingAdjustmentSubmitted]);
 
   useEffect(() => {
     if (counter.data === undefined) {
@@ -59,8 +47,8 @@ export function useCounterMutation({
   }, [counter.error, counter.isError]);
 
   return {
-    adjust,
-    counterValue,
+    counterValue: counter.data?.value ?? initialCounterValue,
+    increment,
     syncMountedAt: syncMountedAt.current,
   };
 }

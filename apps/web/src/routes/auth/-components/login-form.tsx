@@ -40,7 +40,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
   const onSubmit = (values: LoginValues) => {
     login.mutate(values, {
       onSuccess: async () => {
-        await navigate({ to: "/app" });
+        await navigate({ to: "/" });
       },
     });
   };

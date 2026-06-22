@@ -137,7 +137,7 @@ function SyncedCounter({
     <PublicCounter
       counterValue={counter.counterValue}
       isAdjusting={false}
-      onAdjust={counter.adjust}
+      onAdjust={(amount) => counter.increment.mutate({ amount })}
       ssrMs={ssrMs}
       timing={{ ...timing, syncMountedAt: counter.syncMountedAt }}
     />

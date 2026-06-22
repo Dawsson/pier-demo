@@ -41,7 +41,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
   const onSubmit = (values: SignUpValues) => {
     registerUser.mutate(values, {
       onSuccess: async () => {
-        await navigate({ to: "/app" });
+        await navigate({ to: "/" });
       },
     });
   };
