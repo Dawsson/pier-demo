@@ -3,6 +3,9 @@
   "name": "pier-demo",
   "slug": "pierdemo",
   "services": ["web", "admin", "api", "zero"],
+  "servicePorts": {
+    "zero": 4859
+  },
   "session": {
     "windows": [
       {
