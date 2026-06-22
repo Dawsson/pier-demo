@@ -74,6 +74,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
                   id="email"
                   className={authUiConfig.styles.input}
                   autoComplete="email"
+                  placeholder={authUiConfig.fields.email.placeholder}
                   type="email"
                   aria-invalid={!!form.formState.errors.email}
                   {...form.register("email")}

@@ -76,6 +76,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
                     id="name"
                     className={authUiConfig.styles.input}
                     autoComplete={authUiConfig.signUp.fields.name.autoComplete}
+                    placeholder={authUiConfig.signUp.fields.name.placeholder}
                     aria-invalid={!!form.formState.errors.name}
                     {...form.register("name")}
                   />
@@ -96,6 +97,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
                   id="email"
                   className={authUiConfig.styles.input}
                   autoComplete="email"
+                  placeholder={authUiConfig.fields.email.placeholder}
                   type="email"
                   aria-invalid={!!form.formState.errors.email}
                   {...form.register("email")}

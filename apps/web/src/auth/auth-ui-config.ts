@@ -17,7 +17,13 @@ export const authUiConfig = {
         autoComplete: "name",
         enabled: true,
         label: "Name",
+        placeholder: "Jane Doe",
       },
+    },
+  },
+  fields: {
+    email: {
+      placeholder: "name@example.com",
     },
   },
   styles: {
