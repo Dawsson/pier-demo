@@ -11,6 +11,11 @@ export function useLogin() {
         throw new Error(result.error.message ?? "Sign in failed.");
       }
 
+      const session = await authClient.getSession();
+      if (session.error || !session.data) {
+        throw new Error(session.error?.message ?? "Sign in succeeded, but no session cookie was found.");
+      }
+
       return result.data;
     },
     onSuccess: () => {

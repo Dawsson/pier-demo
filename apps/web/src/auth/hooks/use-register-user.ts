@@ -15,6 +15,13 @@ export function useRegisterUser() {
         throw new Error(result.error.message ?? "Account creation failed.");
       }
 
+      const session = await authClient.getSession();
+      if (session.error || !session.data) {
+        throw new Error(
+          session.error?.message ?? "Account created, but no session cookie was found.",
+        );
+      }
+
       return result.data;
     },
     onSuccess: () => {
