@@ -1,9 +1,6 @@
 import { spawn } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 
-const hostDatabaseUrl = "postgresql://postgres:pass@127.0.0.1:55432/zero";
-const dockerDatabaseUrl = "postgres://postgres:pass@upstream-db:5432/zero";
-
 type Command = "down" | "logs" | "permissions" | "reset" | "up";
 
 const command = process.argv[2] as Command | undefined;
@@ -14,47 +11,45 @@ if (!command || !["down", "logs", "permissions", "reset", "up"].includes(command
 }
 
 if (command === "permissions") {
-  const baseEnv = zeroEnv({ requireApiRuntime: false });
-  await run("docker", ["compose", "up", "-d", "--wait", "upstream-db"], dockerEnv(baseEnv));
+  const baseEnv = zeroEnv();
   await run("bun", ["scripts/bootstrap-db.ts"], baseEnv);
   await deployPermissions(baseEnv);
   process.exit(0);
 }
 
 if (command === "reset") {
-  const baseEnv = zeroEnv({ requireApiRuntime: false });
+  const baseEnv = zeroEnv();
   await run("docker", ["compose", "down", "-v"], dockerEnv(baseEnv));
-  await run("docker", ["compose", "up", "-d", "--wait", "upstream-db"], dockerEnv(baseEnv));
   await run("bun", ["scripts/bootstrap-db.ts"], baseEnv);
   await run("node", ["node_modules/@rocicorp/zero/out/zero/src/zero-out.js"], baseEnv);
   await deployPermissions(baseEnv);
-  await run(
-    "docker",
-    ["compose", "up", "-d", "zero-cache"],
-    dockerEnv(zeroEnv({ requireApiRuntime: true })),
-  );
+  await run("docker", ["compose", "up", "-d", "zero-cache"], dockerEnv(baseEnv));
   process.exit(0);
 }
 
 const composeArgs =
   command === "up"
-    ? ["compose", "up", "-d", "upstream-db", "zero-cache"]
+    ? ["compose", "up", "-d", "zero-cache"]
     : command === "down"
       ? ["compose", "down"]
       : ["compose", "logs", "-f", "zero-cache"];
 
 if (command === "up") {
-  const baseEnv = zeroEnv({ requireApiRuntime: false });
-  await run("docker", ["compose", "up", "-d", "--wait", "upstream-db"], dockerEnv(baseEnv));
+  const baseEnv = zeroEnv();
   await run("bun", ["scripts/bootstrap-db.ts"], baseEnv);
   await deployPermissions(baseEnv);
+  await run("docker", composeArgs, dockerEnv(baseEnv));
+  process.exit(0);
 }
 
-await run("docker", composeArgs, dockerEnv(zeroEnv({ requireApiRuntime: command !== "down" })));
+await run("docker", composeArgs, dockerEnv(zeroEnv()));
 
-function zeroEnv({ requireApiRuntime }: { readonly requireApiRuntime: boolean }) {
-  const runtimeEnv = requireApiRuntime ? readApiRuntimeEnv() : {};
-  const databaseUrl = process.env.DATABASE_URL ?? hostDatabaseUrl;
+function zeroEnv() {
+  const runtimeEnv = readApiRuntimeEnv();
+  const provisionEnv = readProvisionEnv();
+  const databaseUrl = process.env.DATABASE_URL ?? runtimeEnv.DATABASE_URL;
+  const zeroDatabaseUrl =
+    process.env.ZERO_DATABASE_URL ?? provisionEnv.ZERO_DATABASE_URL ?? databaseUrl;
 
   return {
     ...process.env,
@@ -63,19 +58,14 @@ function zeroEnv({ requireApiRuntime }: { readonly requireApiRuntime: boolean })
     DEV_ZERO_PORT: process.env.DEV_ZERO_PORT ?? "4859",
     ZERO_APP_ID: process.env.ZERO_APP_ID ?? "pier_demo_local",
     ZERO_AUTH_SECRET: process.env.ZERO_AUTH_SECRET ?? runtimeEnv.ZERO_AUTH_SECRET ?? "unused",
-    ZERO_CHANGE_DB: process.env.ZERO_CHANGE_DB ?? hostDatabaseUrl,
-    ZERO_CVR_DB: process.env.ZERO_CVR_DB ?? hostDatabaseUrl,
-    ZERO_UPSTREAM_DB: process.env.ZERO_UPSTREAM_DB ?? hostDatabaseUrl,
+    ZERO_CHANGE_DB: process.env.ZERO_CHANGE_DB ?? zeroDatabaseUrl,
+    ZERO_CVR_DB: process.env.ZERO_CVR_DB ?? zeroDatabaseUrl,
+    ZERO_UPSTREAM_DB: process.env.ZERO_UPSTREAM_DB ?? zeroDatabaseUrl,
   };
 }
 
 function dockerEnv(env: NodeJS.ProcessEnv) {
-  return {
-    ...env,
-    ZERO_CHANGE_DB: dockerDatabaseUrl,
-    ZERO_CVR_DB: dockerDatabaseUrl,
-    ZERO_UPSTREAM_DB: dockerDatabaseUrl,
-  };
+  return { ...env };
 }
 
 function readApiRuntimeEnv() {
@@ -96,6 +86,7 @@ function readApiRuntimeEnv() {
     readonly port?: unknown;
   };
   const betterAuthSecret = apiConfig.vars?.BETTER_AUTH_SECRET;
+  const databaseUrl = apiConfig.vars?.DATABASE_URL;
   const apiPort =
     typeof apiRuntime.port === "number"
       ? String(apiRuntime.port)
@@ -110,10 +101,33 @@ function readApiRuntimeEnv() {
     process.exit(1);
   }
 
+  if (typeof databaseUrl !== "string" || databaseUrl.length === 0) {
+    console.error("Missing generated DATABASE_URL. Run `dev restart api` before starting Zero.");
+    process.exit(1);
+  }
+
   return {
     ...(apiPort ? { DEV_API_PORT: apiPort } : {}),
+    DATABASE_URL: databaseUrl,
     ZERO_AUTH_SECRET: betterAuthSecret,
   };
+}
+
+function readProvisionEnv() {
+  const path = ".pier/db-provision/pier_demo-dev.env";
+  if (!existsSync(path)) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    readFileSync(path, "utf8")
+      .split(/\r?\n/)
+      .filter((line) => line && !line.startsWith("#"))
+      .map((line) => {
+        const index = line.indexOf("=");
+        return [line.slice(0, index), line.slice(index + 1)];
+      }),
+  );
 }
 
 async function deployPermissions(env: NodeJS.ProcessEnv) {
@@ -126,7 +140,7 @@ async function deployPermissions(env: NodeJS.ProcessEnv) {
       "--app-id",
       env.ZERO_APP_ID ?? "pier_demo_local",
       "--upstream-db",
-      env.DATABASE_URL ?? "",
+      env.ZERO_UPSTREAM_DB ?? env.DATABASE_URL ?? "",
     ],
     env,
   );
