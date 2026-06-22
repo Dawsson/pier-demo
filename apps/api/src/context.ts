@@ -1,12 +1,10 @@
 import type { Env } from "./.pier/env";
 import { createAuth } from "./auth";
 import { createDb } from "./db";
-import { ensureDatabaseSchema } from "./db/bootstrap";
 
 export const createApiContext = async (env: Env) => {
   try {
     const db = createDb(env);
-    await ensureDatabaseSchema(db);
     const auth = createAuth(env, db);
 
     return {
