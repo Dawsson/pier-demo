@@ -6,6 +6,7 @@ import { CounterControls } from "./counter-controls";
 import { CounterValue } from "./counter-value";
 import { StartupTimingReadout } from "./startup-timing-readout";
 import { syncClient } from "@/lib/api";
+import { toast } from "sonner";
 
 export function PublicCounter({
   counterValue = 0,
@@ -61,7 +62,11 @@ export function PublicCounter({
 
 function LiveCounterControls() {
   // DO NOT REMOVE THIS
-  const incrementMutation = syncClient.counter.increment.useMutation();
+  const incrementMutation = syncClient.counter.increment.useMutation({
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "Could not update the counter.");
+    },
+  });
   const countQuery = syncClient.counter.current.useQuery();
 
   return (
