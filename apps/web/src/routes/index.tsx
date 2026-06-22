@@ -9,6 +9,9 @@ import { toastManager } from "@/components/ui/toast";
 import { endpointClient, syncClient, syncConfig } from "@/lib/api";
 import { authClient } from "@/lib/auth";
 
+const counterRateLimit = 20;
+const counterRateLimitWindowMs = 60_000;
+
 export const Route = createFileRoute("/")({
   component: HomeRoute,
 });
@@ -49,6 +52,7 @@ function HomeRoute() {
 function HomeCounter() {
   const counter = syncClient.counter.current.useQuery();
   const queryErrorToastShown = useRef(false);
+  const submittedAtRef = useRef<number[]>([]);
   const increment = syncClient.counter.increment.useMutation({
     onError: (error) => {
       showCounterErrorToast(error);
@@ -58,6 +62,18 @@ function HomeCounter() {
   const counterValue = counter.data?.value ?? 0;
   const isAdjusting = increment.isPending;
   const adjust = (amount: -1 | 1) => {
+    const now = Date.now();
+    const windowStart = now - counterRateLimitWindowMs;
+    submittedAtRef.current = submittedAtRef.current.filter(
+      (submittedAt) => submittedAt > windowStart,
+    );
+
+    if (submittedAtRef.current.length >= counterRateLimit) {
+      showCounterRateLimitToast();
+      return;
+    }
+
+    submittedAtRef.current.push(now);
     increment.mutate({ amount });
   };
 
@@ -151,13 +167,25 @@ function showCounterErrorToast(error: unknown) {
   const message = errorMessage(error);
   const isRateLimited = /rate.?limit|too many|429/i.test(message);
 
+  if (isRateLimited) {
+    showCounterRateLimitToast();
+    return;
+  }
+
   toastManager.add({
-    description: isRateLimited
-      ? "Give it a moment before counting again."
-      : "The synced counter could not update.",
-    id: isRateLimited ? "counter-rate-limited" : "counter-sync-error",
-    title: isRateLimited ? "Slow down" : "Counter unavailable",
-    type: isRateLimited ? "warning" : "error",
+    description: "The synced counter could not update.",
+    id: "counter-sync-error",
+    title: "Counter unavailable",
+    type: "error",
+  });
+}
+
+function showCounterRateLimitToast() {
+  toastManager.add({
+    description: "Give it a moment before counting again.",
+    id: "counter-rate-limited",
+    title: "Slow down",
+    type: "warning",
   });
 }
 
