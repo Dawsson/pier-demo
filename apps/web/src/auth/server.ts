@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { setResponseHeader } from "@tanstack/react-start/server";
 import { serverEnv } from "@/.pier/env";
 import { loginSchema, signUpSchema } from "@/auth/schemas";
+import { httpErrorMessage } from "@/lib/http-error-message";
 
 export const loginServerFn = createServerFn({ method: "POST" })
   .validator(loginSchema.parse)
@@ -30,7 +31,7 @@ async function forwardAuthRequest(path: readonly [string, string], body: unknown
   const responseBody = await response.json().catch(() => null);
 
   if (!response.ok) {
-    throw new Error(errorMessage(responseBody) ?? "Authentication failed.");
+    throw new Error(httpErrorMessage(responseBody) ?? "Authentication failed.");
   }
 
   forwardSetCookie(response.headers);
@@ -51,23 +52,4 @@ function forwardSetCookie(headers: Headers) {
 
 function splitSetCookieHeader(header: string | null) {
   return header?.split(/,(?=\s*[^;,]+?=)/).map((cookie) => cookie.trim()) ?? [];
-}
-
-function errorMessage(body: unknown) {
-  if (typeof body !== "object" || body === null) {
-    return undefined;
-  }
-
-  const message = (body as { readonly message?: unknown }).message;
-  if (typeof message === "string") {
-    return message;
-  }
-
-  const error = (body as { readonly error?: unknown }).error;
-  if (typeof error === "object" && error !== null) {
-    const errorMessage = (error as { readonly message?: unknown }).message;
-    return typeof errorMessage === "string" ? errorMessage : undefined;
-  }
-
-  return undefined;
 }

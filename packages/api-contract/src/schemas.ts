@@ -14,15 +14,15 @@ export const syncSessionOutputSchema = z.object({
     token: z.string(),
     userId: z.string(),
   }),
-  user: z
-    .object({
-      id: z.string(),
-      email: z.string().optional(),
-      isAnonymous: z.boolean().optional(),
-      name: z.string().optional(),
-    })
-    .passthrough(),
+  user: z.object({
+    id: z.string(),
+    email: z.string().optional(),
+    isAnonymous: z.boolean().optional(),
+    name: z.string().optional(),
+  }),
 });
+
+export type SyncSessionOutput = z.infer<typeof syncSessionOutputSchema>;
 
 export const counterOutputSchema = z.object({
   authenticated: z.boolean(),

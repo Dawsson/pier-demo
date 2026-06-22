@@ -1,20 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
+import { syncSessionOutputSchema, type SyncSessionOutput } from "@pier-demo/api-contract/schemas";
 import { endpointClient } from "@/lib/api";
+import { httpErrorMessage } from "@/lib/http-error-message";
 
-export type PreparedSyncSession = {
-  readonly auth: {
-    readonly expiresAt: number;
-    readonly token: string;
-    readonly userId: string;
-  };
-  readonly user: {
-    readonly email?: string;
-    readonly id: string;
-    readonly isAnonymous?: boolean;
-    readonly name?: string;
-  };
-};
+export type PreparedSyncSession = SyncSessionOutput;
 
 export const getSyncSessionServerFn = createServerFn({ method: "GET" }).handler(async () => {
   const response = await fetch(endpointClient.syncSession.current.href({}), {
@@ -32,25 +22,8 @@ export const getSyncSessionServerFn = createServerFn({ method: "GET" }).handler(
 
   if (!response.ok) {
     const body = await response.json().catch(() => null);
-    throw new Error(errorMessage(body) ?? "Could not read sync session.");
+    throw new Error(httpErrorMessage(body) ?? "Could not read sync session.");
   }
 
-  return (await response.json()) as PreparedSyncSession;
+  return syncSessionOutputSchema.parse(await response.json());
 });
-
-export function errorMessage(body: unknown) {
-  if (typeof body !== "object" || body === null) {
-    return;
-  }
-
-  const error = (body as { readonly error?: unknown }).error;
-  if (typeof error === "object" && error !== null) {
-    const message = (error as { readonly message?: unknown }).message;
-    if (typeof message === "string") {
-      return message;
-    }
-  }
-
-  const message = (body as { readonly message?: unknown }).message;
-  return typeof message === "string" ? message : undefined;
-}
