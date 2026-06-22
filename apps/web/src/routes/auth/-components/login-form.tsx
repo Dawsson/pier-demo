@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 import { useForm } from "react-hook-form";
 import { authOAuthProviders } from "@/auth/auth-ui-config";
@@ -24,7 +24,6 @@ const submitButtonClassName = "!h-[42px] rounded-[10px] font-semibold text-[0.93
 const hasOAuthProviders = authOAuthProviders.length > 0;
 
 export function LoginForm({ className, ...props }: ComponentProps<"div">) {
-  const navigate = useNavigate();
   const login = useLogin();
   const form = useForm<LoginValues>({
     defaultValues: {
@@ -38,11 +37,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
   });
 
   const onSubmit = (values: LoginValues) => {
-    login.mutate(values, {
-      onSuccess: async () => {
-        await navigate({ to: "/" });
-      },
-    });
+    login.mutate(values);
   };
 
   return (

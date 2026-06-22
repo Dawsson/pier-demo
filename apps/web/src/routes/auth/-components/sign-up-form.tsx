@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 import { useForm } from "react-hook-form";
 import { authOAuthProviders, authUiConfig } from "@/auth/auth-ui-config";
@@ -24,7 +24,6 @@ const submitButtonClassName = "!h-[42px] rounded-[10px] font-semibold text-[0.93
 const hasOAuthProviders = authOAuthProviders.length > 0;
 
 export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
-  const navigate = useNavigate();
   const registerUser = useRegisterUser();
   const form = useForm<SignUpValues>({
     defaultValues: {
@@ -39,11 +38,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
   });
 
   const onSubmit = (values: SignUpValues) => {
-    registerUser.mutate(values, {
-      onSuccess: async () => {
-        await navigate({ to: "/" });
-      },
-    });
+    registerUser.mutate(values);
   };
 
   return (

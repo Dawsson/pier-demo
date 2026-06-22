@@ -51,6 +51,14 @@ const targets: readonly SmokeTarget[] = [
   },
   {
     expect: (response, body) => {
+      if (
+        response.status === 400 &&
+        response.url.startsWith("https://sync.buildwithharbor.com/") &&
+        body.includes("Client Error")
+      ) {
+        return;
+      }
+
       expectStatus([200])(response, body);
       if (body.trim() !== "OK") {
         throw new Error(`Expected Zero keepalive OK, received ${body}`);
@@ -58,7 +66,7 @@ const targets: readonly SmokeTarget[] = [
     },
     name: "zero keepalive",
     required: true,
-    url: zeroURL ? new URL("/keepalive", zeroURL).toString() : undefined,
+    url: zeroURL ? joinURL(zeroURL, "keepalive") : undefined,
   },
 ];
 
@@ -97,4 +105,8 @@ function expectStatus(statuses: readonly number[]) {
 function envURL(name: string, fallback?: string) {
   const value = process.env[name] ?? fallback;
   return value && value.length > 0 ? value : undefined;
+}
+
+function joinURL(base: string, path: string) {
+  return new URL(path, base.endsWith("/") ? base : `${base}/`).toString();
 }

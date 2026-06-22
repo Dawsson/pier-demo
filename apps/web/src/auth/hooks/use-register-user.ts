@@ -21,9 +21,10 @@ export function useRegisterUser() {
 
       return result.data;
     },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries();
-      await router.invalidate();
+    onSuccess: () => {
+      void router.navigate({ to: "/" });
+      void queryClient.invalidateQueries();
+      void router.invalidate();
     },
   });
 }
