@@ -54,9 +54,31 @@ const syncRouter = t.router({
 
 const syncClientContract = syncRouter.implement({
   counter: {
-    increment: async () => {},
+    increment: async ({ ctx, input, tx }) => {
+      const current = await tx.run(zql.counter_state.where("id", "=", "global").one());
+
+      if (!current) {
+        return;
+      }
+
+      const amount = input?.amount ?? optimisticCounterStep(ctx.user);
+      await tx.mutate.counter_state.update({
+        id: "global",
+        updatedAt: new Date().toISOString(),
+        value: current.value + amount,
+      });
+    },
   },
 });
+
+const optimisticCounterStep = (user: SyncContext["user"]) =>
+  user && !isAnonymousUser(user) ? 5 : 1;
+
+const isAnonymousUser = (user: unknown) =>
+  typeof user === "object" &&
+  user !== null &&
+  "isAnonymous" in user &&
+  (user as { readonly isAnonymous?: unknown }).isAnonymous === true;
 
 const syncContract = {
   clientMutators: syncClientContract.clientMutators,
