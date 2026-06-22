@@ -2,7 +2,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { DEFAULT_THEME, THEME_STORAGE_KEY, ThemeProvider } from "@/components/theme-provider";
-import { ToastProvider } from "@/components/ui/toast";
+import { Toaster } from "@/components/ui/sonner";
 import type { RouterContext } from "@/router-context";
 import "@/styles.css";
 
@@ -53,9 +53,8 @@ function RootComponent() {
     <RootDocument>
       <ThemeProvider>
         <QueryClientProvider client={context.queryClient}>
-          <ToastProvider timeout={1400}>
-            <Outlet />
-          </ToastProvider>
+          <Outlet />
+          <Toaster closeButton duration={1600} position="bottom-center" richColors={false} />
         </QueryClientProvider>
       </ThemeProvider>
     </RootDocument>

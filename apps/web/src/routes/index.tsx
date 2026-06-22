@@ -3,9 +3,9 @@ import { contract } from "@pier-demo/api-contract";
 import { schema } from "@pier-demo/api-contract/sync-schema";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
-import { toastManager } from "@/components/ui/toast";
 import { endpointClient, syncClient, syncConfig } from "@/lib/api";
 import { authClient } from "@/lib/auth";
 
@@ -172,20 +172,16 @@ function showCounterErrorToast(error: unknown) {
     return;
   }
 
-  toastManager.add({
+  toast.error("Counter unavailable", {
     description: "The synced counter could not update.",
     id: "counter-sync-error",
-    title: "Counter unavailable",
-    type: "error",
   });
 }
 
 function showCounterRateLimitToast() {
-  toastManager.add({
+  toast.warning("Slow down", {
     description: "Give it a moment before counting again.",
     id: "counter-rate-limited",
-    title: "Slow down",
-    type: "warning",
   });
 }
 

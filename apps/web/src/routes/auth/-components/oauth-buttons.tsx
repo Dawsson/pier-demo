@@ -1,12 +1,10 @@
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { toastManager } from "@/components/ui/toast";
 
 const showProviderToast = (provider: string) => {
-  toastManager.add({
+  toast.info("OAuth not configured", {
     description: `Add ${provider} credentials to enable this sign-in option.`,
     id: `oauth-${provider.toLowerCase()}-not-configured`,
-    title: "OAuth not configured",
-    type: "info",
   });
 };
 
