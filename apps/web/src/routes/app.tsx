@@ -79,27 +79,28 @@ function AccountCounter() {
   };
 
   return (
-    <main className="app-shell">
+    <main className="flex min-h-screen flex-col gap-14 bg-background px-5 py-7 text-foreground sm:px-7">
       <header className="site-header">
         <Link className="brand" to="/">
           <span className="brand-mark" aria-hidden />
           Pier Demo
         </Link>
         <nav className="site-nav" aria-label="Primary">
-          <button
-            className="link-button"
+          <Button
             disabled={logout.isPending}
+            size="sm"
             type="button"
+            variant="ghost"
             onClick={signOut}
           >
             {logout.isPending ? "Signing out" : "Sign out"}
-          </button>
+          </Button>
         </nav>
       </header>
 
-      <Frame className="counter-frame" aria-labelledby="counter-title">
+      <Frame className="mx-auto w-full max-w-3xl" aria-labelledby="counter-title">
         <FrameHeader>
-          <FrameTitle id="counter-title" className="counter-title">
+          <FrameTitle id="counter-title" className="text-lg">
             Increment the counter.
           </FrameTitle>
           <FrameDescription>
@@ -108,15 +109,24 @@ function AccountCounter() {
         </FrameHeader>
 
         <FramePanel>
-          <div className="counter-display" aria-live="polite">
-            <span className="section-label">{me.data?.email ?? "Account"}</span>
-            <span className="counter-value">{counterValue}</span>
-            <span className="counter-caption">Current value</span>
+          <div
+            className="grid gap-2 border-border border-y py-8 text-center sm:py-9"
+            aria-live="polite"
+          >
+            <span className="font-medium text-muted-foreground text-sm">
+              {me.data?.email ?? "Account"}
+            </span>
+            <span className="font-semibold text-7xl leading-none tabular-nums sm:text-8xl">
+              {counterValue}
+            </span>
+            <span className="font-medium text-muted-foreground text-sm">Current value</span>
           </div>
-          {increment.error ? <p className="error">{String(increment.error)}</p> : null}
+          {increment.error ? (
+            <p className="font-medium text-destructive text-sm">{String(increment.error)}</p>
+          ) : null}
         </FramePanel>
 
-        <FrameFooter className="counter-footer">
+        <FrameFooter className="flex flex-wrap items-center gap-3">
           <Button
             disabled={increment.isPending}
             size="lg"

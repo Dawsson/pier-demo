@@ -65,7 +65,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
           </div>
 
           <FieldGroup className="gap-[15px]">
-            <Field data-invalid={!!form.formState.errors.name}>
+            <Field invalid={!!form.formState.errors.name}>
               <FieldLabel className="font-normal text-foreground text-sm" htmlFor="name">
                 Name
               </FieldLabel>
@@ -84,7 +84,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
               </FieldContent>
             </Field>
 
-            <Field data-invalid={!!form.formState.errors.email}>
+            <Field invalid={!!form.formState.errors.email}>
               <FieldLabel className="font-normal text-foreground text-sm" htmlFor="email">
                 Email
               </FieldLabel>
@@ -104,7 +104,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
               </FieldContent>
             </Field>
 
-            <Field data-invalid={!!form.formState.errors.password}>
+            <Field invalid={!!form.formState.errors.password}>
               <FieldLabel className="font-normal text-foreground text-sm" htmlFor="password">
                 Password
               </FieldLabel>

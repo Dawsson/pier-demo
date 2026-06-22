@@ -15,16 +15,6 @@ export const getPublicCounterServerFn = createServerFn({ method: "GET" }).handle
   const counter = await rpcClient.publicCounter.current.call({});
   const ssrMs = Math.round(performance.now() - startedAt);
 
-  if (import.meta.env.DEV || ssrMs >= 100) {
-    console.log(
-      JSON.stringify({
-        event: "public_counter_ssr_timing",
-        ssrMs,
-        value: counter.value,
-      }),
-    );
-  }
-
   return {
     counter,
     hasSessionCookie: hasBetterAuthSessionCookie(getRequest().headers.get("cookie")),

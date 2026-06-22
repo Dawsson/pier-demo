@@ -102,10 +102,10 @@ function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
 
 function NotFound() {
   return (
-    <main className="shell">
-      <section className="auth-panel">
-        <h1>Not found</h1>
-        <p className="summary">That page is not available.</p>
+    <main className="flex min-h-screen items-center justify-center bg-background px-5 py-7 text-foreground">
+      <section className="grid w-full max-w-md gap-3 rounded-lg border bg-card p-7">
+        <h1 className="font-semibold text-2xl leading-tight">Not found</h1>
+        <p className="text-muted-foreground leading-relaxed">That page is not available.</p>
       </section>
     </main>
   );
