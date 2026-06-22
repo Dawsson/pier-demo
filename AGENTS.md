@@ -22,8 +22,9 @@ Cloudflare account mutations, and platform-admin telemetry belong in Pier.
 
 ## Local Dev And Logs
 
-- Start the full local session with `bun run dev`, or run individual services
-  with `bun run dev:api`, `bun run dev:web`, and `bun run dev:admin`.
+- Start the full local session with `bun run dev`. For individual services,
+  use `dev restart <service> --cwd /Users/dawson/projects/waypoint-guest-app`
+  against the running dev session.
 - Use Pier cloud env as the runtime source of truth. Do not add `.env` setup
   instructions or local dotenv fallbacks for required app values.
 - Local development uses the Pier cloud dev Postgres database plus local
@@ -55,9 +56,9 @@ bun run check
 Useful platform checks:
 
 ```sh
-bun run inspect
-bun run plan
 bun run env:types
+pier inspect --json
+pier plan
 pier logs --state local --project pier-demo
 pier logs dump --state local --project pier-demo --markdown
 ```

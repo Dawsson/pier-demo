@@ -107,18 +107,20 @@ Use the repo `dev.json` for the normal local session:
 bun run dev
 ```
 
-Individual services are available when you need a focused process:
+For focused local runtime work, use the `dev` CLI against the running session:
 
 ```sh
-bun run dev:web
-bun run dev:admin
-bun run dev:api
+dev status --cwd /Users/dawson/projects/waypoint-guest-app
+dev restart web --cwd /Users/dawson/projects/waypoint-guest-app
+dev restart api --cwd /Users/dawson/projects/waypoint-guest-app
 ```
 
 Local logs:
 
 ```sh
-bun run logs
+dev logs api --cwd /Users/dawson/projects/waypoint-guest-app --tail 80
+dev logs zero --cwd /Users/dawson/projects/waypoint-guest-app --tail 80
+pier logs --state local --project pier-demo
 pier logs dump --state local --project pier-demo --markdown
 ```
 
@@ -127,8 +129,8 @@ pier logs dump --state local --project pier-demo --markdown
 ```sh
 bun run check-types
 bun run test
-bun run inspect
-bun run plan
+pier inspect --json
+pier plan
 ```
 
 This repo is not the Pier control plane. Domains, previews, backups,

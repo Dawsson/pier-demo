@@ -41,9 +41,9 @@ export const agentContext = {
   commands: {
     checkTypes: "bun run check-types",
     dev: "bun run dev",
-    inspect: "bun run inspect",
+    inspect: "pier inspect --json",
     logs: "pier logs --project pier-demo",
-    plan: "bun run plan",
+    plan: "pier plan",
   },
   project: {
     name: "pier-demo",
