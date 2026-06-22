@@ -1,4 +1,19 @@
 services:
+  zero-state-db:
+    image: postgres:18
+    container_name: pier-demo-zero-state-db
+    ports:
+      - "${DEV_ZERO_STATE_POSTGRES_PORT:-55433}:5432"
+    environment:
+      POSTGRES_DB: zero_state
+      POSTGRES_PASSWORD: pass
+    healthcheck:
+      test: pg_isready -U postgres -d zero_state
+      interval: 5s
+      start_period: 10s
+    volumes:
+      - pier-demo-zero-state-db:/var/lib/postgresql
+
   zero-cache:
     image: rocicorp/zero:1.6.2
     container_name: pier-demo-zero-cache
@@ -9,13 +24,16 @@ services:
       - /usr/local/bin/zero-cache
     ports:
       - "${DEV_ZERO_PORT:-4859}:4848"
+    depends_on:
+      zero-state-db:
+        condition: service_healthy
     stop_grace_period: 10m
     environment:
       ZERO_APP_ID: ${ZERO_APP_ID:-pier_demo_local}
       ZERO_APP_PUBLICATIONS: pier_demo_sync
       ZERO_UPSTREAM_DB: ${ZERO_UPSTREAM_DB:?ZERO_UPSTREAM_DB is required}
-      ZERO_CVR_DB: ${ZERO_CVR_DB:?ZERO_CVR_DB is required}
-      ZERO_CHANGE_DB: ${ZERO_CHANGE_DB:?ZERO_CHANGE_DB is required}
+      ZERO_CVR_DB: ${ZERO_CVR_DB:-postgres://postgres:pass@zero-state-db:5432/zero_state}
+      ZERO_CHANGE_DB: ${ZERO_CHANGE_DB:-postgres://postgres:pass@zero-state-db:5432/zero_state}
       ZERO_REPLICA_FILE: /data/replica.db
       ZERO_ADMIN_PASSWORD: password
       ZERO_AUTH_SECRET: ${ZERO_AUTH_SECRET:?ZERO_AUTH_SECRET is required}
@@ -43,4 +61,5 @@ services:
       - pier-demo-zero-cache:/data
 
 volumes:
+  pier-demo-zero-state-db:
   pier-demo-zero-cache:

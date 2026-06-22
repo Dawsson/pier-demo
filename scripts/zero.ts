@@ -5,6 +5,9 @@ import { prepareDatabase } from "./prepare-database";
 
 type Command = "down" | "logs" | "reset" | "up";
 
+const zeroStateHostDatabaseUrl = "postgresql://postgres:pass@127.0.0.1:55433/zero_state";
+const zeroStateDockerDatabaseUrl = "postgres://postgres:pass@zero-state-db:5432/zero_state";
+
 const command = process.argv[2] as Command | undefined;
 
 if (!command || !["down", "logs", "reset", "up"].includes(command)) {
@@ -15,6 +18,7 @@ if (!command || !["down", "logs", "reset", "up"].includes(command)) {
 if (command === "reset") {
   const baseEnv = zeroEnv();
   await run("docker", ["compose", "down", "-v"], dockerEnv(baseEnv));
+  await run("docker", ["compose", "up", "-d", "--wait", "zero-state-db"], dockerEnv(baseEnv));
   await decommissionZero(baseEnv);
   await prepareZeroDatabase(baseEnv);
   await deployPermissions(baseEnv);
@@ -33,6 +37,7 @@ const composeArgs =
 if (command === "up") {
   const baseEnv = zeroEnv();
   await run("docker", ["compose", "down"], dockerEnv(baseEnv));
+  await run("docker", ["compose", "up", "-d", "--wait", "zero-state-db"], dockerEnv(baseEnv));
   await decommissionZero(baseEnv);
   await prepareZeroDatabase(baseEnv);
   await deployPermissions(baseEnv);
@@ -62,10 +67,11 @@ function zeroEnv() {
     ...runtimeEnv,
     DATABASE_URL: appDatabaseUrl,
     DEV_ZERO_PORT: process.env.DEV_ZERO_PORT ?? "4859",
+    DEV_ZERO_STATE_POSTGRES_PORT: process.env.DEV_ZERO_STATE_POSTGRES_PORT ?? "55433",
     ZERO_APP_ID: process.env.ZERO_APP_ID ?? "pier_demo_local",
     ZERO_AUTH_SECRET: process.env.ZERO_AUTH_SECRET ?? runtimeEnv.ZERO_AUTH_SECRET ?? "unused",
-    ZERO_CHANGE_DB: process.env.ZERO_CHANGE_DB ?? zeroDatabaseUrl,
-    ZERO_CVR_DB: process.env.ZERO_CVR_DB ?? zeroDatabaseUrl,
+    ZERO_CHANGE_DB: process.env.ZERO_CHANGE_DB ?? zeroStateHostDatabaseUrl,
+    ZERO_CVR_DB: process.env.ZERO_CVR_DB ?? zeroStateHostDatabaseUrl,
     ZERO_SERVER_SCHEMA: serverSchema,
     ZERO_UPSTREAM_DB: process.env.ZERO_UPSTREAM_DB ?? zeroDatabaseUrl,
     ...(serverSchema ? { PUBLIC_ZERO_SERVER_SCHEMA: serverSchema } : {}),
@@ -73,7 +79,15 @@ function zeroEnv() {
 }
 
 function dockerEnv(env: NodeJS.ProcessEnv) {
-  return { ...env };
+  return {
+    ...env,
+    ZERO_CHANGE_DB:
+      env.ZERO_CHANGE_DB === zeroStateHostDatabaseUrl
+        ? zeroStateDockerDatabaseUrl
+        : env.ZERO_CHANGE_DB,
+    ZERO_CVR_DB:
+      env.ZERO_CVR_DB === zeroStateHostDatabaseUrl ? zeroStateDockerDatabaseUrl : env.ZERO_CVR_DB,
+  };
 }
 
 function readApiRuntimeEnv() {
