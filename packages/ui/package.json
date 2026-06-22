@@ -1,0 +1,67 @@
+{
+  "name": "@repo/ui",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./button": {
+      "types": "./src/components/ui/button.tsx",
+      "import": "./src/components/ui/button.tsx"
+    },
+    "./card": {
+      "types": "./src/components/ui/card.tsx",
+      "import": "./src/components/ui/card.tsx"
+    },
+    "./field": {
+      "types": "./src/components/ui/field.tsx",
+      "import": "./src/components/ui/field.tsx"
+    },
+    "./frame": {
+      "types": "./src/components/ui/frame.tsx",
+      "import": "./src/components/ui/frame.tsx"
+    },
+    "./input": {
+      "types": "./src/components/ui/input.tsx",
+      "import": "./src/components/ui/input.tsx"
+    },
+    "./label": {
+      "types": "./src/components/ui/label.tsx",
+      "import": "./src/components/ui/label.tsx"
+    },
+    "./separator": {
+      "types": "./src/components/ui/separator.tsx",
+      "import": "./src/components/ui/separator.tsx"
+    },
+    "./sonner": {
+      "types": "./src/components/ui/sonner.tsx",
+      "import": "./src/components/ui/sonner.tsx"
+    },
+    "./spinner": {
+      "types": "./src/components/ui/spinner.tsx",
+      "import": "./src/components/ui/spinner.tsx"
+    },
+    "./utils": {
+      "types": "./src/utils.ts",
+      "import": "./src/utils.ts"
+    }
+  },
+  "scripts": {
+    "check-types": "tsgo -p tsconfig.json"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.6.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.17.0",
+    "radix-ui": "^1.5.0",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.6.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3"
+  },
+  "peerDependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  }
+}

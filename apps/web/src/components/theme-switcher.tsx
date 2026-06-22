@@ -1,7 +1,7 @@
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useContext } from "react";
 import { ThemeProviderContext, type Theme } from "@/components/theme-provider";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/button";
 
 const nextTheme: Record<Theme, Theme> = {
   dark: "system",

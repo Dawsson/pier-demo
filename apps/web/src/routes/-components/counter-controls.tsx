@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/button";
 import { useHoverIntentPrewarm } from "@/routes/-hooks/use-hover-intent-prewarm";
 import type { CounterAdjustAmount } from "@/routes/-types";
 import type { ReactNode } from "react";

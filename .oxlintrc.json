@@ -3,6 +3,7 @@
   "plugins": ["import", "typescript", "unicorn", "oxc", "react", "jsx-a11y"],
   "ignorePatterns": [
     "apps/*/src/.pier/**",
+    "packages/ui/src/components/ui/**",
     "apps/admin/src/routeTree.gen.ts",
     "apps/web/src/routeTree.gen.ts"
   ],

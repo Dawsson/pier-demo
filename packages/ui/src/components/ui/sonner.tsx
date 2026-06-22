@@ -5,17 +5,12 @@ import {
   OctagonXIcon,
   TriangleAlertIcon,
 } from "lucide-react";
-import { useContext, type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
-import { ThemeProviderContext } from "@/components/theme-provider";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { isSystemDark, theme } = useContext(ThemeProviderContext);
-  const resolvedTheme = theme === "system" ? (isSystemDark ? "dark" : "light") : theme;
-
   return (
     <Sonner
-      theme={resolvedTheme}
       className="toaster group"
       icons={{
         error: <OctagonXIcon className="size-4" />,

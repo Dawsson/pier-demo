@@ -6,7 +6,7 @@ import {
   FrameHeader,
   FramePanel,
   FrameTitle,
-} from "@/components/ui/frame";
+} from "@repo/ui/frame";
 
 type AuthFormFrameProps = {
   children: ReactNode;

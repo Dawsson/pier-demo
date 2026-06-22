@@ -8,8 +8,8 @@
   ],
   "type": "module",
   "scripts": {
-    "check": "bun run lint && bun run format:check && bun run check-types && bun run test",
-    "check-types": "bun run --filter='@pier-demo/*' check-types",
+    "check": "bun run lint && bun run lint:patterns && bun run lint:size && bun run format:check && bun run check-types && bun run test",
+    "check-types": "bun run --filter='@pier-demo/*' --filter='@repo/*' check-types",
     "deploy": "pier deploy all --env prod",
     "dev": "dev up --cwd .",
     "dev:api": "pier dev api",
@@ -24,6 +24,7 @@
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
     "lint:patterns": "ast-grep scan --report-style short",
+    "lint:size": "bun tools/policies/check-file-length.ts --max 300",
     "logs": "pier logs --project pier-demo",
     "plan": "pier plan",
     "submit": "pier submit",

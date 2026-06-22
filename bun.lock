@@ -82,29 +82,25 @@
     "apps/web": {
       "name": "@pier-demo/web",
       "dependencies": {
-        "@base-ui/react": "^1.6.0",
         "@fontsource-variable/geist": "^5.2.9",
         "@hookform/resolvers": "^5.4.0",
         "@pier-demo/api-contract": "workspace:*",
         "@pier/backend": "0.1.20",
         "@pier/sync": "0.1.23",
+        "@repo/ui": "workspace:*",
         "@tanstack/react-query": "^5.95.0",
         "@tanstack/react-router": "^1.170.10",
         "@tanstack/react-start": "^1.168.18",
         "@tanstack/router-plugin": "^1.168.13",
         "@vitejs/plugin-react": "^5.1.1",
         "better-auth": "1.6.11",
-        "class-variance-authority": "^0.7.1",
-        "clsx": "^2.1.1",
         "lucide-react": "^1.17.0",
         "motion": "^12.40.0",
-        "radix-ui": "^1.5.0",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
         "react-hook-form": "^7.80.0",
         "shadcn": "^4.10.0",
         "sonner": "^2.0.7",
-        "tailwind-merge": "^3.6.0",
         "vite": "^7.2.7",
         "zod": "^4.4.3",
       },
@@ -124,6 +120,26 @@
         "@pier/sync": "0.1.23",
         "@rocicorp/zero": "1.6.2",
         "zod": "^4.1.13",
+      },
+    },
+    "packages/ui": {
+      "name": "@repo/ui",
+      "dependencies": {
+        "@base-ui/react": "^1.6.0",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "lucide-react": "^1.17.0",
+        "radix-ui": "^1.5.0",
+        "sonner": "^2.0.7",
+        "tailwind-merge": "^3.6.0",
+      },
+      "devDependencies": {
+        "@types/react": "^19.2.7",
+        "@types/react-dom": "^19.2.3",
+      },
+      "peerDependencies": {
+        "react": "^19.2.0",
+        "react-dom": "^19.2.0",
       },
     },
   },
@@ -850,6 +866,8 @@
     "@radix-ui/react-visually-hidden": ["@radix-ui/react-visually-hidden@1.2.6", "", { "dependencies": { "@radix-ui/react-primitive": "2.1.6" }, "peerDependencies": { "@types/react": "*", "@types/react-dom": "*", "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc" }, "optionalPeers": ["@types/react", "@types/react-dom"] }, "sha512-jCE0WljWifTI4niIMCll06kGpsJTAPiZVU9H4WR1N6qW7At9ystHbN7dDB+we2xH535roFHj7qKS+RGj0FMDWQ=="],
 
     "@radix-ui/rect": ["@radix-ui/rect@1.1.2", "", {}, "sha512-xnXE7wG13PI+cxieVssYXlQJuYVRhH9NBoxt3KNwzghDIA69GMm7d4wXRouHIYjE+KvS6U/MsMO73NdS2MH9ZA=="],
+
+    "@repo/ui": ["@repo/ui@workspace:packages/ui"],
 
     "@rocicorp/lock": ["@rocicorp/lock@1.0.4", "", { "dependencies": { "@rocicorp/resolver": "^1.0.2" } }, "sha512-FavTiO8ETXFXDVfA87IThGduTTTR8iqzBnr/c60gUUmbk7knGEXPmf2B+yiNuluJD0ku0fL2V2r62UXnsLXl6w=="],
 

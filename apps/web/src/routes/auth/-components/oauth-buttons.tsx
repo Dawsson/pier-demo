@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/button";
 
 const showProviderToast = (provider: string) => {
   toast.info("OAuth not configured", {

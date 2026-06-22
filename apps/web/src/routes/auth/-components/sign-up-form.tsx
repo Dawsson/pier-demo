@@ -4,7 +4,7 @@ import type { ComponentProps } from "react";
 import { useForm } from "react-hook-form";
 import { signUpSchema, type SignUpValues } from "@/auth/schemas";
 import { useRegisterUser } from "@/auth/hooks/use-register-user";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/button";
 import {
   Field,
   FieldContent,
@@ -12,9 +12,9 @@ import {
   FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+} from "@repo/ui/field";
+import { Input } from "@repo/ui/input";
+import { cn } from "@repo/ui/utils";
 import { OAuthButtons } from "@/routes/auth/-components/oauth-buttons";
 import { AuthFormFrame } from "@/routes/auth/-components/auth-form-frame";
 

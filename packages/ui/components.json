@@ -5,7 +5,7 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "src/styles.css",
+    "css": "../../apps/web/src/styles.css",
     "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
@@ -16,8 +16,8 @@
   "menuAccent": "subtle",
   "aliases": {
     "components": "@/components",
-    "utils": "@repo/ui/utils",
-    "ui": "@repo/ui",
+    "utils": "@/utils",
+    "ui": "@/components/ui",
     "lib": "@/lib",
     "hooks": "@/hooks"
   },

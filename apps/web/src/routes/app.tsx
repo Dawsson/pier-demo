@@ -4,7 +4,7 @@ import { schema } from "@pier-demo/api-contract/sync-schema";
 import { Link, createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useLogout } from "@/auth/hooks/use-logout";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/button";
 import {
   Frame,
   FrameDescription,
@@ -12,7 +12,7 @@ import {
   FrameHeader,
   FramePanel,
   FrameTitle,
-} from "@/components/ui/frame";
+} from "@repo/ui/frame";
 import { endpointClient, syncClient, syncConfig } from "@/lib/api";
 import { authClient } from "@/lib/auth";
 import { hasServerSessionCookie } from "@/lib/session";

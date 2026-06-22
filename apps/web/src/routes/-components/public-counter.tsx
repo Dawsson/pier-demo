@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { Button } from "@/components/ui/button";
+import { Button } from "@repo/ui/button";
 import type { CounterAdjustAmount, StartupTiming } from "@/routes/-types";
 import { CounterControls } from "./counter-controls";
 import { CounterValue } from "./counter-value";

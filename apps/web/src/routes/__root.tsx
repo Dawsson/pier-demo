@@ -1,8 +1,13 @@
 import { QueryClientProvider } from "@tanstack/react-query";
 import { HeadContent, Outlet, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
-import type { ReactNode } from "react";
-import { DEFAULT_THEME, THEME_STORAGE_KEY, ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { useContext, type ReactNode } from "react";
+import {
+  DEFAULT_THEME,
+  THEME_STORAGE_KEY,
+  ThemeProvider,
+  ThemeProviderContext,
+} from "@/components/theme-provider";
+import { Toaster } from "@repo/ui/sonner";
 import type { RouterContext } from "@/router-context";
 import "@/styles.css";
 
@@ -54,10 +59,25 @@ function RootComponent() {
       <ThemeProvider>
         <QueryClientProvider client={context.queryClient}>
           <Outlet />
-          <Toaster closeButton duration={1600} position="bottom-right" richColors={false} />
+          <AppToaster />
         </QueryClientProvider>
       </ThemeProvider>
     </RootDocument>
+  );
+}
+
+function AppToaster() {
+  const { isSystemDark, theme } = useContext(ThemeProviderContext);
+  const resolvedTheme = theme === "system" ? (isSystemDark ? "dark" : "light") : theme;
+
+  return (
+    <Toaster
+      closeButton
+      duration={1600}
+      position="bottom-right"
+      richColors={false}
+      theme={resolvedTheme}
+    />
   );
 }
 
