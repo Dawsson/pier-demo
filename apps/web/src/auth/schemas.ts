@@ -8,7 +8,7 @@ export const loginSchema = z.object({
 
 const signUpShape = {
   email: z.email("Enter a valid email address."),
-  name: authUiConfig.signUp.fields.name.enabled
+  name: authUiConfig.signUp.requireName
     ? z.string().trim().min(2, "Enter your name.")
     : z.string().trim().optional(),
   password: z.string().min(8, "Use at least 8 characters."),

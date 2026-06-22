@@ -19,13 +19,16 @@ import { cn } from "@repo/ui/utils";
 import { OAuthButtons } from "@/routes/auth/-components/oauth-buttons";
 import { AuthFormCard } from "@/routes/auth/-components/auth-form-card";
 
+const inputClassName = "!h-[42px] rounded-[10px] bg-background px-3 text-[0.9375rem] leading-none";
+const submitButtonClassName = "!h-[42px] rounded-[10px] font-semibold text-[0.9375rem]";
+
 export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
   const navigate = useNavigate();
   const registerUser = useRegisterUser();
   const form = useForm<SignUpValues>({
     defaultValues: {
       email: "",
-      name: authUiConfig.signUp.fields.name.enabled ? "" : undefined,
+      name: authUiConfig.signUp.requireName ? "" : undefined,
       password: "",
     },
     mode: "onSubmit",
@@ -66,17 +69,17 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
           </div>
 
           <FieldGroup className="gap-[15px]">
-            {authUiConfig.signUp.fields.name.enabled ? (
+            {authUiConfig.signUp.requireName ? (
               <Field invalid={!!form.formState.errors.name}>
                 <FieldLabel className="font-normal text-foreground text-sm" htmlFor="name">
-                  {authUiConfig.signUp.fields.name.label}
+                  Name
                 </FieldLabel>
                 <FieldContent>
                   <Input
                     id="name"
-                    className={authUiConfig.styles.input}
-                    autoComplete={authUiConfig.signUp.fields.name.autoComplete}
-                    placeholder={authUiConfig.signUp.fields.name.placeholder}
+                    className={inputClassName}
+                    autoComplete="name"
+                    placeholder="Jane Doe"
                     aria-invalid={!!form.formState.errors.name}
                     {...form.register("name")}
                   />
@@ -95,9 +98,9 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
               <FieldContent>
                 <Input
                   id="email"
-                  className={authUiConfig.styles.input}
+                  className={inputClassName}
                   autoComplete="email"
-                  placeholder={authUiConfig.fields.email.placeholder}
+                  placeholder="name@example.com"
                   type="email"
                   aria-invalid={!!form.formState.errors.email}
                   {...form.register("email")}
@@ -116,7 +119,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
               <FieldContent>
                 <Input
                   id="password"
-                  className={authUiConfig.styles.input}
+                  className={inputClassName}
                   autoComplete="new-password"
                   type="password"
                   aria-invalid={!!form.formState.errors.password}
@@ -136,11 +139,7 @@ export function SignUpForm({ className, ...props }: ComponentProps<"div">) {
             ) : null}
           </FieldGroup>
 
-          <Button
-            className={authUiConfig.styles.submitButton}
-            disabled={registerUser.isPending}
-            type="submit"
-          >
+          <Button className={submitButtonClassName} disabled={registerUser.isPending} type="submit">
             {registerUser.isPending ? "Creating account" : "Continue"}
           </Button>
         </AuthFormCard>

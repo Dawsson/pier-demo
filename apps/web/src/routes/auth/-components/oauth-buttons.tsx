@@ -3,6 +3,8 @@ import type { ComponentType } from "react";
 import { authUiConfig, type AuthProviderId } from "@/auth/auth-ui-config";
 import { Button } from "@repo/ui/button";
 
+const oauthButtonClassName = "!h-11 min-w-0 justify-center rounded-[10px] text-[0.9375rem]";
+
 const showProviderToast = (provider: string) => {
   toast.info("OAuth not configured", {
     description: `Add ${provider} credentials to enable this sign-in option.`,
@@ -11,7 +13,7 @@ const showProviderToast = (provider: string) => {
 };
 
 export function OAuthButtons() {
-  const providers = authUiConfig.providers.filter((provider) => provider.enabled);
+  const providers = authUiConfig.providers;
 
   if (!providers.length) {
     return null;
@@ -24,7 +26,7 @@ export function OAuthButtons() {
 
         return (
           <Button
-            className={authUiConfig.styles.oauthButton}
+            className={oauthButtonClassName}
             key={provider.id}
             type="button"
             variant="outline"

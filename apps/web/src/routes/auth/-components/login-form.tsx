@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import type { ComponentProps } from "react";
 import { useForm } from "react-hook-form";
-import { authUiConfig } from "@/auth/auth-ui-config";
 import { loginSchema, type LoginValues } from "@/auth/schemas";
 import { useLogin } from "@/auth/hooks/use-login";
 import { Button } from "@repo/ui/button";
@@ -18,6 +17,9 @@ import { Input } from "@repo/ui/input";
 import { cn } from "@repo/ui/utils";
 import { OAuthButtons } from "@/routes/auth/-components/oauth-buttons";
 import { AuthFormCard } from "@/routes/auth/-components/auth-form-card";
+
+const inputClassName = "!h-[42px] rounded-[10px] bg-background px-3 text-[0.9375rem] leading-none";
+const submitButtonClassName = "!h-[42px] rounded-[10px] font-semibold text-[0.9375rem]";
 
 export function LoginForm({ className, ...props }: ComponentProps<"div">) {
   const navigate = useNavigate();
@@ -72,9 +74,9 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
               <FieldContent>
                 <Input
                   id="email"
-                  className={authUiConfig.styles.input}
+                  className={inputClassName}
                   autoComplete="email"
-                  placeholder={authUiConfig.fields.email.placeholder}
+                  placeholder="name@example.com"
                   type="email"
                   aria-invalid={!!form.formState.errors.email}
                   {...form.register("email")}
@@ -93,7 +95,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
               <FieldContent>
                 <Input
                   id="password"
-                  className={authUiConfig.styles.input}
+                  className={inputClassName}
                   autoComplete="current-password"
                   type="password"
                   aria-invalid={!!form.formState.errors.password}
@@ -113,11 +115,7 @@ export function LoginForm({ className, ...props }: ComponentProps<"div">) {
             ) : null}
           </FieldGroup>
 
-          <Button
-            className={authUiConfig.styles.submitButton}
-            disabled={login.isPending}
-            type="submit"
-          >
+          <Button className={submitButtonClassName} disabled={login.isPending} type="submit">
             {login.isPending ? "Signing in" : "Continue"}
           </Button>
         </AuthFormCard>
