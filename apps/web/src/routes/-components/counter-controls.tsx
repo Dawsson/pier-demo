@@ -1,5 +1,4 @@
 import { Button } from "@repo/ui/button";
-import { useHoverIntentPrewarm } from "@/lib/use-hover-intent-prewarm";
 import type { ReactNode } from "react";
 
 export type CounterAdjustAmount = -1 | 1;
@@ -8,15 +7,11 @@ export function CounterControls({
   children,
   isAdjusting,
   onAdjust,
-  onPrewarm,
 }: {
   readonly children: ReactNode;
   readonly isAdjusting: boolean;
   readonly onAdjust: ((amount: CounterAdjustAmount) => void) | undefined;
-  readonly onPrewarm?: (() => void) | undefined;
 }) {
-  const prewarmIntent = useHoverIntentPrewarm(onPrewarm);
-
   return (
     <div className="grid w-full grid-cols-[3.25rem_minmax(9rem,auto)_3.25rem] items-center justify-center gap-8 sm:grid-cols-[4.5rem_minmax(14rem,auto)_4.5rem] sm:gap-12 md:gap-16">
       <Button
@@ -27,11 +22,6 @@ export function CounterControls({
         type="button"
         variant="outline"
         onClick={() => onAdjust?.(-1)}
-        onFocus={prewarmIntent.onFocus}
-        onPointerEnter={prewarmIntent.onPointerEnter}
-        onPointerLeave={prewarmIntent.onPointerLeave}
-        onPointerMove={prewarmIntent.onPointerMove}
-        onTouchStart={prewarmIntent.onTouchStart}
       >
         <span aria-hidden className="-translate-y-0.5">
           −
@@ -48,11 +38,6 @@ export function CounterControls({
         type="button"
         variant="outline"
         onClick={() => onAdjust?.(1)}
-        onFocus={prewarmIntent.onFocus}
-        onPointerEnter={prewarmIntent.onPointerEnter}
-        onPointerLeave={prewarmIntent.onPointerLeave}
-        onPointerMove={prewarmIntent.onPointerMove}
-        onTouchStart={prewarmIntent.onTouchStart}
       >
         <span aria-hidden className="-translate-y-0.5">
           +
