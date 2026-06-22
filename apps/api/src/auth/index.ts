@@ -15,7 +15,7 @@ export const createAuth = (env: Env, db: AppDb) =>
 
       plugins: [
         anonymous({
-          emailDomainName: "anonymous.pier-demo.local",
+          emailDomainName: "anonymous.local",
           generateName: () => "Anonymous guest",
         }),
         admin({

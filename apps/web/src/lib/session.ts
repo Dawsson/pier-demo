@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 
 const sessionCookieName = "better-auth.session_token";
 
-const hasBetterAuthSessionCookie = (cookie: string | null) =>
+export const hasBetterAuthSessionCookie = (cookie: string | null) =>
   cookie?.split(";").some((part) => {
     const name = part.trim().split("=", 1)[0];
 

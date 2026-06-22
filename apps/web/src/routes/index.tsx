@@ -2,12 +2,13 @@ import { SyncProvider } from "@pier/sync";
 import { contract } from "@pier-demo/api-contract";
 import { schema } from "@pier-demo/api-contract/sync-schema";
 import { Link, createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { endpointClient, syncClient, syncConfig } from "@/lib/api";
 import { authClient } from "@/lib/auth";
+import { getPublicCounterServerFn, type PublicCounterInitialData } from "@/lib/counter-data";
 
 const counterRateLimit = 20;
 const counterRateLimitWindowMs = 60_000;
@@ -26,12 +27,24 @@ type StartupTiming = {
 };
 
 export const Route = createFileRoute("/")({
+  loader: () => getPublicCounterServerFn(),
   component: HomeRoute,
+  staleTime: 5_000,
 });
 
 function HomeRoute() {
+  const initialData = Route.useLoaderData();
+
+  if (initialData.hasSessionCookie) {
+    return <SessionBackedHome initialData={initialData} />;
+  }
+
+  return <LazyGuestHome initialData={initialData} />;
+}
+
+function SessionBackedHome({ initialData }: { readonly initialData: PublicCounterInitialData }) {
   const session = authClient.useSession();
-  const anonymousSignInStarted = useRef(false);
+  const [pendingAdjustment, setPendingAdjustment] = useState<PendingAdjustment | null>(null);
   const [timing, setTiming] = useState<StartupTiming>(() => ({
     startedAt: now(),
   }));
@@ -55,34 +68,162 @@ function HomeRoute() {
     updateTiming({ sessionReadyAt: now() });
   }, [session.isPending, timing.sessionReadyAt]);
 
-  useEffect(() => {
-    if (session.isPending || session.data?.user || anonymousSignInStarted.current) {
+  if (session.isPending) {
+    return (
+      <HomeShell
+        counterValue={initialData.counter.value}
+        isAdjusting
+        timing={timing}
+        ssrMs={initialData.ssrMs}
+      />
+    );
+  }
+
+  if (!session.data?.user) {
+    return (
+      <LazyGuestHome
+        initialData={initialData}
+        timingOverride={timing}
+        updateTimingOverride={updateTiming}
+      />
+    );
+  }
+
+  return (
+    <SyncedHome
+      initialData={initialData}
+      onCounterReady={(counterReadyAt) => updateTiming({ counterReadyAt })}
+      onPendingAdjustmentSubmitted={() => setPendingAdjustment(null)}
+      pendingAdjustment={pendingAdjustment}
+      timing={timing}
+      user={session.data.user}
+    />
+  );
+}
+
+function LazyGuestHome({
+  initialData,
+  timingOverride,
+  updateTimingOverride,
+}: {
+  readonly initialData: PublicCounterInitialData;
+  readonly timingOverride?: StartupTiming;
+  readonly updateTimingOverride?: (nextTiming: Partial<StartupTiming>) => void;
+}) {
+  const anonymousSignInStarted = useRef(false);
+  const [user, setUser] = useState<unknown>(null);
+  const [pendingAdjustment, setPendingAdjustment] = useState<PendingAdjustment | null>(null);
+  const [guestAuthPending, setGuestAuthPending] = useState(false);
+  const [localTiming, setLocalTiming] = useState<StartupTiming>(() => ({
+    startedAt: now(),
+  }));
+  const timing = timingOverride ?? localTiming;
+
+  const updateTiming = (nextTiming: Partial<StartupTiming>) => {
+    if (!showStartupTiming) {
+      return;
+    }
+
+    if (updateTimingOverride) {
+      updateTimingOverride(nextTiming);
+      return;
+    }
+
+    setLocalTiming((currentTiming) => ({
+      ...currentTiming,
+      ...nextTiming,
+    }));
+  };
+
+  const requestAdjustment = (amount: -1 | 1) => {
+    setPendingAdjustment({ amount, id: crypto.randomUUID() });
+
+    if (user || anonymousSignInStarted.current) {
       return;
     }
 
     anonymousSignInStarted.current = true;
+    setGuestAuthPending(true);
     updateTiming({ anonymousAuthStartAt: now() });
+
     void (async () => {
       try {
-        const result = await authClient.signIn.anonymous();
-        if (result.error) {
-          updateTiming({ anonymousAuthFailedAt: now() });
-          showAnonymousAuthErrorToast(result.error);
+        const existingSession = await authClient.getSession();
+        if (existingSession.data?.user) {
+          updateTiming({ sessionReadyAt: now() });
+          setUser(existingSession.data.user);
+          return;
         }
+
+        const anonymousSession = await authClient.signIn.anonymous();
+        if (anonymousSession.error) {
+          setPendingAdjustment(null);
+          updateTiming({ anonymousAuthFailedAt: now() });
+          showAnonymousAuthErrorToast(anonymousSession.error);
+          return;
+        }
+
+        const nextUser = anonymousSession.data?.user ?? (await authClient.getSession()).data?.user;
+        if (!nextUser) {
+          setPendingAdjustment(null);
+          updateTiming({ anonymousAuthFailedAt: now() });
+          showAnonymousAuthErrorToast(new Error("Anonymous session was not created."));
+          return;
+        }
+
+        updateTiming({ sessionReadyAt: now() });
+        setUser(nextUser);
       } catch (error) {
+        setPendingAdjustment(null);
         updateTiming({ anonymousAuthFailedAt: now() });
         showAnonymousAuthErrorToast(error);
       } finally {
         updateTiming({ anonymousAuthEndAt: now() });
         anonymousSignInStarted.current = false;
+        setGuestAuthPending(false);
       }
     })();
-  }, [session.data?.user, session.isPending]);
+  };
 
-  if (!session.data?.user) {
-    return <HomeShell timing={timing} />;
+  if (!user) {
+    return (
+      <HomeShell
+        counterValue={initialData.counter.value}
+        isAdjusting={guestAuthPending}
+        onAdjust={requestAdjustment}
+        timing={timing}
+        ssrMs={initialData.ssrMs}
+      />
+    );
   }
 
+  return (
+    <SyncedHome
+      initialData={initialData}
+      onCounterReady={(counterReadyAt) => updateTiming({ counterReadyAt })}
+      onPendingAdjustmentSubmitted={() => setPendingAdjustment(null)}
+      pendingAdjustment={pendingAdjustment}
+      timing={timing}
+      user={user}
+    />
+  );
+}
+
+function SyncedHome({
+  initialData,
+  onCounterReady,
+  onPendingAdjustmentSubmitted,
+  pendingAdjustment,
+  timing,
+  user,
+}: {
+  readonly initialData: PublicCounterInitialData;
+  readonly onCounterReady: (counterReadyAt: number) => void;
+  readonly onPendingAdjustmentSubmitted: () => void;
+  readonly pendingAdjustment: PendingAdjustment | null;
+  readonly timing: StartupTiming;
+  readonly user: unknown;
+}) {
   return (
     <SyncProvider
       authEndpoint={endpointClient.sync.auth}
@@ -90,27 +231,45 @@ function HomeRoute() {
       clientContext={contract.clientContext as never}
       config={syncConfig}
       schema={schema}
-      user={session.data.user as never}
+      user={user as never}
     >
       <HomeCounter
-        onCounterReady={(counterReadyAt) => updateTiming({ counterReadyAt })}
+        initialCounterValue={initialData.counter.value}
+        onCounterReady={onCounterReady}
+        onPendingAdjustmentSubmitted={onPendingAdjustmentSubmitted}
+        pendingAdjustment={pendingAdjustment}
         timing={timing}
+        ssrMs={initialData.ssrMs}
       />
     </SyncProvider>
   );
 }
 
+type PendingAdjustment = {
+  readonly amount: -1 | 1;
+  readonly id: string;
+};
+
 function HomeCounter({
+  initialCounterValue,
   onCounterReady,
+  onPendingAdjustmentSubmitted,
+  pendingAdjustment,
+  ssrMs,
   timing,
 }: {
+  readonly initialCounterValue: number;
   readonly onCounterReady: (counterReadyAt: number) => void;
+  readonly onPendingAdjustmentSubmitted: () => void;
+  readonly pendingAdjustment: PendingAdjustment | null;
+  readonly ssrMs: number;
   readonly timing: StartupTiming;
 }) {
   const counter = syncClient.counter.current.useQuery();
   const queryErrorToastShown = useRef(false);
   const counterReadyReported = useRef(false);
   const syncMountedAt = useRef(now());
+  const submittedPendingAdjustmentId = useRef<string | null>(null);
   const submittedAtRef = useRef<number[]>([]);
   const increment = syncClient.counter.increment.useMutation({
     onError: (error) => {
@@ -118,23 +277,40 @@ function HomeCounter({
     },
   });
 
-  const counterValue = counter.data?.value ?? 0;
+  const counterValue = counter.data?.value ?? initialCounterValue;
   const isAdjusting = increment.isPending;
-  const adjust = (amount: -1 | 1) => {
-    const now = Date.now();
-    const windowStart = now - counterRateLimitWindowMs;
-    submittedAtRef.current = submittedAtRef.current.filter(
-      (submittedAt) => submittedAt > windowStart,
-    );
+  const adjust = useCallback(
+    (amount: -1 | 1) => {
+      const now = Date.now();
+      const windowStart = now - counterRateLimitWindowMs;
+      submittedAtRef.current = submittedAtRef.current.filter(
+        (submittedAt) => submittedAt > windowStart,
+      );
 
-    if (submittedAtRef.current.length >= counterRateLimit) {
-      showCounterRateLimitToast();
+      if (submittedAtRef.current.length >= counterRateLimit) {
+        showCounterRateLimitToast();
+        return;
+      }
+
+      submittedAtRef.current.push(now);
+      increment.mutate({ amount });
+    },
+    [increment],
+  );
+
+  useEffect(() => {
+    if (
+      !pendingAdjustment ||
+      submittedPendingAdjustmentId.current === pendingAdjustment.id ||
+      increment.isPending
+    ) {
       return;
     }
 
-    submittedAtRef.current.push(now);
-    increment.mutate({ amount });
-  };
+    submittedPendingAdjustmentId.current = pendingAdjustment.id;
+    adjust(pendingAdjustment.amount);
+    onPendingAdjustmentSubmitted();
+  }, [adjust, increment.isPending, pendingAdjustment, onPendingAdjustmentSubmitted]);
 
   useEffect(() => {
     if (!showStartupTiming || counterReadyReported.current || counter.data === undefined) {
@@ -159,6 +335,7 @@ function HomeCounter({
       counterValue={counterValue}
       isAdjusting={isAdjusting}
       onAdjust={adjust}
+      ssrMs={ssrMs}
       timing={{ ...timing, syncMountedAt: syncMountedAt.current }}
     />
   );
@@ -168,11 +345,13 @@ function HomeShell({
   counterValue = 0,
   isAdjusting = true,
   onAdjust,
+  ssrMs,
   timing,
 }: {
   readonly counterValue?: number;
   readonly isAdjusting?: boolean;
   readonly onAdjust?: (amount: -1 | 1) => void;
+  readonly ssrMs?: number;
   readonly timing?: StartupTiming;
 }) {
   return (
@@ -235,13 +414,21 @@ function HomeShell({
             </span>
           </Button>
         </div>
-        {showStartupTiming && timing ? <StartupTimingReadout timing={timing} /> : null}
+        {showStartupTiming && timing ? (
+          <StartupTimingReadout ssrMs={ssrMs} timing={timing} />
+        ) : null}
       </section>
     </main>
   );
 }
 
-function StartupTimingReadout({ timing }: { readonly timing: StartupTiming }) {
+function StartupTimingReadout({
+  ssrMs,
+  timing,
+}: {
+  readonly ssrMs: number | undefined;
+  readonly timing: StartupTiming;
+}) {
   const totalReadyMs =
     timing.counterReadyAt === undefined ? undefined : timing.counterReadyAt - timing.startedAt;
   const authFailed = timing.anonymousAuthFailedAt !== undefined;
@@ -262,15 +449,24 @@ function StartupTimingReadout({ timing }: { readonly timing: StartupTiming }) {
         {authFailed
           ? "Anonymous auth blocked"
           : totalReadyMs === undefined
-            ? "Sync initializing"
-            : `Sync ready in ${formatMs(totalReadyMs)}`}
+            ? "SSR value ready"
+            : `Live sync ready in ${formatMs(totalReadyMs)}`}
       </span>
+      <span aria-hidden>·</span>
+      <span>ssr {formatTimingValue(ssrMs)}</span>
       <span aria-hidden>·</span>
       <span>session {formatTimingValue(authMs)}</span>
       <span aria-hidden>·</span>
-      <span>anonymous auth {authFailed ? "failed" : formatTimingValue(anonymousAuthMs)}</span>
+      <span>
+        guest auth{" "}
+        {authFailed
+          ? "failed"
+          : anonymousAuthMs === undefined
+            ? "deferred"
+            : formatTimingValue(anonymousAuthMs)}
+      </span>
       <span aria-hidden>·</span>
-      <span>counter {formatTimingValue(syncMs)}</span>
+      <span>live counter {formatTimingValue(syncMs)}</span>
     </div>
   );
 }
