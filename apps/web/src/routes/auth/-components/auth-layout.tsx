@@ -22,24 +22,24 @@ export function AuthLayout() {
 function AuthPatternPanel() {
   return (
     <section
-      className="relative min-h-[168px] overflow-hidden border-border border-b bg-neutral-950 text-white lg:min-h-screen lg:border-r lg:border-b-0"
+      className="relative min-h-[168px] overflow-hidden border-border border-b bg-neutral-100 text-neutral-900 lg:min-h-screen lg:border-r lg:border-b-0 dark:bg-neutral-950 dark:text-white"
       aria-hidden
     >
       <CubePattern />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgb(10_10_10_/_0.80)_0%,transparent_22%,transparent_68%,rgb(10_10_10_/_0.88)_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,transparent_70%,rgb(10_10_10_/_0.34)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgb(245_245_245_/_0.78)_0%,transparent_28%,transparent_68%,rgb(229_229_229_/_0.78)_100%)] dark:bg-[linear-gradient(to_bottom,rgb(10_10_10_/_0.80)_0%,transparent_22%,transparent_68%,rgb(10_10_10_/_0.88)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,transparent_0%,transparent_70%,rgb(212_212_212_/_0.32)_100%)] dark:bg-[linear-gradient(90deg,transparent_0%,transparent_70%,rgb(10_10_10_/_0.34)_100%)]" />
       <div className="relative z-1 flex min-h-[168px] flex-col justify-between p-5 lg:min-h-full lg:p-8">
         <Link
-          className="inline-flex items-center gap-2.5 font-extrabold text-[0.9375rem] !text-white"
+          className="inline-flex items-center gap-2.5 font-extrabold text-[0.9375rem] !text-neutral-900 dark:!text-white"
           to="/"
         >
           <span
-            className="inline-block size-3 rounded-[3px] border-2 border-white bg-white/10 shadow-[4px_4px_0_var(--color-white)]"
+            className="inline-block size-3 rounded-[3px] border-2 border-neutral-900 bg-neutral-900/5 shadow-[4px_4px_0_var(--color-neutral-900)] dark:border-white dark:bg-white/10 dark:shadow-[4px_4px_0_var(--color-white)]"
             aria-hidden
           />
           Pier Demo
         </Link>
-        <p className="max-w-82 text-balance font-semibold text-sm text-neutral-200 leading-6 lg:max-w-108 lg:text-[1.25rem] lg:leading-[1.35]">
+        <p className="max-w-82 text-balance font-semibold text-neutral-700 text-sm leading-6 lg:max-w-108 lg:text-[1.25rem] lg:leading-[1.35] dark:text-neutral-200">
           A simple product template with auth, API calls, and a shared counter.
         </p>
       </div>
@@ -50,7 +50,7 @@ function AuthPatternPanel() {
 function CubePattern() {
   return (
     <svg
-      className="absolute inset-[-8%_-18%_-8%_-8%] h-[116%] w-[126%] -rotate-3 text-white/[0.13]"
+      className="absolute inset-[-8%_-18%_-8%_-8%] h-[116%] w-[126%] -rotate-3 text-neutral-500/30 dark:text-white/[0.13]"
       aria-hidden
     >
       <defs>
